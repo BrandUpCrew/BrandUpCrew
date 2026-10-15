@@ -6,6 +6,7 @@ import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import { ArticleCard } from "@/components/site/cards";
 import { CtaSection } from "@/components/site/cta-section";
 import { articles } from "@/content/content";
+import { siteConfig } from "@/config/site";
 
 type ArticlePageProps = { params: Promise<{ slug: string }> };
 
@@ -50,9 +51,25 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
       day: "numeric",
     },
   );
+  const structuredData = JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: article.title,
+    description: article.summary,
+    datePublished: article.published,
+    articleSection: article.category,
+    mainEntityOfPage: new URL(
+      `/insights/${article.slug}`,
+      siteConfig.url,
+    ).toString(),
+  }).replaceAll("<", "\\u003c");
   return (
     <main id="main">
       <article>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: structuredData }}
+        />
         <header className="article-hero content-width">
           <Link className="underlined-link" href="/insights">
             <ArrowLeft aria-hidden="true" size={15} />
