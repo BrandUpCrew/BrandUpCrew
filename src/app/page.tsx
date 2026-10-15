@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import { ArticleCard, ProjectCard, ServiceCard } from "@/components/site/cards";
 import { CtaSection } from "@/components/site/cta-section";
 import { FaqList } from "@/components/site/faq-list";
+import { HeroBlock, RevealSection } from "@/components/site/animated";
 import { SectionHeading } from "@/components/site/page-intro";
 import {
   faqs,
@@ -32,9 +33,9 @@ export const metadata: Metadata = {
 export default function HomePage() {
   return (
     <main id="main">
-      <section className="home-hero">
+      <RevealSection className="home-hero">
         <div className="hero-inner">
-          <div className="hero-copy">
+          <HeroBlock className="hero-copy">
             <p className="eyebrow">
               <span />
               {siteConfig.descriptor}
@@ -48,23 +49,19 @@ export default function HomePage() {
             </p>
             <div className="hero-actions">
               <Link className="button button-dark" href="/contact">
-                Start a conversation{" "}
-                <ArrowUpRight aria-hidden="true" size={16} />
+                Start a conversation <ArrowUpRight aria-hidden="true" size={16} />
               </Link>
               <Link className="text-link" href="/services">
-                Explore our services{" "}
-                <ArrowDownRight aria-hidden="true" size={16} />
+                Explore our services <ArrowDownRight aria-hidden="true" size={16} />
               </Link>
             </div>
             <p className="hero-note">
               Independent perspective. Thoughtful delivery. No borrowed
               playbook.
             </p>
-          </div>
-          <div
-            className="hero-composition"
-            aria-label="Abstract, original studio artwork"
-          >
+          </HeroBlock>
+
+          <HeroBlock className="hero-composition" aria-label="Abstract studio artwork">
             <div className="hero-composition-top">
               <span>Ideas into action</span>
               <span>01 — 04</span>
@@ -77,15 +74,15 @@ export default function HomePage() {
               <span>Strategy / Design / Technology</span>
               <MoveUpRight aria-hidden="true" size={18} />
             </div>
-          </div>
+          </HeroBlock>
         </div>
         <div className="hero-stamp">
           <span>Small enough to care</span>
           <span>Built to think bigger</span>
         </div>
-      </section>
+      </RevealSection>
 
-      <section className="intro-strip content-width">
+      <RevealSection className="intro-strip content-width">
         <p className="eyebrow">
           <span />A useful kind of independent
         </p>
@@ -96,9 +93,9 @@ export default function HomePage() {
         <Link href="/about" className="underlined-link">
           Meet the studio <ArrowUpRight aria-hidden="true" size={15} />
         </Link>
-      </section>
+      </RevealSection>
 
-      <section className="section-block service-section">
+      <RevealSection className="section-block service-section">
         <div className="content-width">
           <div className="section-heading-row">
             <SectionHeading
@@ -118,14 +115,13 @@ export default function HomePage() {
           <div className="service-more">
             <span>From a focused sprint to a connected growth program.</span>
             <Link href="/services">
-              Explore all 12 capabilities{" "}
-              <ArrowUpRight aria-hidden="true" size={15} />
+              Explore all 12 capabilities <ArrowUpRight aria-hidden="true" size={15} />
             </Link>
           </div>
         </div>
-      </section>
+      </RevealSection>
 
-      <section className="section-block process-preview">
+      <RevealSection className="section-block process-preview">
         <div className="content-width process-preview-grid">
           <div>
             <p className="eyebrow">
@@ -158,9 +154,9 @@ export default function HomePage() {
             ))}
           </ol>
         </div>
-      </section>
+      </RevealSection>
 
-      <section className="section-block work-preview">
+      <RevealSection className="section-block work-preview">
         <div className="content-width">
           <div className="section-heading-row">
             <SectionHeading
@@ -178,9 +174,9 @@ export default function HomePage() {
             ))}
           </div>
         </div>
-      </section>
+      </RevealSection>
 
-      <section className="industry-band">
+      <RevealSection className="industry-band">
         <div className="content-width industry-band-inner">
           <div>
             <p className="eyebrow">
@@ -206,9 +202,9 @@ export default function HomePage() {
             ))}
           </ul>
         </div>
-      </section>
+      </RevealSection>
 
-      <section className="section-block insight-preview">
+      <RevealSection className="section-block insight-preview">
         <div className="content-width">
           <div className="section-heading-row">
             <SectionHeading
@@ -226,9 +222,9 @@ export default function HomePage() {
             ))}
           </div>
         </div>
-      </section>
+      </RevealSection>
 
-      <section className="section-block home-faq">
+      <RevealSection className="section-block home-faq">
         <div className="content-width home-faq-grid">
           <div>
             <p className="eyebrow">
@@ -239,13 +235,12 @@ export default function HomePage() {
               Good questions lead to better work. Here are a few we hear often.
             </p>
             <Link className="underlined-link" href="/faq">
-              More questions answered{" "}
-              <ArrowUpRight aria-hidden="true" size={15} />
+              More questions answered <ArrowUpRight aria-hidden="true" size={15} />
             </Link>
           </div>
           <FaqList items={faqs.slice(0, 4)} />
         </div>
-      </section>
+      </RevealSection>
       <CtaSection />
     </main>
   );
