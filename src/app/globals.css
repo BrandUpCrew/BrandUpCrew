@@ -942,6 +942,100 @@ textarea {
   color: #a9c5ad;
 }
 
+.team-section {
+  background: var(--surface);
+}
+
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+  margin-top: 28px;
+}
+
+.team-card {
+  display: flex;
+  min-height: 100%;
+  flex-direction: column;
+  padding: 24px 24px 20px;
+  border: 1px solid var(--line-light);
+  background: rgba(255, 255, 255, 0.38);
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.team-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(82, 103, 242, 0.26);
+  box-shadow: 0 20px 32px rgba(16, 24, 32, 0.06);
+}
+
+.team-card-sage .team-marker {
+  background: linear-gradient(135deg, #edf3db 0%, #dfe9d6 100%);
+  color: #2f3f31;
+}
+
+.team-card-rose .team-marker {
+  background: linear-gradient(135deg, #f6e8dd 0%, #eed7cb 100%);
+  color: #4b322a;
+}
+
+.team-card-blue .team-marker {
+  background: linear-gradient(135deg, #dfeaf8 0%, #cfe0ef 100%);
+  color: #233246;
+}
+
+.team-marker {
+  display: grid;
+  width: 58px;
+  height: 58px;
+  place-items: center;
+  border: 1px solid rgba(16, 24, 32, 0.12);
+  font-family: var(--font-newsreader), Georgia, serif;
+  font-size: 23px;
+  letter-spacing: -0.06em;
+}
+
+.team-meta {
+  margin-top: 22px;
+}
+
+.team-role {
+  margin: 0;
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 750;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.team-card h3 {
+  margin: 12px 0 0;
+  font-family: var(--font-newsreader), Georgia, serif;
+  font-size: clamp(29px, 2vw, 38px);
+  font-weight: 450;
+  letter-spacing: -0.04em;
+  line-height: 0.98;
+}
+
+.team-bio,
+.team-focus {
+  margin: 18px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.8;
+}
+
+.team-focus {
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid var(--line-light);
+  color: var(--foreground);
+  font-weight: 600;
+}
+
 .industry-list {
   margin: 0;
   padding: 0;
@@ -1122,6 +1216,10 @@ textarea {
 
 .cta-section .eyebrow > span {
   background: currentcolor;
+}
+
+.cta-section .button-light {
+  color: #101820;
 }
 
 .cta-section h2 {
@@ -2332,6 +2430,10 @@ textarea {
     width: calc(50% - 13px);
   }
 
+  .team-grid {
+    grid-template-columns: 1fr;
+  }
+
   .project-art {
     min-height: 260px;
   }
@@ -2513,6 +2615,10 @@ textarea {
   .project-grid {
     grid-template-columns: 1fr;
     gap: 37px;
+  }
+
+  .team-grid {
+    grid-template-columns: 1fr;
   }
 
   .project-grid .project-card:nth-child(3) {
