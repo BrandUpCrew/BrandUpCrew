@@ -54,6 +54,7 @@ export function ContactForm({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
+        signal: AbortSignal.timeout(15_000),
       });
       const result = (await response.json()) as {
         message?: string;
@@ -78,7 +79,7 @@ export function ContactForm({
       setState({
         status: "error",
         message:
-          "We could not reach the submission service. Your inquiry was not sent; please try again shortly.",
+          "We could not confirm whether your inquiry was sent. Please contact us before submitting again.",
       });
     }
   }
