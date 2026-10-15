@@ -33,8 +33,9 @@ Create feature folders when a real feature is introduced; do not create empty la
 - `features/<name>` owns feature-specific UI, validation, and server-side operations. Features may depend on shared `lib`, `types`, `config`, and `components/ui`, not on unrelated feature internals.
 - `config` contains replaceable brand and site settings. `lib/env.ts` validates runtime configuration with Zod.
 - `content` owns the current static editorial data. It is not an admin CMS and contains only clearly labeled demonstration project work.
-- `app/api/contact` validates all submissions server-side, applies honeypot and process-local rate limits, and sends email through Resend only when all provider configuration is present. It never stores leads or returns success when delivery fails.
+- `app/api/contact` validates all submissions server-side, bounds the request stream, applies a honeypot and process-local rate limit, and sends email through Resend only when all provider configuration is present. It never stores leads or returns success when delivery fails. The ingress must overwrite `X-Real-IP`; the in-memory limiter is not a distributed production control.
 - `app/feed.xml` renders the public article feed from the same typed content used by the blog.
+- `next.config.ts` adds basic clickjacking, MIME-sniffing, referrer, and browser-capability headers. HSTS and a nonce-based Content Security Policy must be configured at the production edge after verifying the deployment and font/asset policy.
 - `types` is for shared contracts only; colocate feature-only types with their owner.
 - `tests` verifies user-visible behavior without coupling to implementation details.
 
@@ -46,6 +47,6 @@ Prefer server rendering for content and metadata. Use `next/image` for content i
 
 ## Local workflow
 
-Install dependencies with `npm install`, copy `.env.example` to `.env.local`, and start the dev server with `npm run dev`. Before a change is considered ready, run `npm run lint`, `npm run typecheck`, `npm test`, and `npm run build`. Playwright requires a locally installed browser (`npx playwright install chromium`).
+Install dependencies with `npm install`, copy `.env.example` to `.env.local`, and start the dev server with `npm run dev`. Before a change is considered ready, run `npm run lint`, `npm run typecheck`, `npm test`, and `npm run build`. Playwright's cross-browser suite requires the Chromium, Firefox, and WebKit engines (`npx playwright install --with-deps chromium firefox webkit`).
 
-There is no database, authentication, admin panel, or CMS. These are intentionally omitted because the current static content and contact requirements do not justify them. Contact email uses optional server-side Resend integration; analytics, booking, consent, CRM, and conversion tracking remain inactive until provider, privacy, and account requirements are defined.
+There is no database, authentication, admin panel, or CMS. These are intentionally omitted because the current static content and contact requirements do not justify them. Contact email uses optional server-side Resend integration; analytics, booking, consent, CRM, and conversion tracking remain inactive until provider, privacy, and account requirements are defined. Contact delivery with real credentials and a safe provider test account has not been verified in this environment.

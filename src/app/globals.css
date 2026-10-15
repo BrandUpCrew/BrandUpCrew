@@ -6,7 +6,7 @@
   --foreground: #202621;
   --surface: #fffefa;
   --surface-hover: #eae9e1;
-  --muted: #657069;
+  --muted: #56645a;
   --border: #d7d9d1;
   --accent: #285640;
   --accent-hover: #1d4633;
@@ -59,6 +59,10 @@
     --green-soft: #29352c;
     --line-light: rgba(239, 239, 232, 0.16);
     --line-dark: rgba(239, 239, 232, 0.2);
+  }
+
+  .process-preview {
+    --process-muted: #b2b9b1;
   }
 }
 
@@ -681,7 +685,15 @@ textarea {
 }
 
 .process-preview {
+  --process-muted: #515d55;
   background: var(--green-soft);
+}
+
+.process-preview .eyebrow,
+.process-preview .section-lead,
+.process-preview .process-list p,
+.process-preview .process-list li > svg {
+  color: var(--process-muted);
 }
 
 .process-preview-grid {

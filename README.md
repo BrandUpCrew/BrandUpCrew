@@ -50,9 +50,11 @@ The privacy notice and terms are transparent launch templates, not legal advice.
 | `npm run format:check` | Check formatting without changing files                          |
 | `npm test`             | Run the Playwright end-to-end smoke tests                        |
 
-Install a browser for Playwright when running the end-to-end test suite for the first time: `npx playwright install chromium`.
+Install the Playwright engines and operating-system libraries before running the cross-browser suite for the first time: `npx playwright install --with-deps chromium firefox webkit`.
 
-By default, Playwright reuses a local development server on port 3000. To run against the production build on a separate port (useful when another development server is already running), build first and run `PLAYWRIGHT_USE_PRODUCTION=1 PLAYWRIGHT_PORT=3001 npm test`.
+Playwright starts an isolated server on port 3100 and does not reuse an existing server, preventing tests from accidentally targeting a stale build. To test the production build, run `npm run build` followed by `PLAYWRIGHT_USE_PRODUCTION=1 PLAYWRIGHT_PORT=3101 npm test`.
+
+The request limiter uses the `X-Real-IP` header only; it deliberately ignores the client-controlled first value of `X-Forwarded-For`. Configure the trusted ingress to overwrite `X-Real-IP` before enabling lead delivery. The in-memory limiter is process-local and only a basic safeguard; production deployments with multiple instances require a shared rate-limit store. Email-provider idempotency and delivery-failure recovery require the selected provider and deployment workflow to be configured and verified.
 
 ## Routes and architecture
 

@@ -1,5 +1,6 @@
 import "server-only";
 
+import { isIP } from "node:net";
 import { z } from "zod";
 
 import { services } from "@/content/content";
@@ -14,7 +15,12 @@ const contactSchema = z
     website: z
       .union([z.literal(""), z.url().max(2048)])
       .optional()
-      .default(""),
+      .default("")
+      .refine((value) => {
+        if (!value) return true;
+        const protocol = new URL(value).protocol;
+        return protocol === "http:" || protocol === "https:";
+      }, "Website must use HTTP or HTTPS."),
     services: z
       .array(z.string())
       .min(1, "Choose at least one service.")
@@ -35,6 +41,8 @@ const contactSchema = z
 
 const rateLimitWindowMs = 15 * 60 * 1000;
 const maximumRequests = 5;
+const maximumTrackedClients = 10_000;
+const maximumBodyBytes = 16_384;
 const requestCounts = new Map<string, { count: number; resetAt: number }>();
 
 function jsonResponse(body: unknown, status: number, headers?: HeadersInit) {
@@ -45,27 +53,53 @@ function jsonResponse(body: unknown, status: number, headers?: HeadersInit) {
 }
 
 function isRateLimited(request: Request) {
-  const forwarded = request.headers
-    .get("x-forwarded-for")
-    ?.split(",")[0]
-    ?.trim();
-  const key =
-    request.headers.get("x-real-ip")?.trim() || forwarded || "unknown";
+  const headerIp = request.headers.get("x-real-ip")?.trim();
+  const key = headerIp && isIP(headerIp) ? headerIp : "unknown";
   const now = Date.now();
   const current = requestCounts.get(key);
 
   if (!current || current.resetAt <= now) {
-    requestCounts.set(key, { count: 1, resetAt: now + rateLimitWindowMs });
-    if (requestCounts.size > 1000) {
+    if (requestCounts.size >= maximumTrackedClients) {
       for (const [storedKey, value] of requestCounts) {
         if (value.resetAt <= now) requestCounts.delete(storedKey);
       }
+      if (requestCounts.size >= maximumTrackedClients) return true;
     }
+    requestCounts.set(key, { count: 1, resetAt: now + rateLimitWindowMs });
     return false;
   }
 
   current.count += 1;
   return current.count > maximumRequests;
+}
+
+async function readLimitedBody(request: Request) {
+  const reader = request.body?.getReader();
+  if (!reader) return { kind: "body" as const, value: "" };
+
+  const chunks: Uint8Array[] = [];
+  let byteLength = 0;
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    byteLength += value.byteLength;
+    if (byteLength > maximumBodyBytes) {
+      await reader.cancel();
+      return { kind: "too-large" as const };
+    }
+    chunks.push(value);
+  }
+
+  const bytes = new Uint8Array(byteLength);
+  let offset = 0;
+  for (const chunk of chunks) {
+    bytes.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+
+  return { kind: "body" as const, value: new TextDecoder().decode(bytes) };
 }
 
 function formatInquiry(data: z.infer<typeof contactSchema>) {
@@ -91,33 +125,52 @@ function formatInquiry(data: z.infer<typeof contactSchema>) {
 }
 
 export async function POST(request: Request) {
-  const contentLength = Number(request.headers.get("content-length") ?? 0);
-  if (contentLength > 16_384) {
-    return jsonResponse({ message: "The submitted form is too large." }, 413);
+  const contentLengthHeader = request.headers.get("content-length");
+  if (contentLengthHeader !== null) {
+    const contentLength = Number(contentLengthHeader);
+    if (!Number.isSafeInteger(contentLength) || contentLength < 0) {
+      return jsonResponse({ message: "The content length is invalid." }, 400);
+    }
+    if (contentLength > maximumBodyBytes) {
+      return jsonResponse({ message: "The submitted form is too large." }, 413);
+    }
   }
 
   const contentType = request.headers.get("content-type") ?? "";
-  if (!contentType.toLowerCase().includes("application/json")) {
+  if (
+    contentType.split(";", 1)[0]?.trim().toLowerCase() !== "application/json"
+  ) {
     return jsonResponse(
       { message: "Submit the contact form using JSON." },
       415,
     );
   }
 
-  let rawBody: string;
+  if (isRateLimited(request)) {
+    return jsonResponse(
+      {
+        message:
+          "Too many attempts. Please wait a little while before trying again.",
+      },
+      429,
+      { "Retry-After": String(Math.ceil(rateLimitWindowMs / 1000)) },
+    );
+  }
+
+  let bodyRead: Awaited<ReturnType<typeof readLimitedBody>>;
   try {
-    rawBody = await request.text();
+    bodyRead = await readLimitedBody(request);
   } catch (error) {
     console.error("Contact request body could not be read.", error);
     return jsonResponse({ message: "We could not read the submission." }, 400);
   }
-  if (new TextEncoder().encode(rawBody).byteLength > 16_384) {
+  if (bodyRead.kind === "too-large") {
     return jsonResponse({ message: "The submitted form is too large." }, 413);
   }
 
   let body: unknown;
   try {
-    body = JSON.parse(rawBody);
+    body = JSON.parse(bodyRead.value);
   } catch {
     return jsonResponse(
       { message: "The submitted form is not valid JSON." },
@@ -139,17 +192,6 @@ export async function POST(request: Request) {
   if (result.data.faxNumber) {
     return jsonResponse({ message: "The inquiry could not be accepted." }, 400);
   }
-  if (isRateLimited(request)) {
-    return jsonResponse(
-      {
-        message:
-          "Too many attempts. Please wait a little while before trying again.",
-      },
-      429,
-      { "Retry-After": String(Math.ceil(rateLimitWindowMs / 1000)) },
-    );
-  }
-
   if (!env.RESEND_API_KEY || !env.CONTACT_FROM_EMAIL || !env.CONTACT_TO_EMAIL) {
     return jsonResponse(
       {
