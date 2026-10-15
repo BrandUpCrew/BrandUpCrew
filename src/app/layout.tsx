@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Manrope, Newsreader } from "next/font/google";
 
 import { siteConfig } from "@/config/site";
+import { SiteShell } from "@/components/site/site-shell";
 
 import "./globals.css";
 
@@ -18,8 +19,15 @@ export const metadata: Metadata = {
     template: `%s | ${siteConfig.name}`,
   },
   description: siteConfig.description,
+  applicationName: siteConfig.name,
+  category: "design agency",
   alternates: {
     canonical: "/",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteConfig.name,
+    description: siteConfig.description,
   },
   openGraph: {
     type: "website",
@@ -42,7 +50,9 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang={siteConfig.locale}>
-      <body className={`${sans.variable} ${display.variable}`}>{children}</body>
+      <body className={`${sans.variable} ${display.variable}`}>
+        <SiteShell>{children}</SiteShell>
+      </body>
     </html>
   );
 }
