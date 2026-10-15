@@ -2,8 +2,15 @@ import { env } from "@/lib/env";
 
 export const siteConfig = {
   name: "Independent Studio",
+  descriptor: "Digital growth & technology",
   description:
-    "Digital strategy, design, and technology for ambitious businesses.",
+    "Independent strategy, design, and technology for businesses ready to move forward.",
   url: env.NEXT_PUBLIC_SITE_URL,
   locale: "en",
+  navigation: [
+    { label: "Services", href: "/services" },
+    { label: "Work", href: "/work" },
+    { label: "About", href: "/about" },
+    { label: "Insights", href: "/insights" },
+  ],
 };
