@@ -32,6 +32,23 @@ test("home page presents the agency and primary journeys", async ({ page }) => {
   ).toBeVisible();
 });
 
+test("home page includes an editorial team section with senior disciplines", async ({
+  page,
+}) => {
+  await page.goto("/");
+
+  const teamSection = page.locator("section.team-section");
+  await expect(teamSection.getByText("The people behind the work")).toBeVisible();
+  await expect(
+    teamSection.getByRole("heading", {
+      name: "A senior team, shaped around the brief.",
+    }),
+  ).toBeVisible();
+  await expect(
+    teamSection.getByRole("heading", { name: "Strategy & design" }),
+  ).toBeVisible();
+});
+
 test("core pages and a service detail render with page headings", async ({
   page,
 }) => {
