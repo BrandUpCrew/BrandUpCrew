@@ -5,8 +5,8 @@ import { siteConfig } from "@/config/site";
 
 import "./globals.css";
 
-const sans = Manrope({ subsets: ["latin"], variable: "--font-sans" });
-const display = Newsreader({ subsets: ["latin"], variable: "--font-display" });
+const sans = Manrope({ subsets: ["latin"], variable: "--font-manrope" });
+const display = Newsreader({ subsets: ["latin"], variable: "--font-newsreader" });
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
