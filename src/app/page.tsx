@@ -14,6 +14,7 @@ import {
   industries,
   processSteps,
   services,
+  teamDisciplines,
 } from "@/content/content";
 import { siteConfig } from "@/config/site";
 
@@ -201,6 +202,40 @@ export default function HomePage() {
               </li>
             ))}
           </ul>
+        </div>
+      </RevealSection>
+
+      <RevealSection className="section-block team-section">
+        <div className="content-width">
+          <div className="section-heading-row">
+            <SectionHeading
+              eyebrow="The people behind the work"
+              title="A senior team, shaped around the brief."
+              description="A small team with a deliberate point of view—working closely enough to keep strategy, design, and delivery aligned."
+            />
+            <Link className="underlined-link" href="/about">
+              Meet the studio <ArrowUpRight aria-hidden="true" size={15} />
+            </Link>
+          </div>
+
+          <div className="team-grid">
+            {teamDisciplines.map((discipline) => (
+              <article
+                key={discipline.name}
+                className={`team-card team-card-${discipline.accent}`}
+              >
+                <div className="team-marker" aria-hidden="true">
+                  {discipline.number}
+                </div>
+                <div className="team-meta">
+                  <p className="team-role">Studio discipline</p>
+                  <h3>{discipline.name}</h3>
+                </div>
+                <p className="team-bio">{discipline.description}</p>
+                <p className="team-focus">{discipline.focus}</p>
+              </article>
+            ))}
+          </div>
         </div>
       </RevealSection>
 
