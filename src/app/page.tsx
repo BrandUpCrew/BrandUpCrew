@@ -5,7 +5,12 @@ import type { Metadata } from "next";
 import { ArticleCard, ProjectCard, ServiceCard } from "@/components/site/cards";
 import { CtaSection } from "@/components/site/cta-section";
 import { FaqList } from "@/components/site/faq-list";
-import { HeroBlock, RevealSection } from "@/components/site/animated";
+import {
+  HeroBlock,
+  Marquee,
+  RevealSection,
+  StatCounter,
+} from "@/components/site/animated";
 import { SectionHeading } from "@/components/site/page-intro";
 import {
   faqs,
@@ -56,6 +61,11 @@ export default function HomePage() {
                 Explore our services <ArrowDownRight aria-hidden="true" size={16} />
               </Link>
             </div>
+            <div className="hero-stats">
+              <StatCounter value={services.length} label="Capabilities" />
+              <StatCounter value={industries.length} label="Industries" delay={0.1} />
+              <StatCounter value={processSteps.length} label="Process steps" delay={0.2} />
+            </div>
             <p className="hero-note">
               Independent perspective. Thoughtful delivery. No borrowed
               playbook.
@@ -82,6 +92,8 @@ export default function HomePage() {
           <span>Built to think bigger</span>
         </div>
       </RevealSection>
+
+      <Marquee items={services.map((service) => service.title)} />
 
       <RevealSection className="intro-strip content-width">
         <p className="eyebrow">
