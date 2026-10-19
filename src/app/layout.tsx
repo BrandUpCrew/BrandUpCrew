@@ -42,15 +42,18 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#f8f8f5",
+  themeColor: "#f6f7fc",
 };
 
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang={siteConfig.locale}>
-      <body className={`${sans.variable} ${display.variable}`}>
+    <html lang={siteConfig.locale} data-scroll-behavior="smooth">
+      <body
+        className={`${sans.variable} ${display.variable}`}
+        suppressHydrationWarning
+      >
         <SiteShell>{children}</SiteShell>
       </body>
     </html>
