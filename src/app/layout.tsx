@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Montserrat } from "next/font/google";
+import Script from "next/script";
 
 import { siteConfig } from "@/config/site";
 import { SiteShell } from "@/components/site/site-shell";
@@ -57,8 +58,12 @@ export default function RootLayout({
       lang={siteConfig.locale}
       className={montserrat.variable}
       data-scroll-behavior="smooth"
+      suppressHydrationWarning
     >
       <body suppressHydrationWarning>
+        <Script id="initial-page-loader-gate" strategy="beforeInteractive">
+          {`document.documentElement.dataset.initialLoader = "pending";`}
+        </Script>
         <SiteShell>{children}</SiteShell>
       </body>
     </html>
