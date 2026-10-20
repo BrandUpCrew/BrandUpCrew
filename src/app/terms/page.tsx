@@ -4,7 +4,7 @@ import { PageIntro } from "@/components/site/page-intro";
 import { siteConfig } from "@/config/site";
 
 export const metadata: Metadata = {
-  title: "Terms of service",
+  title: "Terms of Use",
   description: "Terms for browsing this website and contacting the studio.",
   alternates: { canonical: "/terms" },
 };
@@ -21,9 +21,9 @@ export default function TermsPage() {
         <p className="legal-updated">Effective date: October 15, 2026</p>
         <h2>Website information</h2>
         <p>
-          This website is provided by {siteConfig.name}, a provisional studio
-          identity. Content is general information and is not professional,
-          legal, financial, or technical advice for a specific situation.
+          This website is provided under the {siteConfig.name} name. Content is
+          general information and is not professional, legal, financial, or
+          technical advice for a specific situation.
         </p>
         <h2>Demonstration concepts</h2>
         <p>
