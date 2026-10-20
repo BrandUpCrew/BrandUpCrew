@@ -783,9 +783,9 @@ export const processSteps = [
 export const teamDisciplines = [
   {
     number: "01",
-    name: "Name to be added",
+    name: "Sabir",
     role: "Strategy & design",
-    portrait: null as string | null,
+    portrait: "/Sabir.png",
     linkedin: null as string | null,
     bio: "Shapes the brief, the story, and the decisions that keep the work useful from the first question to the final handoff.",
     expertise: ["Customer journeys", "Brand clarity", "Actionable positioning"],
@@ -793,9 +793,9 @@ export const teamDisciplines = [
   },
   {
     number: "02",
-    name: "Name to be added",
+    name: "Suleman",
     role: "Product & experience",
-    portrait: null as string | null,
+    portrait: "/Suleman.png",
     linkedin: null as string | null,
     bio: "Turns complexity into clear systems, making the important work easier to navigate, trust, and maintain.",
     expertise: [
@@ -807,9 +807,9 @@ export const teamDisciplines = [
   },
   {
     number: "03",
-    name: "Name to be added",
+    name: "Ali",
     role: "Technology & growth",
-    portrait: null as string | null,
+    portrait: "/ali.jpeg",
     linkedin: null as string | null,
     bio: "Connects product intent with sound implementation, thoughtful performance, and the practical realities of ongoing delivery.",
     expertise: ["Web foundations", "Integrations", "Product improvement"],
