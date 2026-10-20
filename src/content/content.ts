@@ -783,7 +783,7 @@ export const processSteps = [
 export const teamDisciplines = [
   {
     number: "01",
-    name: "Sabir",
+    name: "Sabir Ali",
     role: "Strategy & design",
     portrait: "/Sabir.png",
     linkedin: null as string | null,
@@ -793,7 +793,7 @@ export const teamDisciplines = [
   },
   {
     number: "02",
-    name: "Suleman",
+    name: "Sulman Sagheer",
     role: "Product & experience",
     portrait: "/Suleman.png",
     linkedin: null as string | null,
@@ -807,7 +807,7 @@ export const teamDisciplines = [
   },
   {
     number: "03",
-    name: "Ali",
+    name: "Ali Haider",
     role: "Technology & growth",
     portrait: "/ali.jpeg",
     linkedin: null as string | null,
