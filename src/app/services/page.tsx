@@ -20,7 +20,7 @@ export default function ServicesPage() {
       <PageIntro
         eyebrow="Our capabilities"
         title="The right work, in the right order."
-        description="A connected set of digital services, brought together around the challenge you need to solve—not a one-size-fits-all package."
+        description="A connected set of digital services, brought together around the challenge you need to solve, not a one-size-fits-all package."
       />
       <section className="section-block">
         <div className="content-width">
@@ -40,7 +40,7 @@ export default function ServicesPage() {
           <span>Our point of view</span>
           <p>
             We don&apos;t start with a menu of deliverables. We start by
-            understanding what needs to change—and what is worth doing first.
+            understanding what needs to change, and what is worth doing first.
           </p>
           <Link href="/process">
             How we work <ArrowUpRight aria-hidden="true" size={15} />

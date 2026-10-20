@@ -36,7 +36,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
   return (
     <main id="main">
       <PageIntro
-        eyebrow="Service / 01—12"
+        eyebrow="Service / 01 to 12"
         title={service.title}
         description={service.summary}
         tone="dark"

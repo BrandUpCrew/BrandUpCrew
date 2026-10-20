@@ -282,7 +282,7 @@ export default function HomePage() {
             <SectionHeading
               eyebrow="The people behind the work"
               title="A senior team, shaped around the brief."
-              description="A small team with a deliberate point of view—working closely enough to keep strategy, design, and delivery aligned."
+              description="A small team with a deliberate point of view, working closely enough to keep strategy, design, and delivery aligned."
             />
             <Link className="underlined-link" href="/about">
               Meet the studio <ArrowUpRight aria-hidden="true" size={15} />

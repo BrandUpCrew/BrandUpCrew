@@ -21,7 +21,7 @@ export function GET() {
     })
     .join("");
 
-  const feed = `<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>${escapeXml(siteConfig.name)} — Insights</title><link>${escapeXml(new URL("/insights", siteConfig.url).toString())}</link><description>${escapeXml(siteConfig.description)}</description><language>${siteConfig.locale}</language>${items}</channel></rss>`;
+  const feed = `<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>${escapeXml(siteConfig.name)}: Insights</title><link>${escapeXml(new URL("/insights", siteConfig.url).toString())}</link><description>${escapeXml(siteConfig.description)}</description><language>${siteConfig.locale}</language>${items}</channel></rss>`;
 
   return new Response(feed, {
     headers: {

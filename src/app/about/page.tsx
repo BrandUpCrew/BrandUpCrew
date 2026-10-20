@@ -33,7 +33,7 @@ export default function AboutPage() {
       <PageIntro
         eyebrow="A little about us"
         title="Independent thinking, built around your next move."
-        description="We bring the strategic view and the hands-on craft together—so the plan and the thing people use stay connected."
+        description="We bring the strategic view and the hands-on craft together, so the plan and the thing people use stay connected."
       />
       <section className="section-block about-belief">
         <div className="content-width about-belief-grid">
