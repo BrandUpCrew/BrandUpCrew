@@ -89,7 +89,7 @@ test("home page includes an editorial team section with senior disciplines", asy
     }),
   ).toBeVisible();
   await expect(
-    teamSection.getByRole("heading", { name: "Strategy & design" }),
+    teamSection.getByText("Full-Stack Engineer", { exact: true }),
   ).toBeVisible();
 });
 
@@ -108,21 +108,34 @@ test("team profiles use the correct names and portraits in both themes", async (
   ).toBeVisible();
   await expect(firstProfile.locator("img")).toHaveAttribute(
     "alt",
-    "Sabir Ali, Strategy & design",
+    "Sabir Ali, Full-Stack Engineer",
+  );
+  await expect(firstProfile).toContainText(
+    "Sabir Ali is a Full-Stack Engineer specializing in building scalable web applications, modern digital products, and reliable business solutions.",
   );
   await expect(
-    profiles.nth(1).getByRole("heading", { name: "Sulman Sagheer" }),
+    profiles.nth(1).getByRole("heading", { name: "Suleman Sagheer" }),
   ).toBeVisible();
+  await expect(profiles.nth(1)).toContainText(
+    "WordPress & WooCommerce Specialist",
+  );
+  await expect(profiles.nth(1)).toContainText("5+ years of experience");
   await expect(profiles.nth(1).locator("img")).toHaveAttribute(
     "alt",
-    "Sulman Sagheer, Product & experience",
+    "Suleman Sagheer, WordPress & WooCommerce Specialist",
   );
   await expect(
     profiles.nth(2).getByRole("heading", { name: "Ali Haider" }),
   ).toBeVisible();
+  await expect(profiles.nth(2)).toContainText(
+    "SEO Specialist & Organic Growth Expert",
+  );
+  await expect(profiles.nth(2)).toContainText(
+    "search engine optimization and organic growth",
+  );
   await expect(profiles.nth(2).locator("img")).toHaveAttribute(
     "alt",
-    "Ali Haider, Technology & growth",
+    "Ali Haider, SEO Specialist & Organic Growth Expert",
   );
   const profileImages = teamSection.locator(".team-profile-image");
   await expect(profileImages).toHaveCount(3);
@@ -149,16 +162,60 @@ test("team profiles use the correct names and portraits in both themes", async (
       profiles.nth(0).getByRole("heading", { name: "Sabir Ali" }),
     ).toBeVisible();
     await expect(
-      profiles.nth(1).getByRole("heading", { name: "Sulman Sagheer" }),
+      profiles.nth(1).getByRole("heading", { name: "Suleman Sagheer" }),
     ).toBeVisible();
     await expect(
       profiles.nth(2).getByRole("heading", { name: "Ali Haider" }),
     ).toBeVisible();
   }
 
-  await firstProfile.getByText("Areas of expertise").click();
-  await expect(firstProfile.getByText("Customer journeys")).toBeVisible();
-  await expect(firstProfile.getByText("Actionable positioning")).toBeVisible();
+  const expertise = [
+    [
+      "Product Strategy",
+      "Full-Stack Development",
+      "Web Application Architecture",
+      "UI/UX Implementation",
+      "API Development",
+      "Performance Optimization",
+      "System Design & Scalable Architecture",
+    ],
+    [
+      "WordPress Development",
+      "WooCommerce Solutions",
+      "Responsive Web Design",
+      "Website SEO Optimization",
+      "E-commerce Development",
+      "Website Performance Optimization",
+    ],
+    [
+      "Technical SEO",
+      "On-Page & Off-Page SEO",
+      "Keyword Research & Search Intent",
+      "SEO Content Strategy",
+      "Website Audits & Optimization",
+      "Organic Traffic Growth",
+      "Search Performance Analysis",
+      "SEO Reporting & Analytics",
+    ],
+  ];
+  for (const [index, skills] of expertise.entries()) {
+    const card = profiles.nth(index);
+    await card.getByText("Areas of expertise").click();
+    for (const skill of skills) {
+      await expect(card.getByText(skill, { exact: true })).toBeVisible();
+    }
+  }
+
+  for (const width of [1440, 900, 390]) {
+    await page.setViewportSize({ width, height: 900 });
+    await expect
+      .poll(() =>
+        profiles.evaluateAll((cards) =>
+          cards.every((card) => card.scrollWidth <= card.clientWidth + 1),
+        ),
+      )
+      .toBe(true);
+  }
 });
 test("core pages and a service detail render with page headings", async ({
   page,
