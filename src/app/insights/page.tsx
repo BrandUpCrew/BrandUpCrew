@@ -6,7 +6,7 @@ import { PageIntro, SectionHeading } from "@/components/site/page-intro";
 import { articles } from "@/content/content";
 
 export const metadata: Metadata = {
-  title: "Insights",
+  title: "Digital Strategy & Technology Insights",
   description:
     "Practical perspectives on digital strategy, design, search, and technology from the studio.",
   alternates: { canonical: "/insights" },
