@@ -4,7 +4,7 @@ import { PageIntro } from "@/components/site/page-intro";
 import { siteConfig } from "@/config/site";
 
 export const metadata: Metadata = {
-  title: "Privacy notice",
+  title: "Privacy Policy",
   description:
     "How this website handles information submitted through the contact form.",
   alternates: { canonical: "/privacy" },
@@ -22,10 +22,10 @@ export default function PrivacyPage() {
         <p className="legal-updated">Effective date: October 15, 2026</p>
         <h2>Who is responsible?</h2>
         <p>
-          {siteConfig.name} is a provisional studio identity. Before launch, the
-          responsible legal entity, postal address, and jurisdiction-specific
-          contact details must be added here and the notice reviewed for the
-          applicable laws.
+          {siteConfig.name} is the agency name used on this website. Before
+          launch, the responsible legal entity, postal address, and
+          jurisdiction-specific contact details must be added here and the
+          notice reviewed for the applicable laws.
         </p>
         <h2>Information you provide</h2>
         <p>
