@@ -19,7 +19,7 @@ export async function generateMetadata({
   const member = teamDisciplines.find((profile) => profile.slug === slug);
   if (!member) return {};
 
-  const title = `${member.name} — ${member.role}`;
+  const title = `${member.name} | ${member.role}`;
   const description = member.bio;
 
   return {
@@ -29,7 +29,9 @@ export async function generateMetadata({
     openGraph: {
       title,
       description,
-      images: [{ url: member.portrait, alt: `${member.name}, ${member.role}` }],
+      images: member.portrait
+        ? [{ url: member.portrait, alt: `${member.name}, ${member.role}` }]
+        : [],
     },
   };
 }

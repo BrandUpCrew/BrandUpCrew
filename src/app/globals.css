@@ -2490,7 +2490,7 @@ html[data-initial-loader="leaving"] .brand-loader-initial {
 
 .team-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 22px;
   margin-top: 30px;
 }
@@ -2747,6 +2747,14 @@ html[data-initial-loader="leaving"] .brand-loader-initial {
   overflow: clip;
 }
 
+.team-profile-page > .section-block {
+  padding-block: clamp(56px, 5.5vw, 80px);
+}
+
+.team-profile-page > .team-profile-contact {
+  padding-block: clamp(48px, 5.5vw, 76px);
+}
+
 .team-profile-breadcrumbs {
   display: flex;
   min-height: 58px;
@@ -2771,7 +2779,7 @@ html[data-initial-loader="leaving"] .brand-loader-initial {
 }
 
 .team-profile-hero {
-  padding-block: clamp(52px, 8vw, 108px);
+  padding-block: clamp(40px, 5.5vw, 76px);
   background:
     radial-gradient(ellipse at 8% 12%, var(--accent-soft), transparent 40%),
     var(--surface);
@@ -2958,32 +2966,47 @@ html[data-initial-loader="leaving"] .brand-loader-initial {
 }
 
 .team-profile-technologies {
-  margin-top: 34px;
-  padding-top: 24px;
+  margin-top: 40px;
+  padding-top: 28px;
   border-top: 1px solid var(--border);
 }
 
 .team-profile-technologies h3 {
   margin: 0;
-  font-size: 13px;
-  font-weight: 650;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.team-profile-technology-group {
+  margin-top: 24px;
+}
+
+.team-profile-technology-group h4 {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
 }
 
 .team-profile-technologies ul {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin: 15px 0 0;
+  gap: 10px;
+  margin: 12px 0 0;
   padding: 0;
   list-style: none;
 }
 
 .team-profile-technologies li {
-  padding: 7px 10px;
+  padding: 9px 14px;
   border: 1px solid var(--border);
   border-radius: 999px;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 13px;
+  font-weight: 550;
+  line-height: 1.5;
 }
 
 .team-profile-services {
@@ -3273,7 +3296,11 @@ html[data-initial-loader="leaving"] .brand-loader-initial {
 .team-profile-contact {
   padding-block: clamp(60px, 8vw, 100px);
   background:
-    radial-gradient(ellipse at 90% 10%, rgb(111 141 255 / 20%), transparent 42%),
+    radial-gradient(
+      ellipse at 90% 10%,
+      rgb(111 141 255 / 20%),
+      transparent 42%
+    ),
     linear-gradient(145deg, #0d1428 0%, #080b17 70%);
   color: var(--on-dark);
 }
