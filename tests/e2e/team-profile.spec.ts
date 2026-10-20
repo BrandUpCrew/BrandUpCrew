@@ -6,45 +6,130 @@ const members = [
     name: "Sabir Ali",
     role: "Full-Stack Engineer",
     skills: [
-      "Product Strategy",
-      "Full-Stack Development",
-      "Web Application Architecture",
-      "UI/UX Implementation",
-      "API Development",
-      "Performance Optimization",
-      "System Design & Scalable Architecture",
+      "Full-Stack Web Development",
+      "Frontend Architecture & Responsive UI",
+      "Backend Development & REST API Design",
+      "Database Design & Integration",
+      "Authentication & Authorization",
+      "Application Performance & Optimization",
+      "Maintainable and Scalable Architecture",
+      "Third-Party Service Integration",
+    ],
+    technologies: [
+      "JavaScript",
+      "TypeScript",
+      "React",
+      "Next.js",
+      "Vite",
+      "Tailwind CSS",
+      "Node.js",
+      "Express.js",
+      "MongoDB",
+      "REST APIs",
+      "TanStack Query",
+      "Stripe",
+      "Cloudinary",
+      "Git and GitHub",
+      "Python",
+      "Flask",
+      "OpenCV",
+      "Keras and TensorFlow",
+      "Applied AI/ML",
+    ],
+    excludedTechnologies: [
+      "PostgreSQL",
+      "Socket.IO",
+      "Firebase",
+      "Supabase",
+      "Neon",
+      "FastAPI",
+      "SQLAlchemy",
+    ],
+    projects: [
+      {
+        title: "StaffPilot",
+        href: "https://github.com/sabiralidev/StaffPilot",
+      },
+      {
+        title: "ECom Store",
+        href: "https://github.com/sabiralidev/ECom",
+      },
+      {
+        title: "Face-Emotions",
+        href: "https://github.com/sabiralidev/Face-Emotions",
+      },
     ],
     service: "custom-software",
+    portraitPending: false,
+    hasServices: true,
+    hasFaqs: true,
   },
   {
     slug: "suleman-sagheer",
-    name: "Suleman Sagheer",
+    name: "Sulman Sagheer",
     role: "WordPress & WooCommerce Specialist",
     skills: [
-      "WordPress Development",
-      "WooCommerce Solutions",
-      "Responsive Web Design",
-      "Website SEO Optimization",
-      "E-commerce Development",
-      "Website Performance Optimization",
+      "WordPress Website Development",
+      "WooCommerce Store Development",
+      "E-commerce Website Setup",
+      "Product and Store Structure",
+      "Responsive Storefront Design",
+      "Website SEO and Performance Improvements",
     ],
+    technologies: ["WordPress", "WooCommerce"],
+    excludedTechnologies: ["PHP", "MySQL", "Node.js", "Express.js"],
+    projects: [],
     service: "web-design-development",
+    portraitPending: false,
+    hasServices: true,
+    hasFaqs: true,
   },
   {
     slug: "ali-haider",
     name: "Ali Haider",
-    role: "SEO Specialist & Organic Growth Expert",
+    role: "SEO Specialist",
     skills: [
       "Technical SEO",
-      "On-Page & Off-Page SEO",
+      "On-Page SEO and Metadata Updates",
       "Keyword Research & Search Intent",
+      "Competitor Search Analysis",
       "SEO Content Strategy",
-      "Website Audits & Optimization",
-      "Organic Traffic Growth",
-      "Search Performance Analysis",
-      "SEO Reporting & Analytics",
+      "Website SEO Audits",
+      "Search Performance Monitoring",
+      "SEO Recommendations and Reporting",
     ],
+    technologies: [],
+    excludedTechnologies: [
+      "Google Search Console",
+      "Google Analytics 4",
+      "Ahrefs",
+      "Semrush",
+      "Screaming Frog SEO Spider",
+    ],
+    projects: [],
     service: "search-engine-optimization",
+    portraitPending: false,
+    hasServices: true,
+    hasFaqs: true,
+  },
+  {
+    slug: "muhammad-abdullah",
+    name: "Muhammad Abdullah",
+    role: "SEO Specialist",
+    skills: ["Search Engine Optimization (SEO)"],
+    technologies: [],
+    excludedTechnologies: [
+      "Google Search Console",
+      "Google Analytics 4",
+      "Ahrefs",
+      "Semrush",
+      "Screaming Frog SEO Spider",
+    ],
+    projects: [],
+    service: "search-engine-optimization",
+    portraitPending: true,
+    hasServices: false,
+    hasFaqs: false,
   },
 ];
 
@@ -63,10 +148,60 @@ test("team cards provide accessible links to their dedicated profiles", async ({
   }
 });
 
+test("Muhammad Abdullah has a linked SEO profile with an accessible portrait placeholder", async ({
+  page,
+}) => {
+  await page.goto("/");
+
+  const profileLink = page.getByRole("link", {
+    name: "View Muhammad Abdullah's full profile",
+  });
+  await expect(profileLink).toHaveAttribute("href", "/team/muhammad-abdullah");
+  await expect(
+    page.getByRole("img", {
+      name: "Portrait pending for SEO Specialist profile",
+    }),
+  ).toBeVisible();
+
+  await page.goto("/team/muhammad-abdullah");
+  await expect(
+    page.getByRole("heading", { name: "Muhammad Abdullah", level: 1 }),
+  ).toBeVisible();
+  await expect(page).toHaveTitle(/Muhammad Abdullah/);
+  await expect
+    .poll(() =>
+      page
+        .locator('link[rel="canonical"]')
+        .getAttribute("href")
+        .then((href) => (href ? new URL(href).pathname : null)),
+    )
+    .toBe("/team/muhammad-abdullah");
+  await expect(
+    page.getByText("SEO Specialist", { exact: true }).first(),
+  ).toBeVisible();
+  await expect(
+    page.getByText("Search Engine Optimization (SEO)", { exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.locator(".team-profile-hero-image").getByRole("img", {
+      name: "Portrait pending for SEO Specialist profile",
+    }),
+  ).toBeVisible();
+  await expect(page.locator(".team-profile-technologies")).toHaveCount(0);
+  await expect(page.locator(".team-profile-services")).toHaveCount(0);
+  await expect(page.locator(".team-profile-faq")).toHaveCount(0);
+  await expect(
+    page.getByRole("link", { name: "Work With Me" }),
+  ).toHaveAttribute(
+    "href",
+    "/contact?team=muhammad-abdullah&service=search-engine-optimization",
+  );
+});
+
 test("team profiles load directly, refresh, and connect to the correct inquiry", async ({
   page,
 }) => {
-  for (const member of members) {
+  for (const member of members.filter(({ hasServices }) => hasServices)) {
     await page.goto(`/team/${member.slug}`);
     await expect(
       page.getByRole("heading", { name: member.name, level: 1 }),
@@ -79,6 +214,36 @@ test("team profiles load directly, refresh, and connect to the correct inquiry",
         page.getByText(skill, { exact: true }).first(),
       ).toBeVisible();
     }
+    for (const technology of member.technologies) {
+      await expect(
+        page.getByText(technology, { exact: true }).first(),
+      ).toBeVisible();
+    }
+    for (const technology of member.excludedTechnologies) {
+      await expect(
+        page
+          .locator(".team-profile-technologies")
+          .getByText(technology, { exact: true }),
+      ).toHaveCount(0);
+    }
+    await expect(page.locator(".team-profile-project-card")).toHaveCount(
+      member.projects.length,
+    );
+    for (const project of member.projects) {
+      await expect(
+        page.locator(".team-profile-project-card").getByRole("heading", {
+          name: project.title,
+        }),
+      ).toBeVisible();
+      await expect(
+        page.locator(".team-profile-project-card").getByRole("link", {
+          name: new RegExp(project.title),
+        }),
+      ).toHaveAttribute("href", project.href);
+    }
+    if (member.technologies.length === 0) {
+      await expect(page.locator(".team-profile-technologies")).toHaveCount(0);
+    }
     await expect(page).toHaveTitle(new RegExp(member.name));
     await expect
       .poll(() =>
@@ -88,32 +253,53 @@ test("team profiles load directly, refresh, and connect to the correct inquiry",
           .then((href) => (href ? new URL(href).pathname : null)),
       )
       .toBe(`/team/${member.slug}`);
-    const heroImage = page.locator(".team-profile-hero-image img");
-    await expect
-      .poll(() =>
-        heroImage.evaluate((image) => (image as HTMLImageElement).naturalWidth),
-      )
-      .toBeGreaterThan(0);
-    await expect(
-      page.getByRole("heading", { name: "Services and support" }),
-    ).toBeVisible();
+    if (member.portraitPending) {
+      await expect(
+        page.locator(".team-profile-hero-image").getByRole("img", {
+          name: "Portrait pending for SEO Specialist profile",
+        }),
+      ).toBeVisible();
+    } else {
+      const heroImage = page.locator(".team-profile-hero-image img");
+      await expect
+        .poll(() =>
+          heroImage.evaluate(
+            (image) => (image as HTMLImageElement).naturalWidth,
+          ),
+        )
+        .toBeGreaterThan(0);
+    }
+    if (member.hasServices) {
+      await expect(
+        page.getByRole("heading", { name: "Services and support" }),
+      ).toBeVisible();
+    } else {
+      await expect(page.locator(".team-profile-services")).toHaveCount(0);
+    }
     await expect(
       page.getByRole("heading", { name: "Meet the Rest of the Team" }),
     ).toBeVisible();
-    await expect(page.locator(".team-profile-related-card")).toHaveCount(2);
+    await expect(page.locator(".team-profile-related-card")).toHaveCount(
+      members.length - 1,
+    );
     await expect(
       page.locator(".team-profile-related-card").getByText(member.name, {
         exact: true,
       }),
     ).toHaveCount(0);
-    const firstFaq = page.locator(".team-profile-faq-list details").first();
-    await firstFaq.locator("summary").click();
-    await expect(firstFaq.locator("p")).toBeVisible();
+    if (member.hasFaqs) {
+      const firstFaq = page.locator(".team-profile-faq-list details").first();
+      await firstFaq.locator("summary").click();
+      await expect(firstFaq.locator("p")).toBeVisible();
+    } else {
+      await expect(page.locator(".team-profile-faq")).toHaveCount(0);
+    }
 
     await page.reload();
     await expect(
       page.getByRole("heading", { name: member.name, level: 1 }),
     ).toBeVisible();
+    await expect(page.locator(".brand-loader-route")).toBeHidden();
 
     await page.getByRole("link", { name: "Work With Me" }).click();
     await expect(page).toHaveURL(
