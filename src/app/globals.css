@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /* ==========================================================================
-   Obsidian + Electric Cobalt + Ice — design tokens
+  Obsidian + Electric Cobalt + Ice: design tokens
    Deep obsidian depth, electric cobalt primary, icy blue and cool white
    contrast, controlled violet/cyan highlights and metallic light gradients.
    ========================================================================== */
@@ -11,7 +11,7 @@
   --font-manrope: var(--font-montserrat), sans-serif;
   --font-newsreader: var(--font-montserrat), sans-serif;
 
-  /* Surfaces — cool, layered, light */
+  /* Surfaces: cool, layered, light */
   --background: #f3f5fc;
   --background-2: #ffffff;
   --surface: #ffffff;
@@ -35,7 +35,7 @@
   --line-light: rgb(7 11 24 / 10%);
   --line-dark: rgb(255 255 255 / 16%);
 
-  /* Accent — electric cobalt primary, cyan highlight, ice support */
+  /* Accent: electric cobalt primary, cyan highlight, ice support */
   --accent: #2547f0;
   --accent-hover: #1533c9;
   --accent-2: #06a6c8;
@@ -2092,7 +2092,7 @@ html[data-initial-loader="leaving"] .brand-loader-initial {
   gap: 26px;
 }
 
-/* Asymmetric concept layout — deliberately uneven column spans and vertical
+/* Asymmetric concept layout: deliberately uneven column spans and vertical
    offsets so the work reads as an art-directed spread, not an even grid. */
 
 .work-showcase {

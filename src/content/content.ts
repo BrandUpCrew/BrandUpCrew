@@ -672,7 +672,7 @@ export const articles: Article[] = [
     slug: "technical-seo-is-a-team-sport",
     title: "Technical SEO is a team sport",
     summary:
-      "Search foundations depend on decisions across content, design, engineering, and measurement—not a checklist in isolation.",
+      "Search foundations depend on decisions across content, design, engineering, and measurement, not a checklist in isolation.",
     category: "Search",
     published: "2026-07-22",
     readingTime: "5 min read",

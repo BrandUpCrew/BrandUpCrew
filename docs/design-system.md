@@ -71,18 +71,18 @@ Motion responsibilities are divided, not duplicated:
 
 ## Motion primitives
 
-- `ScrollProgress` — fixed gradient bar that tracks reading progress via
+- `ScrollProgress`: fixed gradient bar that tracks reading progress via
   `useScroll` + `useSpring`.
-- `RevealSection` — fades and lifts a whole section once it enters the viewport
+- `RevealSection`: fades and lifts a whole section once it enters the viewport
   (supports a `delay`).
-- `RevealItem` — the single-item variant, used for staggered groups.
-- `HeroBlock` — animates on mount for above-the-fold content (supports `delay`).
-- `StatCounter` — counts up to a value the first time it is seen.
-- `Marquee` — decorative continuous scrolling strip; marked `aria-hidden`.
-- `MaskedHeading` — clipped line-by-line headline reveal. Renders plain,
+- `RevealItem`: the single-item variant, used for staggered groups.
+- `HeroBlock`: animates on mount for above-the-fold content (supports `delay`).
+- `StatCounter`: counts up to a value the first time it is seen.
+- `Marquee`: decorative continuous scrolling strip; marked `aria-hidden`.
+- `MaskedHeading`: clipped line-by-line headline reveal. Renders plain,
   selectable, readable text; nothing is hidden until GSAP runs.
-- `Parallax` — scrubbed vertical drift for layered sections.
-- `Magnetic` — restrained pointer pull, desktop fine-pointer only.
+- `Parallax`: scrubbed vertical drift for layered sections.
+- `Magnetic`: restrained pointer pull, desktop fine-pointer only.
 
 Supporting CSS animations are `cue-slide`, `rise-in`, `fade-up`, `dropdown-in`,
 `dot-ping`, `aurora-drift`, `float-slow`, `marquee`, and `spin`.
@@ -99,7 +99,7 @@ renders its final value without animating.
 Monolith"): a faceted transmission-glass core inside tilted brushed-metal orbit
 rings with emissive cobalt beads, a faint wireframe shell, drifting ice dust,
 and an infinite cobalt grid above a `ContactShadows` catch. Lighting is a real
-directional setup plus a procedural `Environment` built from `Lightformer`s —
+directional setup plus a procedural `Environment` built from `Lightformer`s,
 no image textures. Tone mapping is ACES filmic.
 
 - The scene is loaded with `next/dynamic` and `ssr: false`, only after a
