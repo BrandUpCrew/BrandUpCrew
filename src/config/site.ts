@@ -1,7 +1,7 @@
 import { env } from "@/lib/env";
 
 export const siteConfig = {
-  name: "Independent Studio",
+  name: "BrandUpCrew",
   descriptor: "Digital growth & technology",
   description:
     "Independent strategy, design, and technology for businesses ready to move forward.",
