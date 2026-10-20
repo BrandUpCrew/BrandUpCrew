@@ -6,7 +6,7 @@ import { PageIntro } from "@/components/site/page-intro";
 import { faqs } from "@/content/content";
 
 export const metadata: Metadata = {
-  title: "Frequently asked questions",
+  title: "Digital Agency FAQs",
   description:
     "Answers to common questions about how we work, scope projects, and measure progress.",
   alternates: { canonical: "/faq" },
