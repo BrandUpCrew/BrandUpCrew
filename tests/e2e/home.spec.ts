@@ -32,6 +32,33 @@ test("home page presents the agency and primary journeys", async ({ page }) => {
   ).toBeVisible();
 });
 
+test("initial loader appears on every page reload and internal navigation remains usable", async ({
+  page,
+}) => {
+  const loader = page.locator(".brand-loader-initial");
+  await page.goto("/", { waitUntil: "commit" });
+
+  await expect(loader).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Make your next move matter." }),
+  ).toBeVisible();
+  await expect(loader).toBeHidden({ timeout: 9_000 });
+
+  await page.reload({ waitUntil: "commit" });
+  await expect(loader).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Make your next move matter." }),
+  ).toBeVisible();
+  await expect(loader).toBeHidden({ timeout: 9_000 });
+
+  await page.getByRole("link", { name: /Explore our services/ }).click();
+  await expect(
+    page.getByRole("heading", {
+      name: "The right work, in the right order.",
+    }),
+  ).toBeVisible();
+  await expect(page.locator(".brand-loader-route")).toBeHidden();
+});
 test("home page includes an editorial team section with senior disciplines", async ({
   page,
 }) => {
