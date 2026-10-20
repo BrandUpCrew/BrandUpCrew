@@ -133,13 +133,17 @@ function getQuality(): Quality {
 
 function makeUiTexture(id: ModuleId) {
   const canvas = document.createElement("canvas");
-  canvas.width = id === "product" ? 1200 : 800;
-  canvas.height = id === "product" ? 760 : 540;
+  const pixelRatio = 2;
+  const width = id === "product" ? 1200 : 800;
+  const height = id === "product" ? 760 : 540;
+  canvas.width = width * pixelRatio;
+  canvas.height = height * pixelRatio;
   const context = canvas.getContext("2d");
   if (!context) return new THREE.CanvasTexture(canvas);
 
-  const w = canvas.width;
-  const h = canvas.height;
+  context.scale(pixelRatio, pixelRatio);
+  const w = width;
+  const h = height;
   const blue = "#385cf4";
   const ink = "#171b24";
   const muted = "#78818f";
@@ -289,7 +293,7 @@ function makeUiTexture(id: ModuleId) {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
-  texture.anisotropy = 8;
+  texture.anisotropy = 16;
   return texture;
 }
 
