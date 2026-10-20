@@ -1,6 +1,13 @@
 "use client";
 
-import { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import {
+  Suspense,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import {
   ContactShadows,
@@ -12,6 +19,12 @@ import {
 import * as THREE from "three";
 
 import { scrollStore } from "@/lib/scroll";
+import {
+  getServerTheme,
+  getTheme,
+  subscribeToThemeChanges,
+  type Theme,
+} from "@/lib/theme";
 
 type Quality = {
   tier: "high" | "medium" | "low";
@@ -96,22 +109,22 @@ function getQuality(): Quality {
   if (compact || cores <= 4 || memory <= 4)
     return {
       tier: "low",
-      dpr: [1, 1.2],
-      antialias: false,
+      dpr: [1.2, 1.35],
+      antialias: true,
       envResolution: 64,
       shadows: false,
     };
   if (coarse || window.innerWidth < 1280 || cores <= 8)
     return {
       tier: "medium",
-      dpr: [1, 1.5],
+      dpr: [1.2, 1.6],
       antialias: true,
       envResolution: 128,
       shadows: false,
     };
   return {
     tier: "high",
-    dpr: [1, 1.8],
+    dpr: [1.2, 1.8],
     antialias: true,
     envResolution: 256,
     shadows: true,
@@ -120,13 +133,17 @@ function getQuality(): Quality {
 
 function makeUiTexture(id: ModuleId) {
   const canvas = document.createElement("canvas");
-  canvas.width = id === "product" ? 1200 : 800;
-  canvas.height = id === "product" ? 760 : 540;
+  const pixelRatio = 2;
+  const width = id === "product" ? 1200 : 800;
+  const height = id === "product" ? 760 : 540;
+  canvas.width = width * pixelRatio;
+  canvas.height = height * pixelRatio;
   const context = canvas.getContext("2d");
   if (!context) return new THREE.CanvasTexture(canvas);
 
-  const w = canvas.width;
-  const h = canvas.height;
+  context.scale(pixelRatio, pixelRatio);
+  const w = width;
+  const h = height;
   const blue = "#385cf4";
   const ink = "#171b24";
   const muted = "#78818f";
@@ -276,7 +293,7 @@ function makeUiTexture(id: ModuleId) {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
-  texture.anisotropy = 8;
+  texture.anisotropy = 16;
   return texture;
 }
 
@@ -411,11 +428,13 @@ function Connector({
   to,
   index,
   reduced,
+  theme,
 }: {
   from: [number, number, number];
   to: [number, number, number];
   index: number;
   reduced: boolean;
+  theme: Theme;
 }) {
   const curve = useMemo(() => {
     const start = new THREE.Vector3(...from);
@@ -459,7 +478,7 @@ function Connector({
     <group>
       <mesh geometry={tube}>
         <meshStandardMaterial
-          color="#7083bd"
+          color={theme === "light" ? "#385cf4" : "#7083bd"}
           metalness={0.5}
           roughness={0.42}
           transparent
@@ -519,10 +538,12 @@ function CameraRig({
 function Scene({
   quality,
   reduced,
+  theme,
   onReady,
 }: {
   quality: Quality;
   reduced: boolean;
+  theme: Theme;
   onReady: () => void;
 }) {
   useEffect(() => onReady(), [onReady]);
@@ -543,13 +564,22 @@ function Scene({
 
   return (
     <>
-      <color attach="background" args={["#080a10"]} />
-      <fog attach="fog" args={["#080a10", 13, 30]} />
-      <ambientLight intensity={0.4} color="#b5bed4" />
+      <color
+        attach="background"
+        args={[theme === "light" ? "#ffffff" : "#080a10"]}
+      />
+      <fog
+        attach="fog"
+        args={[theme === "light" ? "#ffffff" : "#080a10", 13, 30]}
+      />
+      <ambientLight
+        intensity={theme === "light" ? 0.7 : 0.4}
+        color={theme === "light" ? "#ffffff" : "#b5bed4"}
+      />
       <directionalLight
         position={[-3, 5, 6]}
-        intensity={2.3}
-        color="#eef2ff"
+        intensity={theme === "light" ? 2.7 : 2.3}
+        color={theme === "light" ? "#ffffff" : "#eef2ff"}
         castShadow={quality.shadows}
         shadow-mapSize-width={1024}
         shadow-mapSize-height={1024}
@@ -563,8 +593,8 @@ function Scene({
       />
       <directionalLight
         position={[5, -1, 3]}
-        intensity={0.78}
-        color="#91a9ff"
+        intensity={theme === "light" ? 1.05 : 0.78}
+        color={theme === "light" ? "#385cf4" : "#91a9ff"}
       />
       <Environment resolution={quality.envResolution} frames={1}>
         <Lightformer
@@ -595,7 +625,13 @@ function Scene({
 
       <group scale={quality.tier === "low" ? 0.68 : 1}>
         {routes.map((route, index) => (
-          <Connector key={index} {...route} index={index} reduced={reduced} />
+          <Connector
+            key={index}
+            {...route}
+            index={index}
+            reduced={reduced}
+            theme={theme}
+          />
         ))}
         {MODULES.map((config) => (
           <InterfaceModule key={config.id} config={config} reduced={reduced} />
@@ -631,6 +667,11 @@ export default function HeroScene({
       window.matchMedia("(prefers-reduced-motion: reduce)").matches,
     [],
   );
+  const theme = useSyncExternalStore(
+    subscribeToThemeChanges,
+    getTheme,
+    getServerTheme,
+  );
 
   return (
     <Canvas
@@ -661,7 +702,12 @@ export default function HeroScene({
       }}
     >
       <Suspense fallback={null}>
-        <Scene quality={quality} reduced={reduced} onReady={onReady} />
+        <Scene
+          quality={quality}
+          reduced={reduced}
+          theme={theme}
+          onReady={onReady}
+        />
       </Suspense>
     </Canvas>
   );
