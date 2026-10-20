@@ -50,62 +50,88 @@ export default function HomePage() {
         <div aria-hidden="true" className="hero-scrim" />
 
         <div className="content-width">
-          <div className="hero-content">
-            <HeroBlock delay={0.05}>
-              <p className="eyebrow hero-eyebrow">
-                <span />
-                {siteConfig.descriptor}
-              </p>
-            </HeroBlock>
+          <div className="hero-shell">
+            <div className="hero-content">
+              <HeroBlock delay={0.05}>
+                <p className="eyebrow hero-eyebrow">
+                  <span />
+                  {siteConfig.descriptor}
+                </p>
+              </HeroBlock>
 
-            <MaskedHeading
-              className="hero-title"
-              lines={[
-                <span key="line-one">Make your next move</span>,
-                <em key="line-two">matter.</em>,
-              ]}
-              tag="h1"
-              trigger="mount"
-            />
+              <MaskedHeading
+                className="hero-title"
+                lines={[
+                  <span key="line-one">Make your next move</span>,
+                  <em key="line-two">matter.</em>,
+                ]}
+                tag="h1"
+                trigger="mount"
+              />
 
-            <HeroBlock delay={0.4}>
-              <p className="hero-description">
-                We bring strategy, design, and technology together to make
-                digital work clearer, more useful, and ready for what comes
-                next.
-              </p>
+              <HeroBlock delay={0.4}>
+                <p className="hero-description">
+                  We bring strategy, design, and technology together to make
+                  digital work clearer, more useful, and ready for what comes
+                  next.
+                </p>
 
-              <div className="hero-actions">
-                <Magnetic>
-                  <Link className="button button-light" href="/contact">
-                    Start a conversation
-                    <ArrowUpRight aria-hidden="true" size={16} />
+                <div className="hero-actions">
+                  <Magnetic>
+                    <Link className="button button-light" href="/contact">
+                      Start a conversation
+                      <ArrowUpRight aria-hidden="true" size={16} />
+                    </Link>
+                  </Magnetic>
+                  <Link className="text-link" href="/services">
+                    Explore our services
+                    <ArrowDownRight aria-hidden="true" size={16} />
                   </Link>
-                </Magnetic>
-                <Link className="text-link" href="/services">
-                  Explore our services
-                  <ArrowDownRight aria-hidden="true" size={16} />
-                </Link>
-              </div>
+                </div>
 
-              <div className="hero-stats">
-                <StatCounter value={services.length} label="Capabilities" />
-                <StatCounter
-                  value={industries.length}
-                  label="Industries"
-                  delay={0.1}
-                />
-                <StatCounter
-                  value={processSteps.length}
-                  label="Process steps"
-                  delay={0.2}
-                />
-              </div>
+                <div className="hero-stats">
+                  <StatCounter value={services.length} label="Capabilities" />
+                  <StatCounter
+                    value={industries.length}
+                    label="Industries"
+                    delay={0.1}
+                  />
+                  <StatCounter
+                    value={processSteps.length}
+                    label="Process steps"
+                    delay={0.2}
+                  />
+                </div>
 
-              <p className="hero-cue">
-                <span aria-hidden="true" />
-                Scroll to explore
-              </p>
+                <p className="hero-cue">
+                  <span aria-hidden="true" />
+                  Scroll to explore
+                </p>
+              </HeroBlock>
+            </div>
+
+            <HeroBlock className="hero-detail" delay={0.62}>
+              <div className="hero-detail-card">
+                <p className="hero-detail-kicker">Digital Core</p>
+                <p className="hero-detail-title">
+                  A custom signature system shaped around strategy, experience,
+                  and engineered growth.
+                </p>
+                <ul className="hero-detail-list">
+                  <li>
+                    <span aria-hidden="true">01</span>
+                    Signal-led strategy
+                  </li>
+                  <li>
+                    <span aria-hidden="true">02</span>
+                    Premium interaction design
+                  </li>
+                  <li>
+                    <span aria-hidden="true">03</span>
+                    High-performance delivery
+                  </li>
+                </ul>
+              </div>
             </HeroBlock>
           </div>
         </div>
@@ -354,7 +380,8 @@ export default function HomePage() {
               Good questions lead to better work. Here are a few we hear often.
             </p>
             <Link className="underlined-link" href="/faq">
-              More questions answered <ArrowUpRight aria-hidden="true" size={15} />
+              More questions answered{" "}
+              <ArrowUpRight aria-hidden="true" size={15} />
             </Link>
           </div>
           <FaqList items={faqs.slice(0, 4)} />
