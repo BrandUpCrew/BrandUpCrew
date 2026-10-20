@@ -109,7 +109,6 @@ export default function HomePage() {
                 </p>
               </HeroBlock>
             </div>
-
           </div>
         </div>
       </section>
