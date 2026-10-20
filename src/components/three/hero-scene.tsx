@@ -109,7 +109,7 @@ function getQuality(): Quality {
   if (compact || cores <= 4 || memory <= 4)
     return {
       tier: "low",
-      dpr: [1.2, 1.35],
+      dpr: [1.25, 1.6],
       antialias: true,
       envResolution: 64,
       shadows: false,
@@ -117,14 +117,14 @@ function getQuality(): Quality {
   if (coarse || window.innerWidth < 1280 || cores <= 8)
     return {
       tier: "medium",
-      dpr: [1.2, 1.6],
+      dpr: [1.4, 1.8],
       antialias: true,
       envResolution: 128,
       shadows: false,
     };
   return {
     tier: "high",
-    dpr: [1.2, 1.8],
+    dpr: [1.5, 2],
     antialias: true,
     envResolution: 256,
     shadows: true,
@@ -133,7 +133,7 @@ function getQuality(): Quality {
 
 function makeUiTexture(id: ModuleId) {
   const canvas = document.createElement("canvas");
-  const pixelRatio = 2;
+  const pixelRatio = Math.min(Math.max(window.devicePixelRatio || 1, 2), 2.5);
   const width = id === "product" ? 1200 : 800;
   const height = id === "product" ? 760 : 540;
   canvas.width = width * pixelRatio;
@@ -392,11 +392,7 @@ function InterfaceModule({
       </RoundedBox>
       <mesh position={[0, 0, depth / 2 + 0.002]}>
         <planeGeometry args={[config.width - 0.065, config.height - 0.065]} />
-        <meshStandardMaterial
-          map={texture}
-          roughness={0.45}
-          metalness={0.025}
-        />
+        <meshBasicMaterial map={texture} toneMapped={false} />
       </mesh>
       <mesh position={[0, 0, -depth / 2 - 0.012]}>
         <boxGeometry
