@@ -1014,36 +1014,76 @@ h3 {
 .hero-visual-fallback {
   position: absolute;
   inset: 0;
+  overflow: hidden;
   opacity: 0.9;
   background:
-    radial-gradient(
-      22rem 18rem at 58% 42%,
-      rgb(37 71 240 / 44%),
-      transparent 58%
-    ),
-    radial-gradient(
-      14rem 14rem at 72% 44%,
-      rgb(219 231 255 / 16%),
-      transparent 64%
-    ),
-    radial-gradient(
-      18rem 16rem at 70% 66%,
-      rgb(61 215 236 / 16%),
-      transparent 62%
-    ),
-    radial-gradient(
-      24rem 18rem at 46% 30%,
-      rgb(125 142 188 / 16%),
-      transparent 68%
-    );
-  filter: blur(14px);
-  transform: scale(1.04);
-  animation: float-slow 18s ease-in-out infinite;
+    radial-gradient(ellipse at 69% 48%, rgb(69 88 135 / 16%), transparent 45%),
+    linear-gradient(115deg, #080a10, #11151d 68%, #080a10);
+}
+
+.hero-visual-fallback::before,
+.hero-visual-fallback::after {
+  position: absolute;
+  content: "";
+  border: 1px solid rgb(224 230 242 / 22%);
+  border-radius: 5px;
+  box-shadow: 0 28px 75px rgb(0 0 0 / 34%);
+  transform: perspective(1100px) rotateY(-9deg);
+}
+
+.hero-visual-fallback::before {
+  top: 19%;
+  right: 9%;
+  width: min(47%, 640px);
+  aspect-ratio: 1.55;
+  background:
+    linear-gradient(90deg, transparent 0 6%, #385cf4 6% 17%, transparent 17%) 8%
+      77% / 42% 9px no-repeat,
+    linear-gradient(90deg, #dce2ea 0 74%, transparent 74%) 8% 83% / 41% 5px
+      no-repeat,
+    linear-gradient(135deg, #c5d0df, #eef1f4 52%, #aebbd0) 72% 51% / 34% 45%
+      no-repeat,
+    linear-gradient(90deg, #d5dbe3 0 78%, transparent 78%) 8% 68% / 28% 5px
+      no-repeat,
+    linear-gradient(90deg, #141a25 0 100%) 0 0 / 100% 12% no-repeat,
+    linear-gradient(180deg, #f4f5f7, #e8ebef);
+}
+
+.hero-visual-fallback::after {
+  top: 56%;
+  right: 43%;
+  width: min(17%, 225px);
+  aspect-ratio: 1.42;
+  background:
+    linear-gradient(90deg, #8ba6ff 0 34%, transparent 34%) 12% 24% / 76% 5px
+      no-repeat,
+    linear-gradient(90deg, #768397 0 82%, transparent 82%) 12% 39% / 76% 4px
+      no-repeat,
+    linear-gradient(90deg, #768397 0 67%, transparent 67%) 12% 52% / 76% 4px
+      no-repeat,
+    linear-gradient(135deg, #1c2636, #0d121a);
 }
 
 .hero-visual[data-webgl="true"] .hero-visual-fallback {
-  opacity: 0.18;
-  filter: blur(34px);
+  opacity: 0.12;
+}
+
+.hero-module-detail {
+  display: block;
+  width: max-content;
+  max-width: 260px;
+  padding: 7px 10px;
+  border: 1px solid rgb(230 236 248 / 18%);
+  border-radius: 3px;
+  background: rgb(7 10 16 / 92%);
+  color: rgb(242 245 251 / 90%);
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 9px;
+  font-weight: 550;
+  line-height: 1.45;
+  text-align: center;
+  white-space: normal;
+  box-shadow: 0 8px 28px rgb(0 0 0 / 28%);
 }
 
 /* Masked line reveals ----------------------------------------------------- */
