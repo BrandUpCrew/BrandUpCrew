@@ -8,6 +8,8 @@
 
 :root {
   color-scheme: light;
+  --font-manrope: var(--font-montserrat), sans-serif;
+  --font-newsreader: var(--font-montserrat), sans-serif;
 
   /* Surfaces — cool, layered, light */
   --background: #f3f5fc;
