@@ -14,6 +14,7 @@ import {
   StatCounter,
 } from "@/components/site/animated";
 import { SectionHeading } from "@/components/site/page-intro";
+import { TeamPortrait } from "@/components/site/team-portrait";
 import {
   faqs,
   articles,
@@ -305,20 +306,41 @@ export default function HomePage() {
           </div>
 
           <div className="team-grid">
-            {teamDisciplines.map((discipline) => (
+            {teamDisciplines.map((member) => (
               <article
-                key={discipline.name}
-                className={`team-card team-card-${discipline.accent}`}
+                key={member.number}
+                className={`team-card team-card-${member.accent}`}
               >
-                <div className="team-marker" aria-hidden="true">
-                  {discipline.number}
+                <div className="team-profile-portrait">
+                  <TeamPortrait
+                    name={member.name}
+                    number={member.number}
+                    role={member.role}
+                    src={member.portrait}
+                  />
                 </div>
                 <div className="team-meta">
-                  <p className="team-role">Studio discipline</p>
-                  <h3>{discipline.name}</h3>
+                  <p className="team-role">{member.role}</p>
+                  <h3>{member.name}</h3>
                 </div>
-                <p className="team-bio">{discipline.description}</p>
-                <p className="team-focus">{discipline.focus}</p>
+                <p className="team-bio">{member.bio}</p>
+                <details className="team-profile-details">
+                  <summary>
+                    Areas of expertise
+                    <ArrowDownRight aria-hidden="true" size={16} />
+                  </summary>
+                  <ul>
+                    {member.expertise.map((skill) => (
+                      <li key={skill}>{skill}</li>
+                    ))}
+                  </ul>
+                  {member.linkedin && (
+                    <a href={member.linkedin} rel="noreferrer" target="_blank">
+                      LinkedIn profile
+                      <ArrowUpRight aria-hidden="true" size={14} />
+                    </a>
+                  )}
+                </details>
               </article>
             ))}
           </div>
