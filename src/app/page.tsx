@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
 import type { Metadata } from "next";
 
-import { ArticleCard, ProjectCard } from "@/components/site/cards";
+import { ArticleCard } from "@/components/site/cards";
 import { CtaSection } from "@/components/site/cta-section";
 import { FaqList } from "@/components/site/faq-list";
 import { HeroVisual } from "@/components/site/hero-visual";
@@ -18,7 +18,6 @@ import { TeamPortrait } from "@/components/site/team-portrait";
 import {
   faqs,
   articles,
-  caseStudies,
   industries,
   processSteps,
   services,
@@ -217,33 +216,6 @@ export default function HomePage() {
               </li>
             ))}
           </ol>
-        </div>
-      </RevealSection>
-
-      <RevealSection className="section-block work-preview">
-        <div className="content-width">
-          <div className="section-heading-row">
-            <SectionHeading
-              eyebrow="Selected concepts"
-              title="A glimpse of how we think."
-              description="These clearly labeled demonstrations show our approach. They are not client work and do not claim real-world results."
-            />
-            <Link className="underlined-link" href="/work">
-              View all concepts <ArrowUpRight aria-hidden="true" size={15} />
-            </Link>
-          </div>
-
-          <div className="work-showcase">
-            {caseStudies.map((project, index) => (
-              <Parallax
-                className={`work-slot work-slot-${index + 1}`}
-                distance={index === 1 ? 11 : 5}
-                key={project.slug}
-              >
-                <ProjectCard project={project} />
-              </Parallax>
-            ))}
-          </div>
         </div>
       </RevealSection>
 
