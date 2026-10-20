@@ -93,7 +93,7 @@ test("home page includes an editorial team section with senior disciplines", asy
   ).toBeVisible();
 });
 
-test("team profiles show clear placeholders and expandable expertise", async ({
+test("team profiles use the correct names and portraits in both themes", async ({
   page,
 }) => {
   await page.goto("/");
@@ -104,12 +104,57 @@ test("team profiles show clear placeholders and expandable expertise", async ({
 
   const firstProfile = profiles.first();
   await expect(
-    firstProfile.getByRole("heading", { name: "Name to be added" }),
+    firstProfile.getByRole("heading", { name: "Sabir Ali" }),
   ).toBeVisible();
-  await expect(firstProfile.getByRole("img")).toHaveAttribute(
-    "aria-label",
-    "Portrait pending for Strategy & design profile",
+  await expect(firstProfile.locator("img")).toHaveAttribute(
+    "alt",
+    "Sabir Ali, Strategy & design",
   );
+  await expect(
+    profiles.nth(1).getByRole("heading", { name: "Sulman Sagheer" }),
+  ).toBeVisible();
+  await expect(profiles.nth(1).locator("img")).toHaveAttribute(
+    "alt",
+    "Sulman Sagheer, Product & experience",
+  );
+  await expect(
+    profiles.nth(2).getByRole("heading", { name: "Ali Haider" }),
+  ).toBeVisible();
+  await expect(profiles.nth(2).locator("img")).toHaveAttribute(
+    "alt",
+    "Ali Haider, Technology & growth",
+  );
+  const profileImages = teamSection.locator(".team-profile-image");
+  await expect(profileImages).toHaveCount(3);
+  for (const image of await profileImages.all()) {
+    await expect(image).toHaveCSS("object-fit", "cover");
+    await expect
+      .poll(() =>
+        image.evaluate((element) => (element as HTMLImageElement).naturalWidth),
+      )
+      .toBeGreaterThan(0);
+  }
+
+  const themeToggle = page.getByRole("button", {
+    name: "Toggle light and dark theme",
+  });
+  for (let index = 0; index < 2; index += 1) {
+    const currentTheme = await page.locator("html").getAttribute("data-theme");
+    await themeToggle.click();
+    await expect(page.locator("html")).toHaveAttribute(
+      "data-theme",
+      currentTheme === "dark" ? "light" : "dark",
+    );
+    await expect(
+      profiles.nth(0).getByRole("heading", { name: "Sabir Ali" }),
+    ).toBeVisible();
+    await expect(
+      profiles.nth(1).getByRole("heading", { name: "Sulman Sagheer" }),
+    ).toBeVisible();
+    await expect(
+      profiles.nth(2).getByRole("heading", { name: "Ali Haider" }),
+    ).toBeVisible();
+  }
 
   await firstProfile.getByText("Areas of expertise").click();
   await expect(firstProfile.getByText("Customer journeys")).toBeVisible();
