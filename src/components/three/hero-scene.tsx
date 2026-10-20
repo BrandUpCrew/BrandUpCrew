@@ -1,1024 +1,613 @@
 "use client";
 
-import { Suspense, useMemo, useRef } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import {
   ContactShadows,
   Environment,
+  Html,
   Lightformer,
-  PointMaterial,
-  Points,
+  RoundedBox,
 } from "@react-three/drei";
 import * as THREE from "three";
 
 import { scrollStore } from "@/lib/scroll";
 
-const OBSIDIAN = "#05070f";
-const TITANIUM = "#c7d0e3";
-const TITANIUM_DARK = "#6d768a";
-const COBALT = "#2547f0";
-const COBALT_LIGHT = "#8dabff";
-const CYAN = "#3dd7ec";
-const ICE = "#dbe7ff";
-
 type Quality = {
   tier: "high" | "medium" | "low";
   dpr: [number, number];
   antialias: boolean;
-  particles: number;
   envResolution: number;
   shadows: boolean;
-  glass: boolean;
-  signalPoints: number;
 };
 
-type RibbonConfig = {
-  key: string;
-  points: Array<[number, number, number]>;
-  radius: number;
-  color: string;
-  rotation: readonly [number, number, number];
-  position: readonly [number, number, number];
-  introLift: number;
-  pointer: readonly [number, number];
-  scrollOffset: readonly [number, number, number];
-  scrollRotation: readonly [number, number];
-  speed: number;
-  roughness: number;
-  signalColor: string;
+type ModuleId = "product" | "identity" | "engineering" | "growth";
+
+type ModuleConfig = {
+  id: ModuleId;
+  position: [number, number, number];
+  rotation: [number, number, number];
+  width: number;
+  height: number;
+  formationOffset: [number, number, number];
+  delay: number;
 };
 
-type FinConfig = {
-  key: string;
-  position: readonly [number, number, number];
-  rotation: readonly [number, number, number];
-  scale: readonly [number, number, number];
-  drift: number;
-};
-
-type BraceConfig = {
-  key: string;
-  position: readonly [number, number, number];
-  rotation: readonly [number, number, number];
-  scale: readonly [number, number, number];
-};
-
-const RIBBONS: RibbonConfig[] = [
+const MODULES: ModuleConfig[] = [
   {
-    key: "spine",
-    points: [
-      [-2.2, -1.25, 0.25],
-      [-1.32, -0.62, 1.1],
-      [-0.3, 0.42, 1.5],
-      [0.62, 1.55, 0.92],
-      [1.5, 1.86, -0.22],
-      [2.32, 0.64, -1.1],
-      [1.08, -0.68, -1.58],
-      [-0.52, -1.28, -0.9],
-    ],
-    radius: 0.105,
-    color: TITANIUM,
-    rotation: [0.16, -0.42, 0.28],
-    position: [0.2, 0.06, 0],
-    introLift: 1.35,
-    pointer: [0.18, 0.14],
-    scrollOffset: [0.95, 0.3, -0.4],
-    scrollRotation: [0.35, 0.55],
-    speed: 0.18,
-    roughness: 0.2,
-    signalColor: COBALT_LIGHT,
+    id: "product",
+    position: [1.18, 0.02, 0.48],
+    rotation: [0.015, -0.13, 0.008],
+    width: 3.7,
+    height: 2.38,
+    formationOffset: [0.1, -0.18, 1.7],
+    delay: 0.12,
   },
   {
-    key: "veil",
-    points: [
-      [-1.68, 1.62, -0.82],
-      [-0.56, 1.08, -1.4],
-      [0.92, 0.22, -1.18],
-      [1.86, -0.82, -0.18],
-      [1.24, -1.66, 0.98],
-      [-0.16, -1.22, 1.56],
-      [-1.62, -0.12, 1.02],
-      [-2.1, 0.88, 0.08],
-    ],
-    radius: 0.08,
-    color: "#8d98ae",
-    rotation: [-0.34, 0.58, -0.46],
-    position: [0.3, -0.08, 0.06],
-    introLift: 1.5,
-    pointer: [0.16, 0.1],
-    scrollOffset: [-0.42, 0.44, -0.72],
-    scrollRotation: [-0.52, 0.32],
-    speed: -0.14,
-    roughness: 0.28,
-    signalColor: CYAN,
+    id: "identity",
+    position: [-0.92, 1.46, -0.78],
+    rotation: [0.03, 0.2, -0.025],
+    width: 1.7,
+    height: 1.17,
+    formationOffset: [-0.55, 0.28, 1.1],
+    delay: 0.42,
   },
   {
-    key: "bridge",
-    points: [
-      [-1.52, -1.56, -0.16],
-      [-0.88, -0.7, -0.92],
-      [0.24, -0.14, -1.34],
-      [1.54, 0.28, -0.62],
-      [2.08, 1.14, 0.52],
-      [1.16, 1.52, 1.36],
-      [-0.18, 1.08, 1.2],
-      [-1.48, 0.12, 0.46],
-    ],
-    radius: 0.056,
-    color: TITANIUM_DARK,
-    rotation: [0.22, -0.08, 0.86],
-    position: [0.06, 0.14, -0.24],
-    introLift: 1.1,
-    pointer: [0.12, 0.12],
-    scrollOffset: [0.48, -0.42, -0.2],
-    scrollRotation: [0.42, -0.38],
-    speed: 0.22,
-    roughness: 0.34,
-    signalColor: COBALT,
+    id: "engineering",
+    position: [3.24, 1.23, -0.96],
+    rotation: [-0.035, -0.18, 0.025],
+    width: 1.78,
+    height: 1.2,
+    formationOffset: [0.45, 0.42, 1.2],
+    delay: 0.68,
+  },
+  {
+    id: "growth",
+    position: [3.35, -1.32, -0.8],
+    rotation: [0.035, -0.2, -0.025],
+    width: 1.8,
+    height: 1.2,
+    formationOffset: [0.5, -0.38, 1.15],
+    delay: 0.94,
   },
 ];
 
-const FINS: FinConfig[] = [
-  {
-    key: "north",
-    position: [0.44, 0.92, -0.16],
-    rotation: [0.38, -0.42, 0.26],
-    scale: [0.96, 1.14, 0.9],
-    drift: 0.46,
-  },
-  {
-    key: "south",
-    position: [-0.72, -0.48, 0.34],
-    rotation: [-0.28, 0.82, -0.74],
-    scale: [0.88, 1.02, 0.86],
-    drift: 0.72,
-  },
-  {
-    key: "east",
-    position: [0.98, -0.06, 0.72],
-    rotation: [0.12, 0.24, 0.96],
-    scale: [0.74, 0.9, 0.72],
-    drift: 0.58,
-  },
-];
+const COPY: Record<ModuleId, { label: string; title: string }> = {
+  product: { label: "DIGITAL PRODUCT / 01", title: "Ideas into experiences." },
+  identity: { label: "IDENTITY / 02", title: "A system with a point of view." },
+  engineering: { label: "ENGINEERING / 03", title: "Built to move with you." },
+  growth: { label: "GROWTH / 04", title: "Find the signal. Scale it." },
+};
 
-const BRACES: BraceConfig[] = [
-  {
-    key: "brace-a",
-    position: [0.28, 0.24, 0.74],
-    rotation: [0.38, 0.18, 0.82],
-    scale: [1, 1.1, 1],
-  },
-  {
-    key: "brace-b",
-    position: [-0.62, -0.12, -0.28],
-    rotation: [-0.42, 0.96, -0.38],
-    scale: [0.9, 0.96, 0.9],
-  },
-  {
-    key: "brace-c",
-    position: [0.06, -0.76, 0.08],
-    rotation: [1.18, 0.34, 0.14],
-    scale: [0.82, 0.88, 0.82],
-  },
-];
-
-function detectQuality(): Quality {
-  if (typeof window === "undefined") {
+function getQuality(): Quality {
+  if (typeof window === "undefined")
     return {
       tier: "medium",
       dpr: [1, 1.5],
       antialias: true,
-      particles: 180,
       envResolution: 128,
       shadows: false,
-      glass: true,
-      signalPoints: 6,
     };
-  }
-
   const cores = navigator.hardwareConcurrency ?? 4;
-  const deviceMemory =
+  const memory =
     (navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 8;
+  const compact = window.innerWidth < 720;
   const coarse = window.matchMedia("(pointer: coarse)").matches;
-  const width = window.innerWidth;
-
-  if (width < 720 || cores <= 4 || deviceMemory <= 4) {
+  if (compact || cores <= 4 || memory <= 4)
     return {
       tier: "low",
-      dpr: [1, 1.25],
+      dpr: [1, 1.2],
       antialias: false,
-      particles: 48,
       envResolution: 64,
       shadows: false,
-      glass: false,
-      signalPoints: 3,
     };
-  }
-
-  if (coarse || width < 1280 || cores <= 8) {
+  if (coarse || window.innerWidth < 1280 || cores <= 8)
     return {
       tier: "medium",
       dpr: [1, 1.5],
       antialias: true,
-      particles: 140,
       envResolution: 128,
       shadows: false,
-      glass: true,
-      signalPoints: 5,
     };
-  }
-
   return {
     tier: "high",
-    dpr: [1, 1.9],
+    dpr: [1, 1.8],
     antialias: true,
-    particles: 300,
     envResolution: 256,
     shadows: true,
-    glass: true,
-    signalPoints: 8,
   };
 }
 
-function createRandom(seed: number) {
-  let state = seed;
-  return () => {
-    state += 0x6d2b79f5;
-    let value = Math.imul(state ^ (state >>> 15), 1 | state);
-    value ^= value + Math.imul(value ^ (value >>> 7), 61 | value);
-    return ((value ^ (value >>> 14)) >>> 0) / 4294967296;
+function makeUiTexture(id: ModuleId) {
+  const canvas = document.createElement("canvas");
+  canvas.width = id === "product" ? 1200 : 800;
+  canvas.height = id === "product" ? 760 : 540;
+  const context = canvas.getContext("2d");
+  if (!context) return new THREE.CanvasTexture(canvas);
+
+  const w = canvas.width;
+  const h = canvas.height;
+  const blue = "#385cf4";
+  const ink = "#171b24";
+  const muted = "#78818f";
+  const light = id === "product" || id === "identity";
+  context.fillStyle = light ? "#f3f5f7" : "#111722";
+  context.fillRect(0, 0, w, h);
+  const drawText = (
+    value: string,
+    x: number,
+    y: number,
+    size: number,
+    color: string,
+    weight = 500,
+  ) => {
+    context.fillStyle = color;
+    context.font = `${weight} ${size}px Manrope, Arial, sans-serif`;
+    context.fillText(value, x, y);
   };
+  const rect = (
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    color: string,
+    radius = 0,
+  ) => {
+    context.fillStyle = color;
+    context.beginPath();
+    context.roundRect(x, y, width, height, radius);
+    context.fill();
+  };
+
+  if (id === "product") {
+    rect(0, 0, w, 72, "#ffffff");
+    drawText("DIGITAL / STUDIO", 40, 44, 18, ink, 700);
+    drawText("Work     Studio     Journal", 768, 43, 14, muted);
+    rect(1050, 19, 110, 36, blue, 18);
+    drawText("Let's talk", 1072, 42, 12, "#ffffff", 650);
+    rect(46, 112, 1108, 1, "#dce0e6");
+    drawText("DIGITAL PRODUCT STUDIO", 56, 178, 13, blue, 700);
+    drawText("Make space for", 54, 256, 54, ink, 650);
+    drawText("what comes next.", 54, 319, 54, ink, 650);
+    drawText(
+      "A thoughtful digital home for ambitious ideas.",
+      58,
+      360,
+      18,
+      muted,
+    );
+    rect(58, 395, 134, 42, blue, 4);
+    drawText("Explore the work", 72, 421, 13, "#ffffff", 600);
+    rect(714, 151, 424, 274, "#dce4ef", 5);
+    rect(745, 178, 362, 220, "#eef2f5", 3);
+    rect(766, 200, 128, 172, "#c7d1df", 2);
+    rect(909, 200, 176, 10, "#8999ad", 5);
+    rect(909, 226, 145, 7, "#b8c2cf", 4);
+    rect(909, 248, 161, 7, "#b8c2cf", 4);
+    rect(909, 295, 82, 40, blue, 3);
+    rect(56, 474, 1086, 1, "#dce0e6");
+    ["Strategy", "Design", "Technology", "Growth"].forEach((label, i) => {
+      const x = 58 + i * 272;
+      drawText(label, x, 520, 15, ink, 600);
+      rect(x, 545, 210, 5, "#dfe3e8", 3);
+    });
+  } else if (id === "identity") {
+    drawText("BRAND SYSTEM", 36, 49, 20, ink, 700);
+    drawText("IDENTITY SYSTEM", 36, 94, 12, muted, 700);
+    drawText("A clear voice,", 36, 151, 24, ink, 600);
+    drawText("across every touchpoint", 36, 181, 24, ink, 600);
+    rect(36, 207, 728, 1, "#d7dce4");
+    rect(36, 232, 164, 124, blue, 3);
+    rect(216, 232, 164, 124, "#dfe6ee", 3);
+    rect(396, 232, 164, 124, "#d1c4ae", 3);
+    rect(576, 232, 188, 124, "#222833", 3);
+    drawText("Aa", 44, 427, 46, ink, 500);
+    drawText("Newsreader / Manrope", 151, 414, 16, ink, 600);
+    drawText("TYPE, COLOR, MOTION", 151, 442, 11, muted, 600);
+  } else if (id === "engineering") {
+    rect(0, 0, w, 56, "#1b2431");
+    drawText("/ product-platform", 30, 36, 15, "#eef1f6", 600);
+    ["#e06d66", "#dfb663", "#64b88e"].forEach((color, i) => {
+      context.fillStyle = color;
+      context.beginPath();
+      context.arc(742 + i * 18, 28, 5, 0, Math.PI * 2);
+      context.fill();
+    });
+    [
+      "export function Experience() {",
+      "  const signal = useProductState();",
+      "  return (",
+      "    <System surface={signal.surface}",
+      '      motion="measured" />',
+      "  );",
+      "}",
+    ].forEach((line, i) => {
+      drawText(String(i + 1).padStart(2, "0"), 30, 105 + i * 43, 13, "#657286");
+      drawText(
+        line,
+        78,
+        105 + i * 43,
+        17,
+        i === 0 ? "#83a4ff" : "#d5dbe5",
+        500,
+      );
+    });
+    rect(30, 438, 740, 1, "#2b3543");
+    drawText("SYSTEMS ONLINE", 32, 480, 12, "#7dcaa9", 700);
+    drawText("SOFTWARE SYSTEMS", 620, 480, 12, "#8c98a8");
+  } else {
+    drawText("GROWTH SIGNALS", 34, 47, 13, "#9db1ff", 700);
+    drawText("A clearer picture of progress", 34, 89, 21, "#edf1f8", 600);
+    drawText("CHANNEL PERFORMANCE", 36, 139, 11, "#8a95a7", 600);
+    const points: [number, number][] = [
+      [40, 370],
+      [110, 326],
+      [185, 340],
+      [260, 264],
+      [335, 290],
+      [410, 220],
+      [485, 245],
+      [560, 180],
+      [635, 200],
+      [760, 145],
+    ];
+    context.strokeStyle = "#7794ff";
+    context.lineWidth = 4;
+    context.beginPath();
+    points.forEach(([x, y], i) =>
+      i ? context.lineTo(x, y) : context.moveTo(x, y),
+    );
+    context.stroke();
+    points.forEach(([x, y]) => {
+      context.beginPath();
+      context.arc(x, y, 6, 0, Math.PI * 2);
+      context.fillStyle = "#111722";
+      context.fill();
+      context.strokeStyle = "#a9bcff";
+      context.lineWidth = 2;
+      context.stroke();
+    });
+    rect(34, 424, 732, 1, "#303b4a");
+    ["DISCOVERY", "ENGAGEMENT", "CONVERSION"].forEach((label, i) =>
+      drawText(label, 36 + i * 254, 468, 11, "#8a95a7", 600),
+    );
+  }
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.anisotropy = 8;
+  return texture;
 }
 
-function easeOutCubic(value: number) {
-  return 1 - (1 - value) ** 3;
+function useUiTexture(id: ModuleId) {
+  const texture = useMemo(() => makeUiTexture(id), [id]);
+  useEffect(() => () => texture.dispose(), [texture]);
+  return texture;
 }
 
-function getIntroProgress(reduced: boolean, elapsedTime: number) {
-  if (reduced) return 1;
-  return easeOutCubic(Math.min(elapsedTime / 2.2, 1));
-}
-
-function makeCurve(points: RibbonConfig["points"]) {
-  return new THREE.CatmullRomCurve3(
-    points.map(([x, y, z]) => new THREE.Vector3(x, y, z)),
-    false,
-    "centripetal",
-    0.55,
-  );
-}
-
-function makeFinGeometry() {
-  const shape = new THREE.Shape();
-  shape.moveTo(0, -1.08);
-  shape.bezierCurveTo(0.52, -0.8, 0.74, -0.22, 0.5, 0.34);
-  shape.bezierCurveTo(0.3, 0.86, 0.12, 1.16, 0, 1.28);
-  shape.bezierCurveTo(-0.18, 1.02, -0.54, 0.4, -0.62, -0.18);
-  shape.bezierCurveTo(-0.72, -0.68, -0.32, -1, 0, -1.08);
-  const geometry = new THREE.ExtrudeGeometry(shape, {
-    depth: 0.08,
-    bevelEnabled: false,
-    curveSegments: 28,
-    steps: 1,
-  });
-  geometry.center();
-  return geometry;
-}
-
-function makeLatheGeometry() {
-  const profile = [
-    new THREE.Vector2(0.06, -1.1),
-    new THREE.Vector2(0.3, -0.92),
-    new THREE.Vector2(0.52, -0.4),
-    new THREE.Vector2(0.56, 0.08),
-    new THREE.Vector2(0.34, 0.78),
-    new THREE.Vector2(0.1, 1.08),
-  ];
-  return new THREE.LatheGeometry(profile, 48);
-}
-
-function SignalTrail({
-  curve,
-  count,
-  color,
-  speed,
-  reduced,
-}: {
-  curve: THREE.CatmullRomCurve3;
-  count: number;
-  color: string;
-  speed: number;
-  reduced: boolean;
-}) {
-  const ref = useRef<THREE.InstancedMesh>(null);
-  const dummy = useMemo(() => new THREE.Object3D(), []);
-  const geometry = useMemo(() => new THREE.SphereGeometry(0.032, 10, 10), []);
-
-  useFrame((state) => {
-    const mesh = ref.current;
-    if (!mesh) return;
-
-    const intro = getIntroProgress(reduced, state.clock.elapsedTime);
-    const travel = state.clock.elapsedTime * speed * (reduced ? 0.08 : 0.18);
-
-    for (let index = 0; index < count; index += 1) {
-      const offset = (((travel - index * 0.07) % 1) + 1) % 1;
-      const point = curve.getPointAt(offset);
-      const scale = Math.max((count - index) / count, 0.12) * intro;
-      dummy.position.copy(point);
-      dummy.scale.setScalar(scale * 0.8);
-      dummy.updateMatrix();
-      mesh.setMatrixAt(index, dummy.matrix);
-    }
-
-    mesh.instanceMatrix.needsUpdate = true;
-  });
-
-  return (
-    <instancedMesh ref={ref} args={[geometry, undefined, count]}>
-      <meshStandardMaterial
-        color={color}
-        emissive={color}
-        emissiveIntensity={1.8}
-        metalness={0.25}
-        roughness={0.2}
-        toneMapped={false}
-      />
-    </instancedMesh>
-  );
-}
-
-function RibbonBand({
+function InterfaceModule({
   config,
-  quality,
   reduced,
 }: {
-  config: RibbonConfig;
-  quality: Quality;
-  reduced: boolean;
-}) {
-  const group = useRef<THREE.Group>(null);
-  const curve = useMemo(() => makeCurve(config.points), [config.points]);
-  const segments =
-    quality.tier === "high" ? 240 : quality.tier === "medium" ? 180 : 132;
-  const radialSegments = quality.tier === "high" ? 18 : 12;
-  const geometry = useMemo(
-    () =>
-      new THREE.TubeGeometry(
-        curve,
-        segments,
-        config.radius,
-        radialSegments,
-        false,
-      ),
-    [config.radius, curve, radialSegments, segments],
-  );
-  const channelGeometry = useMemo(
-    () =>
-      new THREE.TubeGeometry(
-        curve,
-        Math.floor(segments * 0.72),
-        config.radius * 0.18,
-        8,
-        false,
-      ),
-    [config.radius, curve, segments],
-  );
-
-  useFrame((state, delta) => {
-    const mesh = group.current;
-    if (!mesh) return;
-
-    const dt = Math.min(delta, 0.05);
-    const intro = getIntroProgress(reduced, state.clock.elapsedTime);
-    const scroll = scrollStore.hero;
-    const drift = reduced
-      ? 0
-      : Math.sin(state.clock.elapsedTime * config.speed) * 0.06;
-    const offset = 1 - intro;
-
-    mesh.position.x = THREE.MathUtils.damp(
-      mesh.position.x,
-      config.position[0] + scroll * config.scrollOffset[0],
-      2.2,
-      dt,
-    );
-    mesh.position.y = THREE.MathUtils.damp(
-      mesh.position.y,
-      config.position[1] +
-        drift +
-        scroll * config.scrollOffset[1] +
-        offset * config.introLift,
-      2.4,
-      dt,
-    );
-    mesh.position.z = THREE.MathUtils.damp(
-      mesh.position.z,
-      config.position[2] + scroll * config.scrollOffset[2],
-      2.2,
-      dt,
-    );
-
-    mesh.rotation.x = THREE.MathUtils.damp(
-      mesh.rotation.x,
-      config.rotation[0] +
-        state.pointer.y * config.pointer[1] +
-        scroll * config.scrollRotation[0],
-      2.2,
-      dt,
-    );
-    mesh.rotation.y = THREE.MathUtils.damp(
-      mesh.rotation.y,
-      config.rotation[1] +
-        state.pointer.x * config.pointer[0] +
-        scroll * config.scrollRotation[1],
-      2.2,
-      dt,
-    );
-    mesh.rotation.z = THREE.MathUtils.damp(
-      mesh.rotation.z,
-      config.rotation[2] + drift * 0.45,
-      2.4,
-      dt,
-    );
-
-    const scale = 0.84 + intro * 0.16 - scroll * 0.05;
-    mesh.scale.setScalar(scale);
-  });
-
-  return (
-    <group ref={group}>
-      <mesh geometry={geometry}>
-        <meshPhysicalMaterial
-          color={config.color}
-          metalness={1}
-          roughness={config.roughness}
-          clearcoat={0.8}
-          clearcoatRoughness={0.16}
-          envMapIntensity={2.3}
-        />
-      </mesh>
-      <mesh geometry={channelGeometry}>
-        <meshStandardMaterial
-          color="#0a0f1e"
-          emissive={config.signalColor}
-          emissiveIntensity={0.35}
-          metalness={0.4}
-          roughness={0.3}
-        />
-      </mesh>
-      {quality.signalPoints > 0 && (
-        <SignalTrail
-          color={config.signalColor}
-          count={quality.signalPoints}
-          curve={curve}
-          reduced={reduced}
-          speed={Math.abs(config.speed) + 0.2}
-        />
-      )}
-    </group>
-  );
-}
-
-function GlassFin({
-  config,
-  geometry,
-  reduced,
-}: {
-  config: FinConfig;
-  geometry: THREE.ExtrudeGeometry;
+  config: ModuleConfig;
   reduced: boolean;
 }) {
   const ref = useRef<THREE.Group>(null);
+  const texture = useUiTexture(config.id);
+  const [selected, setSelected] = useState(false);
+  const hover = useRef(false);
+  const touchSelected = useRef(false);
+  const copy = COPY[config.id];
+  const depth = config.id === "product" ? 0.12 : 0.095;
 
   useFrame((state, delta) => {
     const group = ref.current;
     if (!group) return;
+    const time = state.clock.elapsedTime;
+    const reveal = reduced
+      ? 1
+      : THREE.MathUtils.smoothstep(time - config.delay, 0, 1.55);
+    const scroll = THREE.MathUtils.clamp(scrollStore.hero, 0, 1);
     const dt = Math.min(delta, 0.05);
-    const intro = getIntroProgress(reduced, state.clock.elapsedTime);
-    const scroll = scrollStore.hero;
-    const wave = reduced
-      ? 0
-      : Math.sin(state.clock.elapsedTime * config.drift) * 0.08;
-
-    group.position.x = THREE.MathUtils.damp(
-      group.position.x,
-      config.position[0] + scroll * 0.18,
-      2.4,
-      dt,
-    );
-    group.position.y = THREE.MathUtils.damp(
-      group.position.y,
-      config.position[1] + wave + (1 - intro) * 0.6,
-      2.6,
-      dt,
-    );
-    group.position.z = THREE.MathUtils.damp(
-      group.position.z,
-      config.position[2] - scroll * 0.2,
-      2.4,
-      dt,
-    );
-    group.rotation.x = THREE.MathUtils.damp(
-      group.rotation.x,
-      config.rotation[0] - scroll * 0.22,
-      2.4,
-      dt,
-    );
-    group.rotation.y = THREE.MathUtils.damp(
-      group.rotation.y,
-      config.rotation[1] + wave * 0.4,
-      2.4,
-      dt,
-    );
-    group.rotation.z = THREE.MathUtils.damp(
-      group.rotation.z,
-      config.rotation[2] + wave * 0.3,
-      2.4,
-      dt,
-    );
+    group.position.x =
+      config.position[0] +
+      config.formationOffset[0] * (1 - reveal) -
+      scroll * config.position[0] * 0.035;
+    group.position.y =
+      config.position[1] + config.formationOffset[1] * (1 - reveal);
+    group.position.z =
+      config.position[2] +
+      config.formationOffset[2] * (1 - reveal) +
+      scroll * 0.16;
+    group.rotation.x = config.rotation[0] + (hover.current ? -0.025 : 0);
+    group.rotation.y =
+      config.rotation[1] + state.pointer.x * (reduced ? 0 : 0.018);
+    group.rotation.z = config.rotation[2] + (hover.current ? 0.014 : 0);
+    const scale =
+      (0.92 + reveal * 0.08) *
+      (hover.current ? 1.025 : 1) *
+      (1 - scroll * 0.02);
+    const nextScale = THREE.MathUtils.damp(group.scale.x, scale, 5, dt);
+    group.scale.setScalar(nextScale);
   });
 
   return (
     <group
       ref={ref}
       position={config.position}
-      rotation={config.rotation as unknown as THREE.Euler}
-      scale={config.scale}
+      rotation={config.rotation}
+      onPointerOver={(event) => {
+        event.stopPropagation();
+        if (event.nativeEvent.pointerType === "touch") return;
+        hover.current = true;
+        setSelected(true);
+      }}
+      onPointerOut={() => {
+        if (touchSelected.current) return;
+        hover.current = false;
+        setSelected(false);
+      }}
+      onPointerDown={(event) => {
+        event.stopPropagation();
+        if (event.nativeEvent.pointerType === "touch") {
+          touchSelected.current = !touchSelected.current;
+          hover.current = touchSelected.current;
+          setSelected(touchSelected.current);
+        }
+      }}
     >
-      <mesh geometry={geometry}>
+      <RoundedBox
+        args={[config.width, config.height, depth]}
+        radius={0.05}
+        smoothness={3}
+        castShadow
+        receiveShadow
+      >
         <meshPhysicalMaterial
-          color="#6f8cff"
-          metalness={0.04}
-          roughness={0.02}
-          transmission={0.92}
-          thickness={0.58}
-          ior={1.32}
-          clearcoat={1}
-          clearcoatRoughness={0.04}
-          envMapIntensity={1.7}
-          attenuationColor="#2748ff"
-          attenuationDistance={1.25}
-          transparent
+          color={config.id === "product" ? "#d3d9e3" : "#8792a4"}
+          metalness={0.5}
+          roughness={0.32}
+          clearcoat={0.42}
+          clearcoatRoughness={0.24}
+          envMapIntensity={1.3}
         />
-      </mesh>
-      <mesh geometry={geometry} scale={[0.88, 0.9, 0.88]}>
+      </RoundedBox>
+      <mesh position={[0, 0, depth / 2 + 0.002]}>
+        <planeGeometry args={[config.width - 0.065, config.height - 0.065]} />
         <meshStandardMaterial
-          color="#d9e7ff"
-          emissive={CYAN}
-          emissiveIntensity={0.12}
-          metalness={0.56}
-          roughness={0.24}
+          map={texture}
+          roughness={0.45}
+          metalness={0.025}
         />
       </mesh>
+      <mesh position={[0, 0, -depth / 2 - 0.012]}>
+        <boxGeometry
+          args={[config.width - 0.08, config.height - 0.08, 0.012]}
+        />
+        <meshStandardMaterial
+          color="#080b12"
+          metalness={0.62}
+          roughness={0.28}
+        />
+      </mesh>
+      {selected && (
+        <Html
+          position={[0, -config.height / 2 - 0.13, depth / 2]}
+          center
+          distanceFactor={8}
+        >
+          <span className="hero-module-detail">
+            {copy.label} · {copy.title}
+          </span>
+        </Html>
+      )}
     </group>
   );
 }
 
-function CoreAssembly({
-  quality,
+function Connector({
+  from,
+  to,
+  index,
   reduced,
 }: {
-  quality: Quality;
+  from: [number, number, number];
+  to: [number, number, number];
+  index: number;
   reduced: boolean;
 }) {
-  const core = useRef<THREE.Group>(null);
-  const shell = useMemo(() => makeLatheGeometry(), []);
-  const crystal = useMemo(() => new THREE.OctahedronGeometry(0.42, 2), []);
-  const frame = useMemo(() => new THREE.OctahedronGeometry(0.68, 0), []);
-  const braceGeometry = useMemo(
-    () => new THREE.CylinderGeometry(0.028, 0.04, 0.78, 10),
+  const curve = useMemo(() => {
+    const start = new THREE.Vector3(...from);
+    const end = new THREE.Vector3(...to);
+    const bend = start.clone().lerp(end, 0.5);
+    bend.z += 0.16;
+    return new THREE.CatmullRomCurve3([start, bend, end]);
+  }, [from, to]);
+  const tube = useMemo(
+    () => new THREE.TubeGeometry(curve, 36, 0.008, 6, false),
+    [curve],
+  );
+  const pulse = useMemo(
+    () =>
+      new THREE.Mesh(
+        new THREE.SphereGeometry(0.03, 10, 8),
+        new THREE.MeshBasicMaterial({ color: "#a5b8ff" }),
+      ),
     [],
   );
 
-  useFrame((state, delta) => {
-    const group = core.current;
-    if (!group) return;
-    const dt = Math.min(delta, 0.05);
-    const intro = getIntroProgress(reduced, state.clock.elapsedTime);
-    const scroll = scrollStore.hero;
-    const breathe = reduced
+  useEffect(
+    () => () => {
+      tube.dispose();
+      pulse.geometry.dispose();
+      (pulse.material as THREE.Material).dispose();
+    },
+    [pulse, tube],
+  );
+
+  useFrame((state) => {
+    const reveal = reduced
       ? 1
-      : 1 + Math.sin(state.clock.elapsedTime * 1.1) * 0.018;
-
-    group.position.y = THREE.MathUtils.damp(
-      group.position.y,
-      Math.sin(state.clock.elapsedTime * 0.56) * 0.08 +
-        (1 - intro) * 0.42 -
-        scroll * 0.22,
-      2.8,
-      dt,
-    );
-    group.rotation.y = THREE.MathUtils.damp(
-      group.rotation.y,
-      state.clock.elapsedTime * 0.18 + scroll * 0.28,
-      1.8,
-      dt,
-    );
-    group.rotation.x = THREE.MathUtils.damp(
-      group.rotation.x,
-      Math.sin(state.clock.elapsedTime * 0.34) * 0.08 - scroll * 0.16,
-      2.1,
-      dt,
-    );
-    group.scale.setScalar((0.9 + intro * 0.1 - scroll * 0.04) * breathe);
+      : THREE.MathUtils.smoothstep(state.clock.elapsedTime - 0.78, 0, 1.45);
+    const phase = (state.clock.elapsedTime * 0.12 + index * 0.28) % 1;
+    pulse.position.copy(curve.getPointAt(phase));
+    pulse.scale.setScalar(reduced ? 0 : reveal);
   });
 
   return (
-    <group ref={core}>
-      <mesh geometry={shell} rotation={[0.08, 0, 0.28]}>
-        {quality.glass ? (
-          <meshPhysicalMaterial
-            color="#09112b"
-            metalness={0.08}
-            roughness={0.04}
-            transmission={0.96}
-            thickness={1.18}
-            ior={1.42}
-            clearcoat={1}
-            clearcoatRoughness={0.08}
-            envMapIntensity={2.1}
-            attenuationColor="#355bff"
-            attenuationDistance={1.5}
-            transparent
-          />
-        ) : (
-          <meshStandardMaterial
-            color="#0c1634"
-            metalness={0.8}
-            roughness={0.18}
-            emissive={COBALT}
-            emissiveIntensity={0.18}
-          />
-        )}
-      </mesh>
-
-      <mesh geometry={crystal}>
+    <group>
+      <mesh geometry={tube}>
         <meshStandardMaterial
-          color="#c4d4ff"
-          emissive={COBALT_LIGHT}
-          emissiveIntensity={1.45}
-          metalness={0.1}
-          roughness={0.14}
-          toneMapped={false}
-        />
-      </mesh>
-
-      <mesh
-        geometry={frame}
-        rotation={[0.32, 0.26, -0.12]}
-        scale={[1.18, 1.08, 0.84]}
-      >
-        <meshBasicMaterial
-          color={COBALT_LIGHT}
+          color="#7083bd"
+          metalness={0.5}
+          roughness={0.42}
           transparent
-          opacity={0.18}
-          wireframe
-          toneMapped={false}
+          opacity={0.4}
         />
       </mesh>
-
-      {BRACES.map((brace) => (
-        <mesh
-          key={brace.key}
-          geometry={braceGeometry}
-          position={brace.position}
-          rotation={brace.rotation as unknown as THREE.Euler}
-          scale={brace.scale}
-        >
-          <meshStandardMaterial
-            color="#aeb9cf"
-            metalness={1}
-            roughness={0.26}
-            envMapIntensity={1.8}
-          />
-        </mesh>
-      ))}
-
-      <pointLight
-        color={COBALT_LIGHT}
-        intensity={5.4}
-        distance={4.8}
-        decay={2}
-      />
+      <primitive object={pulse} />
     </group>
   );
 }
 
-function Atmosphere({ count, reduced }: { count: number; reduced: boolean }) {
-  const dust = useRef<THREE.Points>(null);
-  const positions = useMemo(() => {
-    const random = createRandom(count * 2731 + 7);
-    const values = new Float32Array(count * 3);
-    for (let index = 0; index < count; index += 1) {
-      const radius = 3.1 + random() * 3.4;
-      const theta = random() * Math.PI * 2;
-      values[index * 3] = Math.cos(theta) * radius;
-      values[index * 3 + 1] = (random() - 0.5) * 4.2;
-      values[index * 3 + 2] = Math.sin(theta) * radius * 0.8;
-    }
-    return values;
-  }, [count]);
-
-  useFrame((state, delta) => {
-    const points = dust.current;
-    if (!points || reduced) return;
-    points.rotation.y += Math.min(delta, 0.05) * 0.02;
-    points.rotation.x = Math.sin(state.clock.elapsedTime * 0.1) * 0.03;
-  });
-
-  return (
-    <Points ref={dust} positions={positions} stride={3} frustumCulled={false}>
-      <PointMaterial
-        transparent
-        color={ICE}
-        size={0.03}
-        sizeAttenuation
-        depthWrite={false}
-        opacity={0.38}
-        blending={THREE.AdditiveBlending}
-      />
-    </Points>
-  );
-}
-
-function BackdropGlow({ reduced }: { reduced: boolean }) {
-  const halo = useRef<THREE.Group>(null);
-  const circleGeometry = useMemo(() => new THREE.CircleGeometry(1, 48), []);
-
-  useFrame((state, delta) => {
-    const group = halo.current;
-    if (!group) return;
-    const dt = Math.min(delta, 0.05);
-    const intro = getIntroProgress(reduced, state.clock.elapsedTime);
-    const scroll = scrollStore.hero;
-    const wave = reduced ? 0 : Math.sin(state.clock.elapsedTime * 0.3) * 0.05;
-
-    group.position.x = THREE.MathUtils.damp(
-      group.position.x,
-      0.12 + scroll * 0.18,
-      2.2,
-      dt,
-    );
-    group.position.y = THREE.MathUtils.damp(
-      group.position.y,
-      0.06 + wave,
-      2.2,
-      dt,
-    );
-    group.scale.setScalar(1.2 + intro * 0.12 + scroll * 0.1);
-  });
-
-  return (
-    <group ref={halo} position={[0.12, 0.06, -2.5]}>
-      <mesh geometry={circleGeometry} scale={[3.8, 3.8, 1]}>
-        <meshBasicMaterial
-          color={COBALT}
-          transparent
-          opacity={0.11}
-          toneMapped={false}
-        />
-      </mesh>
-      <mesh
-        geometry={circleGeometry}
-        scale={[2.4, 2.4, 1]}
-        position={[0.28, -0.12, 0.02]}
-      >
-        <meshBasicMaterial
-          color={CYAN}
-          transparent
-          opacity={0.08}
-          toneMapped={false}
-        />
-      </mesh>
-    </group>
-  );
-}
-
-function Rig({ reduced }: { reduced: boolean }) {
-  const lookAt = useMemo(() => new THREE.Vector3(), []);
-
+function CameraRig({
+  reduced,
+  compact,
+}: {
+  reduced: boolean;
+  compact: boolean;
+}) {
+  const target = useMemo(() => new THREE.Vector3(), []);
   useFrame((state, delta) => {
     const { camera } = state;
     const dt = Math.min(delta, 0.05);
-    const scroll = scrollStore.hero;
+    const scroll = THREE.MathUtils.clamp(scrollStore.hero, 0, 1);
+    const intro = reduced
+      ? 1
+      : THREE.MathUtils.smoothstep(state.clock.elapsedTime, 0, 2.2);
     const px = reduced ? 0 : state.pointer.x;
     const py = reduced ? 0 : state.pointer.y;
-    const orbit = reduced ? 0 : Math.sin(state.clock.elapsedTime * 0.16) * 0.14;
-
     camera.position.x = THREE.MathUtils.damp(
       camera.position.x,
-      0.78 + px * 0.52 + orbit + scroll * 0.64,
-      2.2,
+      1.14 + px * 0.18 + scroll * 0.16,
+      2.1,
       dt,
     );
     camera.position.y = THREE.MathUtils.damp(
       camera.position.y,
-      0.2 + py * 0.24 + scroll * 0.52,
-      2.2,
+      0.14 + py * 0.12 + scroll * 0.08,
+      2.1,
       dt,
     );
     camera.position.z = THREE.MathUtils.damp(
       camera.position.z,
-      7.3 + scroll * 1.6,
-      2.4,
+      (compact ? 13.1 : 8.35) - intro * (compact ? 0.45 : 0.58) - scroll * 0.55,
+      1.8,
       dt,
     );
-
-    lookAt.set(0.18 + scroll * 0.18, scroll * 0.24, 0);
-    camera.lookAt(lookAt);
+    target.set(
+      (compact ? 0.78 : 1.08) + px * 0.08 + scroll * 0.22,
+      0.08 + py * 0.04,
+      -0.12 - scroll * 0.22,
+    );
+    camera.lookAt(target);
   });
-
   return null;
 }
 
-function Sculpture({
-  quality,
-  reduced,
-}: {
-  quality: Quality;
-  reduced: boolean;
-}) {
-  const finGeometry = useMemo(() => makeFinGeometry(), []);
-
-  return (
-    <>
-      <BackdropGlow reduced={reduced} />
-      {RIBBONS.map((config) => (
-        <RibbonBand
-          key={config.key}
-          config={config}
-          quality={quality}
-          reduced={reduced}
-        />
-      ))}
-      {FINS.map((config) => (
-        <GlassFin
-          key={config.key}
-          config={config}
-          geometry={finGeometry}
-          reduced={reduced}
-        />
-      ))}
-      <CoreAssembly quality={quality} reduced={reduced} />
-      {quality.particles > 0 && (
-        <Atmosphere count={quality.particles} reduced={reduced} />
-      )}
-    </>
-  );
-}
-
 function Scene({ quality, reduced }: { quality: Quality; reduced: boolean }) {
-  const stage = useRef<THREE.Group>(null);
-  const keyLight = useRef<THREE.DirectionalLight>(null);
-  const rimLight = useRef<THREE.DirectionalLight>(null);
-  const floorLight = useRef<THREE.PointLight>(null);
-
-  useFrame((state, delta) => {
-    const root = stage.current;
-    const dt = Math.min(delta, 0.05);
-    const intro = getIntroProgress(reduced, state.clock.elapsedTime);
-    const scroll = scrollStore.hero;
-    const px = reduced ? 0 : state.pointer.x;
-    const py = reduced ? 0 : state.pointer.y;
-
-    if (root) {
-      root.position.x = THREE.MathUtils.damp(
-        root.position.x,
-        1.58 + scroll * 0.7 + px * 0.18,
-        2.2,
-        dt,
-      );
-      root.position.y = THREE.MathUtils.damp(
-        root.position.y,
-        0.08 + (1 - intro) * 0.7 - scroll * 0.52 + py * 0.08,
-        2.4,
-        dt,
-      );
-      root.position.z = THREE.MathUtils.damp(
-        root.position.z,
-        -0.18 - scroll * 0.22,
-        2.2,
-        dt,
-      );
-      root.rotation.x = THREE.MathUtils.damp(
-        root.rotation.x,
-        -0.18 - py * 0.18 + scroll * 0.18,
-        2.2,
-        dt,
-      );
-      root.rotation.y = THREE.MathUtils.damp(
-        root.rotation.y,
-        -0.44 + px * 0.42 + scroll * 0.64,
-        2.2,
-        dt,
-      );
-      root.rotation.z = THREE.MathUtils.damp(
-        root.rotation.z,
-        0.12 + Math.sin(state.clock.elapsedTime * 0.24) * 0.05 - scroll * 0.18,
-        2.2,
-        dt,
-      );
-      root.scale.setScalar(0.9 + intro * 0.14 - scroll * 0.06);
-    }
-
-    if (keyLight.current) {
-      keyLight.current.intensity = 0.4 + intro * 2.3;
-    }
-    if (rimLight.current) {
-      rimLight.current.intensity = 0.25 + intro * 2.8;
-    }
-    if (floorLight.current) {
-      floorLight.current.intensity = 1.8 + intro * 4.4 - scroll * 0.8;
-    }
-  });
+  const product = MODULES[0];
+  const routes = MODULES.slice(1).map((module) => ({
+    from: [
+      product.position[0],
+      product.position[1],
+      product.position[2] - 0.1,
+    ] as [number, number, number],
+    to: [module.position[0], module.position[1], module.position[2] - 0.04] as [
+      number,
+      number,
+      number,
+    ],
+  }));
 
   return (
     <>
-      <color attach="background" args={[OBSIDIAN]} />
-      <fog attach="fog" args={[OBSIDIAN, 8, 20]} />
-
-      <ambientLight intensity={0.2} color="#95a6d8" />
+      <color attach="background" args={["#080a10"]} />
+      <fog attach="fog" args={["#080a10", 13, 30]} />
+      <ambientLight intensity={0.4} color="#b5bed4" />
       <directionalLight
-        ref={keyLight}
-        position={[5.8, 4.4, 6]}
+        position={[-3, 5, 6]}
         intensity={2.3}
-        color="#eef3ff"
+        color="#eef2ff"
+        castShadow={quality.shadows}
+        shadow-mapSize-width={1024}
+        shadow-mapSize-height={1024}
+        shadow-camera-near={0.5}
+        shadow-camera-far={24}
+        shadow-camera-left={-7}
+        shadow-camera-right={7}
+        shadow-camera-top={6}
+        shadow-camera-bottom={-6}
+        shadow-bias={-0.0002}
       />
       <directionalLight
-        ref={rimLight}
-        position={[-6.2, 1.4, -4.4]}
-        intensity={2.6}
-        color={COBALT}
+        position={[5, -1, 3]}
+        intensity={0.78}
+        color="#91a9ff"
       />
-      <pointLight
-        ref={floorLight}
-        position={[1.4, -2.4, 2]}
-        intensity={4.8}
-        distance={12}
-        decay={2}
-        color={CYAN}
-      />
-
       <Environment resolution={quality.envResolution} frames={1}>
         <Lightformer
           form="rect"
-          intensity={2.3}
-          color="#d9e7ff"
-          position={[-5.4, 3.8, -3.8]}
-          scale={[10, 7, 1]}
-          target={[0, 0, 0]}
-        />
-        <Lightformer
-          form="rect"
-          intensity={2.8}
-          color={COBALT}
-          position={[6, 1.1, 4.8]}
-          scale={[9, 10, 1]}
-          target={[0.8, 0, 0]}
-        />
-        <Lightformer
-          form="rect"
-          intensity={1.2}
-          color={CYAN}
-          position={[2.2, -4.2, 3.2]}
+          intensity={2.1}
+          color="#f5f6fb"
+          position={[-4, 4, 4]}
           scale={[7, 4, 1]}
-          target={[0.4, -0.4, 0]}
+          target={[1, 0, 0]}
         />
         <Lightformer
-          form="ring"
-          intensity={1.5}
-          color="#9bb7ff"
-          position={[0.6, 5.5, 0]}
-          scale={[6.5, 6.5, 1]}
-          target={[0, 0, 0]}
+          form="rect"
+          intensity={2.4}
+          color="#506bc5"
+          position={[5, 1, -2]}
+          scale={[5, 6, 1]}
+          target={[1, 0, 0]}
+        />
+        <Lightformer
+          form="rect"
+          intensity={1.25}
+          color="#b9c8ff"
+          position={[0, -4, 2]}
+          scale={[6, 3, 1]}
+          target={[1, 0, 0]}
         />
       </Environment>
 
-      <group ref={stage} position={[1.58, 0.08, -0.18]}>
-        <Sculpture quality={quality} reduced={reduced} />
+      <group scale={quality.tier === "low" ? 0.68 : 1}>
+        {routes.map((route, index) => (
+          <Connector key={index} {...route} index={index} reduced={reduced} />
+        ))}
+        {MODULES.map((config) => (
+          <InterfaceModule key={config.id} config={config} reduced={reduced} />
+        ))}
+        {quality.shadows && (
+          <ContactShadows
+            position={[1.1, -2.1, -0.8]}
+            opacity={0.3}
+            scale={8}
+            blur={2.8}
+            far={5}
+            resolution={256}
+            color="#03050a"
+          />
+        )}
       </group>
-
-      {quality.shadows && (
-        <ContactShadows
-          position={[1.48, -2.48, 0]}
-          opacity={0.42}
-          scale={11}
-          blur={3.2}
-          far={5.8}
-          resolution={256}
-          color="#03050a"
-        />
-      )}
-
-      <Rig reduced={reduced} />
+      <CameraRig reduced={reduced} compact={quality.tier === "low"} />
     </>
   );
 }
 
 export default function HeroScene({ active = true }: { active?: boolean }) {
-  const quality = useMemo(() => detectQuality(), []);
+  const quality = useMemo(() => getQuality(), []);
   const reduced = useMemo(
     () =>
       typeof window !== "undefined" &&
@@ -1030,6 +619,7 @@ export default function HeroScene({ active = true }: { active?: boolean }) {
     <Canvas
       className="hero-canvas"
       dpr={quality.dpr}
+      shadows={quality.shadows}
       frameloop={active && !reduced ? "always" : "demand"}
       gl={{
         antialias: quality.antialias,
@@ -1038,10 +628,19 @@ export default function HeroScene({ active = true }: { active?: boolean }) {
         stencil: false,
       }}
       performance={{ min: 0.65 }}
-      camera={{ position: [0.78, 0.2, 7.3], fov: 34, near: 0.1, far: 60 }}
+      camera={{
+        position: [
+          quality.tier === "low" ? 0.78 : 1.14,
+          0.14,
+          quality.tier === "low" ? 13.1 : 8.35,
+        ],
+        fov: 39,
+        near: 0.1,
+        far: 45,
+      }}
       onCreated={({ gl }) => {
         gl.toneMapping = THREE.ACESFilmicToneMapping;
-        gl.toneMappingExposure = 1.08;
+        gl.toneMappingExposure = 1.04;
       }}
     >
       <Suspense fallback={null}>
