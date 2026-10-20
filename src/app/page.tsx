@@ -27,12 +27,12 @@ import {
 import { siteConfig } from "@/config/site";
 
 export const metadata: Metadata = {
-  title: "Independent digital growth & technology",
+  title: { absolute: "BrandUpCrew" },
   description:
     "Strategy, design, development, and digital marketing for organizations ready to make their next move.",
   alternates: { canonical: "/" },
   openGraph: {
-    title: "Independent digital growth & technology",
+    title: "BrandUpCrew",
     description:
       "Strategy, design, development, and digital marketing for organizations ready to make their next move.",
     url: "/",
@@ -115,22 +115,6 @@ export default function HomePage() {
       </section>
 
       <Marquee items={services.map((service) => service.title)} />
-
-      <RevealSection className="intro-strip content-width">
-        <p className="eyebrow">
-          <span />A useful kind of independent
-        </p>
-        <Parallax distance={7}>
-          <p className="intro-statement">
-            Good digital work isn&apos;t a collection of deliverables. It&apos;s
-            a better way for people to find you, understand you, and move
-            forward.
-          </p>
-        </Parallax>
-        <Link href="/about" className="underlined-link">
-          Meet the studio <ArrowUpRight aria-hidden="true" size={15} />
-        </Link>
-      </RevealSection>
 
       <RevealSection className="section-block service-section">
         <div className="content-width">
