@@ -8,9 +8,34 @@ import {
   useScroll,
   useSpring,
 } from "motion/react";
-import { useEffect, useRef, useState, type ComponentProps } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+  type ComponentProps,
+} from "react";
 
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
+
+/**
+ * Reduced-motion preference reported through `useSyncExternalStore` so the
+ * first client render still matches the prerendered markup. Reading
+ * `matchMedia` during render instead would cause a hydration mismatch.
+ */
+function subscribeReducedMotion(onChange: () => void) {
+  const query = window.matchMedia("(prefers-reduced-motion: reduce)");
+  query.addEventListener("change", onChange);
+  return () => query.removeEventListener("change", onChange);
+}
+
+function getReducedMotion() {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+function getServerReducedMotion() {
+  return false;
+}
 
 /** Thin gradient bar that tracks reading progress. */
 export function ScrollProgress() {
@@ -77,14 +102,15 @@ export function RevealItem({
 export function HeroBlock({
   children,
   className,
+  delay = 0,
   ...props
-}: ComponentProps<typeof motion.div>) {
+}: ComponentProps<typeof motion.div> & { delay?: number }) {
   return (
     <motion.div
       className={className}
       initial={{ opacity: 0, y: 18 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.7, ease: EASE }}
+      transition={{ duration: 0.7, delay, ease: EASE }}
       {...props}
     >
       {children}
@@ -106,7 +132,11 @@ export function StatCounter({
 }) {
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true, amount: 0.5 });
-  const reduce = useReducedMotion();
+  const reduce = useSyncExternalStore(
+    subscribeReducedMotion,
+    getReducedMotion,
+    getServerReducedMotion,
+  );
   const [display, setDisplay] = useState(0);
 
   useEffect(() => {

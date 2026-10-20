@@ -1,10 +1,12 @@
 import Link from "next/link";
-import { ArrowDownRight, ArrowUpRight, MoveUpRight } from "lucide-react";
+import { ArrowDownRight, ArrowUpRight } from "lucide-react";
 import type { Metadata } from "next";
 
-import { ArticleCard, ProjectCard, ServiceCard } from "@/components/site/cards";
+import { ArticleCard, ProjectCard } from "@/components/site/cards";
 import { CtaSection } from "@/components/site/cta-section";
 import { FaqList } from "@/components/site/faq-list";
+import { HeroVisual } from "@/components/site/hero-visual";
+import { Magnetic, MaskedHeading, Parallax } from "@/components/site/motion";
 import {
   HeroBlock,
   Marquee,
@@ -37,61 +39,77 @@ export const metadata: Metadata = {
 };
 
 export default function HomePage() {
+  const [leadService, ...supportingServices] = services;
+
   return (
     <main id="main">
-      <RevealSection className="home-hero">
-        <div className="hero-inner">
-          <HeroBlock className="hero-copy">
-            <p className="eyebrow">
-              <span />
-              {siteConfig.descriptor}
-            </p>
-            <h1>
-              Make your next move <em>matter.</em>
-            </h1>
-            <p className="hero-description">
-              We bring strategy, design, and technology together to make digital
-              work clearer, more useful, and ready for what comes next.
-            </p>
-            <div className="hero-actions">
-              <Link className="button button-dark" href="/contact">
-                Start a conversation <ArrowUpRight aria-hidden="true" size={16} />
-              </Link>
-              <Link className="text-link" href="/services">
-                Explore our services <ArrowDownRight aria-hidden="true" size={16} />
-              </Link>
-            </div>
-            <div className="hero-stats">
-              <StatCounter value={services.length} label="Capabilities" />
-              <StatCounter value={industries.length} label="Industries" delay={0.1} />
-              <StatCounter value={processSteps.length} label="Process steps" delay={0.2} />
-            </div>
-            <p className="hero-note">
-              Independent perspective. Thoughtful delivery. No borrowed
-              playbook.
-            </p>
-          </HeroBlock>
+      <section className="hero" id="hero">
+        <div aria-hidden="true" className="hero-stage">
+          <HeroVisual />
+        </div>
+        <div aria-hidden="true" className="hero-scrim" />
 
-          <HeroBlock className="hero-composition" aria-label="Abstract studio artwork">
-            <div className="hero-composition-top">
-              <span>Ideas into action</span>
-              <span>01 — 04</span>
-            </div>
-            <div className="orbit orbit-one" />
-            <div className="orbit orbit-two" />
-            <div className="orbit orbit-three" />
-            <div className="hero-sun" />
-            <div className="hero-composition-bottom">
-              <span>Strategy / Design / Technology</span>
-              <MoveUpRight aria-hidden="true" size={18} />
-            </div>
-          </HeroBlock>
+        <div className="content-width">
+          <div className="hero-content">
+            <HeroBlock delay={0.05}>
+              <p className="eyebrow hero-eyebrow">
+                <span />
+                {siteConfig.descriptor}
+              </p>
+            </HeroBlock>
+
+            <MaskedHeading
+              className="hero-title"
+              lines={[
+                <span key="line-one">Make your next move</span>,
+                <em key="line-two">matter.</em>,
+              ]}
+              tag="h1"
+              trigger="mount"
+            />
+
+            <HeroBlock delay={0.4}>
+              <p className="hero-description">
+                We bring strategy, design, and technology together to make
+                digital work clearer, more useful, and ready for what comes
+                next.
+              </p>
+
+              <div className="hero-actions">
+                <Magnetic>
+                  <Link className="button button-light" href="/contact">
+                    Start a conversation
+                    <ArrowUpRight aria-hidden="true" size={16} />
+                  </Link>
+                </Magnetic>
+                <Link className="text-link" href="/services">
+                  Explore our services
+                  <ArrowDownRight aria-hidden="true" size={16} />
+                </Link>
+              </div>
+
+              <div className="hero-stats">
+                <StatCounter value={services.length} label="Capabilities" />
+                <StatCounter
+                  value={industries.length}
+                  label="Industries"
+                  delay={0.1}
+                />
+                <StatCounter
+                  value={processSteps.length}
+                  label="Process steps"
+                  delay={0.2}
+                />
+              </div>
+
+              <p className="hero-cue">
+                <span aria-hidden="true" />
+                Scroll to explore
+              </p>
+            </HeroBlock>
+          </div>
         </div>
-        <div className="hero-stamp">
-          <span>Small enough to care</span>
-          <span>Built to think bigger</span>
-        </div>
-      </RevealSection>
+      </section>
 
       <Marquee items={services.map((service) => service.title)} />
 
@@ -99,10 +117,13 @@ export default function HomePage() {
         <p className="eyebrow">
           <span />A useful kind of independent
         </p>
-        <p className="intro-statement">
-          Good digital work isn&apos;t a collection of deliverables. It&apos;s a
-          better way for people to find you, understand you, and move forward.
-        </p>
+        <Parallax distance={7}>
+          <p className="intro-statement">
+            Good digital work isn&apos;t a collection of deliverables. It&apos;s
+            a better way for people to find you, understand you, and move
+            forward.
+          </p>
+        </Parallax>
         <Link href="/about" className="underlined-link">
           Meet the studio <ArrowUpRight aria-hidden="true" size={15} />
         </Link>
@@ -120,15 +141,57 @@ export default function HomePage() {
               All services <ArrowUpRight aria-hidden="true" size={15} />
             </Link>
           </div>
-          <div className="service-grid">
-            {services.slice(0, 6).map((service, index) => (
-              <ServiceCard key={service.slug} service={service} index={index} />
-            ))}
+
+          <div className="service-feature-grid">
+            <Parallax className="service-feature-slot" distance={5}>
+              <Link
+                className="service-feature"
+                href={`/services/${leadService.slug}`}
+              >
+                <span aria-hidden="true" className="service-feature-art" />
+                <span className="service-feature-index">01</span>
+                <p className="service-feature-kicker">Lead discipline</p>
+                <h3>{leadService.title}</h3>
+                <p className="service-feature-copy">{leadService.summary}</p>
+                <ul className="service-feature-tags">
+                  {leadService.deliverables.slice(0, 3).map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+                <span className="service-feature-cta">
+                  Explore capability
+                  <ArrowUpRight aria-hidden="true" size={16} />
+                </span>
+              </Link>
+            </Parallax>
+
+            <ul className="service-rail">
+              {supportingServices.slice(0, 5).map((service, index) => (
+                <li key={service.slug}>
+                  <Link href={`/services/${service.slug}`}>
+                    <span className="service-rail-index">
+                      {String(index + 2).padStart(2, "0")}
+                    </span>
+                    <span className="service-rail-body">
+                      <span className="service-rail-title">
+                        {service.title}
+                      </span>
+                      <span className="service-rail-summary">
+                        {service.summary}
+                      </span>
+                    </span>
+                    <ArrowUpRight aria-hidden="true" size={17} />
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
+
           <div className="service-more">
             <span>From a focused sprint to a connected growth program.</span>
             <Link href="/services">
-              Explore all 12 capabilities <ArrowUpRight aria-hidden="true" size={15} />
+              Explore all {services.length} capabilities
+              <ArrowUpRight aria-hidden="true" size={15} />
             </Link>
           </div>
         </div>
@@ -141,11 +204,12 @@ export default function HomePage() {
               <span />
               How we work
             </p>
-            <h2>
-              Clarity before activity.
-              <br />
-              <em>Progress all the way through.</em>
-            </h2>
+            <MaskedHeading
+              lines={[
+                <span key="p-one">Clarity before activity.</span>,
+                <em key="p-two">Progress all the way through.</em>,
+              ]}
+            />
             <p className="section-lead">
               We make the work visible, keep decisions close to evidence, and
               leave your team better equipped for what follows.
@@ -154,7 +218,7 @@ export default function HomePage() {
               See our process <ArrowUpRight aria-hidden="true" size={15} />
             </Link>
           </div>
-          <ol className="process-list">
+          <ol className="process-list process-rail">
             {processSteps.map((step) => (
               <li key={step.number}>
                 <span className="process-number">{step.number}</span>
@@ -181,9 +245,16 @@ export default function HomePage() {
               View all concepts <ArrowUpRight aria-hidden="true" size={15} />
             </Link>
           </div>
-          <div className="project-grid">
-            {caseStudies.map((project) => (
-              <ProjectCard key={project.slug} project={project} />
+
+          <div className="work-showcase">
+            {caseStudies.map((project, index) => (
+              <Parallax
+                className={`work-slot work-slot-${index + 1}`}
+                distance={index === 1 ? 11 : 5}
+                key={project.slug}
+              >
+                <ProjectCard project={project} />
+              </Parallax>
             ))}
           </div>
         </div>
@@ -196,11 +267,12 @@ export default function HomePage() {
               <span />
               Where we help
             </p>
-            <h2>
-              Different worlds.
-              <br />
-              <em>Shared human needs.</em>
-            </h2>
+            <MaskedHeading
+              lines={[
+                <span key="i-one">Different worlds.</span>,
+                <em key="i-two">Shared human needs.</em>,
+              ]}
+            />
             <Link className="underlined-link" href="/industries">
               Explore industries <ArrowUpRight aria-hidden="true" size={15} />
             </Link>
