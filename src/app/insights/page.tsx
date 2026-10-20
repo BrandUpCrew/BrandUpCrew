@@ -19,7 +19,7 @@ export default function InsightsPage() {
       <PageIntro
         eyebrow="Insights"
         title="A little thinking, made useful."
-        description="Notes on the choices behind good digital work, shared to help you ask better questions and make more confident decisions."
+        description="Notes on the choices behind good digital work. We share them to help you ask better questions and make more confident decisions."
       />
       <section className="section-block">
         <div className="content-width">
