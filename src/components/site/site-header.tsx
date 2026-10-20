@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { ArrowUpRight, Menu, X } from "lucide-react";
 
 import { siteConfig } from "@/config/site";
+import { ThemeToggle } from "@/components/site/theme-toggle";
 
 const SECONDARY_NAV = [
   { label: "Industries", href: "/industries" },
@@ -74,6 +75,8 @@ export function SiteHeader() {
             Start a project <ArrowUpRight aria-hidden="true" size={15} />
           </Link>
         </nav>
+
+        <ThemeToggle />
 
         <button
           type="button"
