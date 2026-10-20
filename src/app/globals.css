@@ -1218,6 +1218,7 @@ html[data-initial-loader="leaving"] .brand-loader-initial {
   background:
     radial-gradient(ellipse at 69% 48%, rgb(69 88 135 / 16%), transparent 45%),
     linear-gradient(115deg, #080a10, #11151d 68%, #080a10);
+  transition: opacity 280ms var(--ease-out-soft);
 }
 
 .hero-visual-fallback::before,
@@ -1263,7 +1264,7 @@ html[data-initial-loader="leaving"] .brand-loader-initial {
     linear-gradient(135deg, #1c2636, #0d121a);
 }
 
-.hero-visual[data-webgl="true"] .hero-visual-fallback {
+.hero-visual[data-webgl-ready="true"] .hero-visual-fallback {
   opacity: 0.12;
 }
 

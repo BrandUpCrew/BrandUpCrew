@@ -41,7 +41,7 @@ const MODULES: ModuleConfig[] = [
     width: 3.7,
     height: 2.38,
     formationOffset: [0.1, -0.18, 1.7],
-    delay: 0.12,
+    delay: 0.08,
   },
   {
     id: "identity",
@@ -50,7 +50,7 @@ const MODULES: ModuleConfig[] = [
     width: 1.7,
     height: 1.17,
     formationOffset: [-0.55, 0.28, 1.1],
-    delay: 0.42,
+    delay: 0.26,
   },
   {
     id: "engineering",
@@ -59,7 +59,7 @@ const MODULES: ModuleConfig[] = [
     width: 1.78,
     height: 1.2,
     formationOffset: [0.45, 0.42, 1.2],
-    delay: 0.68,
+    delay: 0.44,
   },
   {
     id: "growth",
@@ -68,7 +68,7 @@ const MODULES: ModuleConfig[] = [
     width: 1.8,
     height: 1.2,
     formationOffset: [0.5, -0.38, 1.15],
-    delay: 0.94,
+    delay: 0.62,
   },
 ];
 
@@ -307,7 +307,7 @@ function InterfaceModule({
     const time = state.clock.elapsedTime;
     const reveal = reduced
       ? 1
-      : THREE.MathUtils.smoothstep(time - config.delay, 0, 1.55);
+      : THREE.MathUtils.smoothstep(time - config.delay, 0, 1.1);
     const scroll = THREE.MathUtils.clamp(scrollStore.hero, 0, 1);
     const dt = Math.min(delta, 0.05);
     group.position.x =
@@ -449,7 +449,7 @@ function Connector({
   useFrame((state) => {
     const reveal = reduced
       ? 1
-      : THREE.MathUtils.smoothstep(state.clock.elapsedTime - 0.78, 0, 1.45);
+      : THREE.MathUtils.smoothstep(state.clock.elapsedTime - 0.5, 0, 1.05);
     const phase = (state.clock.elapsedTime * 0.12 + index * 0.28) % 1;
     pulse.position.copy(curve.getPointAt(phase));
     pulse.scale.setScalar(reduced ? 0 : reveal);
@@ -485,7 +485,7 @@ function CameraRig({
     const scroll = THREE.MathUtils.clamp(scrollStore.hero, 0, 1);
     const intro = reduced
       ? 1
-      : THREE.MathUtils.smoothstep(state.clock.elapsedTime, 0, 2.2);
+      : THREE.MathUtils.smoothstep(state.clock.elapsedTime, 0, 1.4);
     const px = reduced ? 0 : state.pointer.x;
     const py = reduced ? 0 : state.pointer.y;
     camera.position.x = THREE.MathUtils.damp(
@@ -516,7 +516,17 @@ function CameraRig({
   return null;
 }
 
-function Scene({ quality, reduced }: { quality: Quality; reduced: boolean }) {
+function Scene({
+  quality,
+  reduced,
+  onReady,
+}: {
+  quality: Quality;
+  reduced: boolean;
+  onReady: () => void;
+}) {
+  useEffect(() => onReady(), [onReady]);
+
   const product = MODULES[0];
   const routes = MODULES.slice(1).map((module) => ({
     from: [
@@ -607,7 +617,13 @@ function Scene({ quality, reduced }: { quality: Quality; reduced: boolean }) {
   );
 }
 
-export default function HeroScene({ active = true }: { active?: boolean }) {
+export default function HeroScene({
+  active = true,
+  onReady,
+}: {
+  active?: boolean;
+  onReady: () => void;
+}) {
   const quality = useMemo(() => getQuality(), []);
   const reduced = useMemo(
     () =>
@@ -645,7 +661,7 @@ export default function HeroScene({ active = true }: { active?: boolean }) {
       }}
     >
       <Suspense fallback={null}>
-        <Scene quality={quality} reduced={reduced} />
+        <Scene quality={quality} reduced={reduced} onReady={onReady} />
       </Suspense>
     </Canvas>
   );

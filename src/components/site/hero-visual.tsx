@@ -1,7 +1,13 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
 
 /** The WebGL bundle is only fetched in the browser, after a capability check. */
 const HeroScene = dynamic(() => import("@/components/three/hero-scene"), {
@@ -50,6 +56,8 @@ export function HeroVisual() {
     getServerWebGLSupport,
   );
   const [inView, setInView] = useState(true);
+  const [webglReady, setWebglReady] = useState(false);
+  const markWebGLReady = useCallback(() => setWebglReady(true), []);
 
   useEffect(() => {
     const element = host.current;
@@ -64,9 +72,9 @@ export function HeroVisual() {
   }, []);
 
   return (
-    <div className="hero-visual" data-webgl={enabled} ref={host}>
+    <div className="hero-visual" data-webgl-ready={webglReady} ref={host}>
       <div aria-hidden="true" className="hero-visual-fallback" />
-      {enabled && <HeroScene active={inView} />}
+      {enabled && <HeroScene active={inView} onReady={markWebGLReady} />}
     </div>
   );
 }

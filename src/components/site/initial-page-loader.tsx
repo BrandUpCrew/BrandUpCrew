@@ -25,25 +25,19 @@ export function InitialPageLoader() {
         delete root.dataset.initialLoader;
         return;
       }
-      leavingTimer = window.setTimeout(
-        () => {
-          delete root.dataset.initialLoader;
-        },
-        220,
-      );
+      leavingTimer = window.setTimeout(() => {
+        delete root.dataset.initialLoader;
+      }, 220);
     };
 
     const timeout = window.setTimeout(leave, maximumWaitMs);
-    const fontsReady = document.fonts?.ready ?? Promise.resolve();
     const layoutPainted = new Promise<void>((resolve) => {
       requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
     });
-    void Promise.all([fontsReady.catch(() => undefined), layoutPainted]).then(
-      () => {
-        if (!active) return;
-        leave();
-      },
-    );
+    void layoutPainted.then(() => {
+      if (!active) return;
+      leave();
+    });
 
     return () => {
       active = false;
