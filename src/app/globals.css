@@ -289,6 +289,202 @@ h3 {
   pointer-events: none;
 }
 
+.brand-loader {
+  --loader-emblem-size: 76px;
+  position: fixed;
+  z-index: 120;
+  inset: 0;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 0;
+  overflow: hidden;
+  padding: max(28px, env(safe-area-inset-top)) 24px
+    max(28px, env(safe-area-inset-bottom));
+  background:
+    radial-gradient(ellipse at 50% 42%, rgb(49 73 142 / 18%), transparent 42%),
+    linear-gradient(145deg, #070b16 0%, #05070f 56%, #0b1020 100%);
+  color: #eef2ff;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition:
+    opacity 480ms var(--ease-out-soft),
+    visibility 480ms var(--ease-out-soft);
+}
+
+.brand-loader-initial {
+  display: none;
+}
+
+html[data-initial-loader="pending"] .brand-loader-initial,
+html[data-initial-loader="leaving"] .brand-loader-initial {
+  display: grid;
+}
+
+html[data-initial-loader="leaving"] .brand-loader-initial {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.brand-loader-emblem-wrap {
+  display: grid;
+  width: calc(var(--loader-emblem-size) + 32px);
+  height: calc(var(--loader-emblem-size) + 32px);
+  place-items: center;
+  perspective: 620px;
+}
+
+.brand-loader-emblem {
+  position: relative;
+  width: var(--loader-emblem-size);
+  height: var(--loader-emblem-size);
+  transform-style: preserve-3d;
+  animation: brand-loader-turn 6.4s cubic-bezier(0.45, 0.05, 0.55, 0.95)
+    infinite;
+}
+
+.brand-loader-emblem-face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: end;
+  justify-content: center;
+  gap: 7px;
+  padding: 20px;
+  border: 1px solid rgb(227 235 255 / 28%);
+  border-radius: 18px;
+  background: linear-gradient(145deg, #6786ff 0%, #3157e9 58%, #1834a8 100%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 42%),
+    0 20px 50px rgb(37 71 240 / 28%);
+  backface-visibility: hidden;
+  transform: translateZ(9px);
+}
+
+.brand-loader-emblem-face span {
+  width: 8px;
+  border-radius: 5px;
+  background: #f4f7ff;
+  box-shadow: 0 0 16px rgb(238 244 255 / 26%);
+}
+
+.brand-loader-emblem-face span:nth-child(1) {
+  height: 22px;
+}
+
+.brand-loader-emblem-face span:nth-child(2) {
+  height: 34px;
+}
+
+.brand-loader-emblem-face span:nth-child(3) {
+  height: 46px;
+}
+
+.brand-loader-emblem-side {
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgb(227 235 255 / 20%);
+  border-radius: 18px;
+  background: linear-gradient(180deg, #2448c8, #102567);
+  transform: rotateY(90deg) translateZ(9px);
+}
+
+.brand-loader-name {
+  margin: 16px 0 0;
+  font-size: 14px;
+  font-weight: 750;
+  line-height: 1.3;
+}
+
+.brand-loader-message {
+  margin: 7px 0 0;
+  color: rgb(222 230 250 / 65%);
+  font-size: 11px;
+  font-weight: 550;
+  line-height: 1.5;
+}
+
+.brand-loader-track {
+  position: relative;
+  width: 116px;
+  height: 2px;
+  margin-top: 22px;
+  overflow: hidden;
+  border-radius: 2px;
+  background: rgb(221 230 255 / 14%);
+}
+
+.brand-loader-track span {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 42%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #4e75ff, #76ddf0);
+  animation: brand-loader-travel 1.25s var(--ease-out-soft) infinite;
+}
+
+.brand-loader-route {
+  --loader-emblem-size: 56px;
+  background:
+    radial-gradient(ellipse at 50% 46%, rgb(49 73 142 / 16%), transparent 40%),
+    rgb(5 7 15 / 94%);
+  backdrop-filter: blur(12px);
+}
+
+.brand-loader-route .brand-loader-emblem-face,
+.brand-loader-route .brand-loader-emblem-side {
+  border-radius: 14px;
+}
+
+.brand-loader-route .brand-loader-emblem-face {
+  gap: 5px;
+  padding: 15px;
+}
+
+.brand-loader-route .brand-loader-emblem-face span {
+  width: 6px;
+}
+
+.brand-loader-route .brand-loader-emblem-face span:nth-child(1) {
+  height: 17px;
+}
+
+.brand-loader-route .brand-loader-emblem-face span:nth-child(2) {
+  height: 26px;
+}
+
+.brand-loader-route .brand-loader-emblem-face span:nth-child(3) {
+  height: 35px;
+}
+
+.brand-loader-route .brand-loader-emblem-side {
+  transform: rotateY(90deg) translateZ(7px);
+}
+
+@keyframes brand-loader-turn {
+  0%,
+  14% {
+    transform: rotateX(-8deg) rotateY(-16deg) translateY(0);
+  }
+  52% {
+    transform: rotateX(7deg) rotateY(164deg) translateY(-4px);
+  }
+  86%,
+  100% {
+    transform: rotateX(-8deg) rotateY(344deg) translateY(0);
+  }
+}
+
+@keyframes brand-loader-travel {
+  from {
+    transform: translateX(-110%);
+  }
+  to {
+    transform: translateX(260%);
+  }
+}
+
 /* ==========================================================================
    Header
    ========================================================================== */
@@ -4803,5 +4999,15 @@ h3 {
 
   body::before {
     animation: none;
+  }
+
+  .brand-loader-emblem,
+  .brand-loader-track span {
+    animation: none;
+  }
+
+  .brand-loader-track span {
+    width: 100%;
+    opacity: 0.65;
   }
 }
