@@ -6,7 +6,7 @@ import { CtaSection } from "@/components/site/cta-section";
 import { PageIntro, SectionHeading } from "@/components/site/page-intro";
 
 export const metadata: Metadata = {
-  title: "About",
+  title: "About Our Digital Studio",
   description:
     "An independent digital studio bringing strategy, design, and technology together around meaningful work.",
   alternates: { canonical: "/about" },
@@ -49,9 +49,9 @@ export default function AboutPage() {
               business question and the finished experience.
             </p>
             <p>
-              Our name is a placeholder while the brand is finalized. The work,
-              standards, and commitments are described here without borrowed
-              client credentials or invented results.
+              BrandUpCrew is the name used for this studio. The work, standards,
+              and commitments are described here without borrowed client
+              credentials or invented results.
             </p>
           </div>
         </div>
