@@ -15,6 +15,8 @@ const HeroScene = dynamic(() => import("@/components/three/hero-scene"), {
   loading: () => null,
 });
 
+const SMALL_SCREEN_QUERY = "(max-width: 900px)";
+
 function supportsWebGL() {
   try {
     const canvas = document.createElement("canvas");
@@ -40,6 +42,20 @@ function getServerWebGLSupport() {
   return false;
 }
 
+function subscribeToSmallScreen(onChange: () => void) {
+  const mediaQuery = window.matchMedia(SMALL_SCREEN_QUERY);
+  mediaQuery.addEventListener("change", onChange);
+  return () => mediaQuery.removeEventListener("change", onChange);
+}
+
+function isSmallScreen() {
+  return window.matchMedia(SMALL_SCREEN_QUERY).matches;
+}
+
+function getServerSmallScreen() {
+  return true;
+}
+
 /**
  * Hosts the 3D hero.
  *
@@ -54,6 +70,11 @@ export function HeroVisual() {
     subscribeToWebGLSupport,
     getWebGLSupport,
     getServerWebGLSupport,
+  );
+  const smallScreen = useSyncExternalStore(
+    subscribeToSmallScreen,
+    isSmallScreen,
+    getServerSmallScreen,
   );
   const [inView, setInView] = useState(true);
   const [webglReady, setWebglReady] = useState(false);
@@ -74,7 +95,9 @@ export function HeroVisual() {
   return (
     <div className="hero-visual" data-webgl-ready={webglReady} ref={host}>
       <div aria-hidden="true" className="hero-visual-fallback" />
-      {enabled && <HeroScene active={inView} onReady={markWebGLReady} />}
+      {enabled && !smallScreen && (
+        <HeroScene active={inView} onReady={markWebGLReady} />
+      )}
     </div>
   );
 }
