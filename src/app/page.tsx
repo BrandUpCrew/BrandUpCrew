@@ -110,29 +110,6 @@ export default function HomePage() {
               </HeroBlock>
             </div>
 
-            <HeroBlock className="hero-detail" delay={0.62}>
-              <div className="hero-detail-card">
-                <p className="hero-detail-kicker">Digital Core</p>
-                <p className="hero-detail-title">
-                  A custom signature system shaped around strategy, experience,
-                  and engineered growth.
-                </p>
-                <ul className="hero-detail-list">
-                  <li>
-                    <span aria-hidden="true">01</span>
-                    Signal-led strategy
-                  </li>
-                  <li>
-                    <span aria-hidden="true">02</span>
-                    Premium interaction design
-                  </li>
-                  <li>
-                    <span aria-hidden="true">03</span>
-                    High-performance delivery
-                  </li>
-                </ul>
-              </div>
-            </HeroBlock>
           </div>
         </div>
       </section>
