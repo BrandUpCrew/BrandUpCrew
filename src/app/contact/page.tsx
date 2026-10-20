@@ -6,7 +6,7 @@ import { PageIntro } from "@/components/site/page-intro";
 import { services } from "@/content/content";
 
 export const metadata: Metadata = {
-  title: "Contact",
+  title: "Start a Digital Project",
   description:
     "Tell us about your project, the challenge you are working through, or the opportunity you see.",
   alternates: { canonical: "/contact" },

@@ -130,6 +130,7 @@ function makeUiTexture(id: ModuleId) {
   const blue = "#385cf4";
   const ink = "#171b24";
   const muted = "#78818f";
+  const fontFamily = getComputedStyle(document.body).fontFamily;
   const light = id === "product" || id === "identity";
   context.fillStyle = light ? "#f3f5f7" : "#111722";
   context.fillRect(0, 0, w, h);
@@ -142,7 +143,7 @@ function makeUiTexture(id: ModuleId) {
     weight = 500,
   ) => {
     context.fillStyle = color;
-    context.font = `${weight} ${size}px Manrope, Arial, sans-serif`;
+    context.font = `${weight} ${size}px ${fontFamily}`;
     context.fillText(value, x, y);
   };
   const rect = (
@@ -202,7 +203,7 @@ function makeUiTexture(id: ModuleId) {
     rect(396, 232, 164, 124, "#d1c4ae", 3);
     rect(576, 232, 188, 124, "#222833", 3);
     drawText("Aa", 44, 427, 46, ink, 500);
-    drawText("Newsreader / Manrope", 151, 414, 16, ink, 600);
+    drawText("Montserrat / Variable", 151, 414, 16, ink, 600);
     drawText("TYPE, COLOR, MOTION", 151, 442, 11, muted, 600);
   } else if (id === "engineering") {
     rect(0, 0, w, 56, "#1b2431");

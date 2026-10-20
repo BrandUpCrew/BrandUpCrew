@@ -5,7 +5,7 @@ import { PageIntro, SectionHeading } from "@/components/site/page-intro";
 import { industries } from "@/content/content";
 
 export const metadata: Metadata = {
-  title: "Industries",
+  title: "Industries We Support",
   description:
     "Digital design, technology, and growth support for teams across a range of sectors.",
   alternates: { canonical: "/industries" },

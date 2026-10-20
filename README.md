@@ -1,8 +1,8 @@
-# Independent Studio
+# BrandUpCrew
 
 > **A digital studio website that turns strategy, design, and technology into a clear path for business growth.**
 
-Independent Studio is a public-facing website for an independent digital agency. It explains the studio's services, shares its approach, and helps potential clients understand how thoughtful digital work can support their business goals.
+BrandUpCrew is a public-facing website for an independent digital agency. It explains the studio's services, shares its approach, and helps potential clients understand how thoughtful digital work can support their business goals.
 
 ## Purpose
 
@@ -10,14 +10,14 @@ The website brings the studio's offering into one clear experience: visitors can
 
 ## What the website offers
 
-| Area | What visitors can explore |
-| --- | --- |
+| Area                 | What visitors can explore                                                                                                                                             |
+| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Digital services** | Web design and development, custom software, branding, UI/UX, SEO, paid advertising, social media, content, automation, conversion optimization, and growth strategy. |
-| **Industries** | Perspectives tailored to professional services, technology, health and wellbeing, education, commerce, and nonprofits. |
-| **Selected work** | Demonstration case studies that illustrate how a project can be presented, from its challenge through its proposed approach. |
-| **Insights** | Articles on digital strategy, technical SEO, design, and practical ways to improve digital experiences. |
-| **Studio approach** | A clear process focused on listening, finding priorities, making and testing, then learning and improving. |
-| **Client inquiries** | A contact form for prospective clients to describe their needs and start a conversation. |
+| **Industries**       | Perspectives tailored to professional services, technology, health and wellbeing, education, commerce, and nonprofits.                                                |
+| **Selected work**    | Demonstration case studies that illustrate how a project can be presented, from its challenge through its proposed approach.                                          |
+| **Insights**         | Articles on digital strategy, technical SEO, design, and practical ways to improve digital experiences.                                                               |
+| **Studio approach**  | A clear process focused on listening, finding priorities, making and testing, then learning and improving.                                                            |
+| **Client inquiries** | A contact form for prospective clients to describe their needs and start a conversation.                                                                              |
 
 ## How it supports prospective clients
 

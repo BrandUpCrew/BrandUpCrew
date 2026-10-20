@@ -1,15 +1,16 @@
 import type { Metadata, Viewport } from "next";
-import { Manrope, Newsreader } from "next/font/google";
+import { Montserrat } from "next/font/google";
 
 import { siteConfig } from "@/config/site";
 import { SiteShell } from "@/components/site/site-shell";
 
 import "./globals.css";
 
-const sans = Manrope({ subsets: ["latin"], variable: "--font-manrope" });
-const display = Newsreader({
+const montserrat = Montserrat({
   subsets: ["latin"],
-  variable: "--font-newsreader",
+  weight: "variable",
+  display: "swap",
+  variable: "--font-montserrat",
 });
 
 export const metadata: Metadata = {
@@ -52,11 +53,12 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang={siteConfig.locale} data-scroll-behavior="smooth">
-      <body
-        className={`${sans.variable} ${display.variable}`}
-        suppressHydrationWarning
-      >
+    <html
+      lang={siteConfig.locale}
+      className={montserrat.variable}
+      data-scroll-behavior="smooth"
+    >
+      <body suppressHydrationWarning>
         <SiteShell>{children}</SiteShell>
       </body>
     </html>

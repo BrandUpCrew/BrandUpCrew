@@ -6,7 +6,7 @@ import { PageIntro, SectionHeading } from "@/components/site/page-intro";
 import { caseStudies } from "@/content/content";
 
 export const metadata: Metadata = {
-  title: "Selected work",
+  title: "Digital Work & Demonstration Concepts",
   description:
     "Explore demonstration concepts that illustrate our approach to digital design, technology, and growth.",
   alternates: { canonical: "/work" },
