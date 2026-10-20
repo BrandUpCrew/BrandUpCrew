@@ -151,58 +151,60 @@ export function TeamProfilePage({
         </div>
       </section>
 
-      <section
-        className="section-block team-profile-services"
-        aria-labelledby="team-profile-services-title"
-      >
-        <div className="content-width">
-          <div className="section-heading">
-            <p className="eyebrow">
-              <span />
-              Ways to work together
-            </p>
-            <h2 id="team-profile-services-title">Services and support</h2>
-            <p>
-              Possible areas of support based on this member’s stated
-              specialization. The project scope and deliverables are agreed
-              before work begins.
-            </p>
+      {member.services.length > 0 && (
+        <section
+          className="section-block team-profile-services"
+          aria-labelledby="team-profile-services-title"
+        >
+          <div className="content-width">
+            <div className="section-heading">
+              <p className="eyebrow">
+                <span />
+                Ways to work together
+              </p>
+              <h2 id="team-profile-services-title">Services and support</h2>
+              <p>
+                Possible areas of support based on this member’s stated
+                specialization. The project scope and deliverables are agreed
+                before work begins.
+              </p>
+            </div>
+            <div className="team-profile-service-grid">
+              {member.services.map((service, index) => (
+                <article
+                  className="team-profile-service-card"
+                  key={service.title}
+                >
+                  <span className="team-profile-card-index">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <h3>{service.title}</h3>
+                  <p>{service.description}</p>
+                  <div>
+                    <h4>Problem addressed</h4>
+                    <p>{service.problem}</p>
+                  </div>
+                  <div>
+                    <h4>Possible deliverables</h4>
+                    <ul>
+                      {service.deliverables.map((deliverable) => (
+                        <li key={deliverable}>{deliverable}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  <p className="team-profile-service-fit">
+                    <strong>May suit:</strong> {service.suitableFor}
+                  </p>
+                  <Link className="underlined-link" href={inquiryHref}>
+                    Discuss this service{" "}
+                    <ArrowUpRight aria-hidden="true" size={14} />
+                  </Link>
+                </article>
+              ))}
+            </div>
           </div>
-          <div className="team-profile-service-grid">
-            {member.services.map((service, index) => (
-              <article
-                className="team-profile-service-card"
-                key={service.title}
-              >
-                <span className="team-profile-card-index">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-                <h3>{service.title}</h3>
-                <p>{service.description}</p>
-                <div>
-                  <h4>Problem addressed</h4>
-                  <p>{service.problem}</p>
-                </div>
-                <div>
-                  <h4>Possible deliverables</h4>
-                  <ul>
-                    {service.deliverables.map((deliverable) => (
-                      <li key={deliverable}>{deliverable}</li>
-                    ))}
-                  </ul>
-                </div>
-                <p className="team-profile-service-fit">
-                  <strong>May suit:</strong> {service.suitableFor}
-                </p>
-                <Link className="underlined-link" href={inquiryHref}>
-                  Discuss this service{" "}
-                  <ArrowUpRight aria-hidden="true" size={14} />
-                </Link>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {member.experience && (
         <section className="section-block team-profile-experience">
@@ -292,51 +294,55 @@ export function TeamProfilePage({
         </div>
       </section>
 
-      <section className="section-block team-profile-process">
-        <div className="content-width">
-          <div className="section-heading">
-            <p className="eyebrow">
-              <span />A considered approach
-            </p>
-            <h2>How the work takes shape</h2>
+      {member.process.length > 0 && (
+        <section className="section-block team-profile-process">
+          <div className="content-width">
+            <div className="section-heading">
+              <p className="eyebrow">
+                <span />A considered approach
+              </p>
+              <h2>How the work takes shape</h2>
+            </div>
+            <ol className="team-profile-process-list">
+              {member.process.map((step, index) => (
+                <li key={step.title}>
+                  <span>{String(index + 1).padStart(2, "0")}</span>
+                  <div>
+                    <h3>{step.title}</h3>
+                    <p>{step.description}</p>
+                  </div>
+                  <ArrowDownRight aria-hidden="true" size={18} />
+                </li>
+              ))}
+            </ol>
           </div>
-          <ol className="team-profile-process-list">
-            {member.process.map((step, index) => (
-              <li key={step.title}>
-                <span>{String(index + 1).padStart(2, "0")}</span>
-                <div>
-                  <h3>{step.title}</h3>
-                  <p>{step.description}</p>
-                </div>
-                <ArrowDownRight aria-hidden="true" size={18} />
-              </li>
-            ))}
-          </ol>
-        </div>
-      </section>
+        </section>
+      )}
 
-      <section className="section-block team-profile-faq">
-        <div className="content-width team-profile-faq-inner">
-          <div className="section-heading">
-            <p className="eyebrow">
-              <span />
-              Helpful context
-            </p>
-            <h2>Frequently asked questions</h2>
+      {member.faqs.length > 0 && (
+        <section className="section-block team-profile-faq">
+          <div className="content-width team-profile-faq-inner">
+            <div className="section-heading">
+              <p className="eyebrow">
+                <span />
+                Helpful context
+              </p>
+              <h2>Frequently asked questions</h2>
+            </div>
+            <div className="team-profile-faq-list">
+              {member.faqs.map((faq) => (
+                <details key={faq.question}>
+                  <summary>
+                    {faq.question}
+                    <ArrowDownRight aria-hidden="true" size={16} />
+                  </summary>
+                  <p>{faq.answer}</p>
+                </details>
+              ))}
+            </div>
           </div>
-          <div className="team-profile-faq-list">
-            {member.faqs.map((faq) => (
-              <details key={faq.question}>
-                <summary>
-                  {faq.question}
-                  <ArrowDownRight aria-hidden="true" size={16} />
-                </summary>
-                <p>{faq.answer}</p>
-              </details>
-            ))}
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       <section className="team-profile-contact" id="contact">
         <div className="content-width team-profile-contact-inner">
