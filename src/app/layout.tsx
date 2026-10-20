@@ -4,6 +4,7 @@ import Script from "next/script";
 
 import { siteConfig } from "@/config/site";
 import { SiteShell } from "@/components/site/site-shell";
+import { initializeThemeScript } from "@/lib/theme";
 
 import "./globals.css";
 
@@ -45,7 +46,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f3f5fc" },
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
     { media: "(prefers-color-scheme: dark)", color: "#04060f" },
   ],
 };
@@ -61,6 +62,9 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body suppressHydrationWarning>
+        <Script id="initialize-color-theme" strategy="beforeInteractive">
+          {initializeThemeScript}
+        </Script>
         <Script id="initial-page-loader-gate" strategy="beforeInteractive">
           {`document.documentElement.dataset.initialLoader = "pending";`}
         </Script>
