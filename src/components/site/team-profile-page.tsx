@@ -130,14 +130,22 @@ export function TeamProfilePage({
               </li>
             ))}
           </ul>
-          {member.technologies.length > 0 && (
+          {member.technologyGroups.length > 0 && (
             <div className="team-profile-technologies">
-              <h3>Verified tools and platforms</h3>
-              <ul>
-                {member.technologies.map((technology) => (
-                  <li key={technology}>{technology}</li>
-                ))}
-              </ul>
+              <h3>Technologies and tools</h3>
+              {member.technologyGroups.map((group) => (
+                <div
+                  className="team-profile-technology-group"
+                  key={group.title}
+                >
+                  <h4>{group.title}</h4>
+                  <ul>
+                    {group.items.map((technology) => (
+                      <li key={technology}>{technology}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
             </div>
           )}
         </div>
