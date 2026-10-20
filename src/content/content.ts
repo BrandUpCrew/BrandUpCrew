@@ -783,26 +783,36 @@ export const processSteps = [
 export const teamDisciplines = [
   {
     number: "01",
-    name: "Strategy & design",
-    description:
-      "Shapes the brief, the story, and the decisions that keep the work useful from the first question to the final handoff.",
-    focus: "Customer journeys, brand clarity, and actionable positioning.",
+    name: "Name to be added",
+    role: "Strategy & design",
+    portrait: null as string | null,
+    linkedin: null as string | null,
+    bio: "Shapes the brief, the story, and the decisions that keep the work useful from the first question to the final handoff.",
+    expertise: ["Customer journeys", "Brand clarity", "Actionable positioning"],
     accent: "sage",
   },
   {
     number: "02",
-    name: "Product & experience",
-    description:
-      "Turns complexity into clear systems, making the important work easier to navigate, trust, and maintain.",
-    focus: "UX systems, research synthesis, and digital experience strategy.",
+    name: "Name to be added",
+    role: "Product & experience",
+    portrait: null as string | null,
+    linkedin: null as string | null,
+    bio: "Turns complexity into clear systems, making the important work easier to navigate, trust, and maintain.",
+    expertise: [
+      "UX systems",
+      "Research synthesis",
+      "Digital experience strategy",
+    ],
     accent: "rose",
   },
   {
     number: "03",
-    name: "Technology & growth",
-    description:
-      "Connects product intent with sound implementation, thoughtful performance, and the practical realities of ongoing delivery.",
-    focus: "Web foundations, integrations, and measurable product improvements.",
+    name: "Name to be added",
+    role: "Technology & growth",
+    portrait: null as string | null,
+    linkedin: null as string | null,
+    bio: "Connects product intent with sound implementation, thoughtful performance, and the practical realities of ongoing delivery.",
+    expertise: ["Web foundations", "Integrations", "Product improvement"],
     accent: "blue",
   },
 ];
