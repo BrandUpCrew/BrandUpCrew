@@ -100,7 +100,7 @@ test("team profiles use the correct names and portraits in both themes", async (
 
   const teamSection = page.locator("section.team-section");
   const profiles = teamSection.locator(".team-card");
-  await expect(profiles).toHaveCount(3);
+  await expect(profiles).toHaveCount(4);
 
   const firstProfile = profiles.first();
   await expect(
@@ -111,34 +111,44 @@ test("team profiles use the correct names and portraits in both themes", async (
     "Sabir Ali, Full-Stack Engineer",
   );
   await expect(firstProfile).toContainText(
-    "Sabir Ali is a Full-Stack Engineer specializing in building scalable web applications, modern digital products, and reliable business solutions.",
+    "Sabir Ali is a Full-Stack Engineer who builds modern web applications across frontend experiences, backend services, APIs, and data stores.",
   );
   await expect(
-    profiles.nth(1).getByRole("heading", { name: "Suleman Sagheer" }),
+    profiles.nth(1).getByRole("heading", { name: "Sulman Sagheer" }),
   ).toBeVisible();
   await expect(profiles.nth(1)).toContainText(
     "WordPress & WooCommerce Specialist",
   );
-  await expect(profiles.nth(1)).toContainText("5+ years of experience");
   await expect(profiles.nth(1).locator("img")).toHaveAttribute(
     "alt",
-    "Suleman Sagheer, WordPress & WooCommerce Specialist",
+    "Sulman Sagheer, WordPress & WooCommerce Specialist",
   );
   await expect(
     profiles.nth(2).getByRole("heading", { name: "Ali Haider" }),
   ).toBeVisible();
-  await expect(profiles.nth(2)).toContainText(
-    "SEO Specialist & Organic Growth Expert",
-  );
-  await expect(profiles.nth(2)).toContainText(
-    "search engine optimization and organic growth",
-  );
+  await expect(profiles.nth(2)).toContainText("SEO Specialist");
+  await expect(profiles.nth(2)).toContainText("organic search visibility");
   await expect(profiles.nth(2).locator("img")).toHaveAttribute(
     "alt",
-    "Ali Haider, SEO Specialist & Organic Growth Expert",
+    "Ali Haider, SEO Specialist",
   );
+  const fourthProfile = profiles.nth(3);
+  await expect(
+    fourthProfile.getByRole("heading", { name: "Muhammad Abdullah" }),
+  ).toBeVisible();
+  await expect(fourthProfile).toContainText("SEO Specialist");
+  await expect(
+    fourthProfile.getByRole("img", {
+      name: "Portrait pending for SEO Specialist profile",
+    }),
+  ).toBeVisible();
   const profileImages = teamSection.locator(".team-profile-image");
   await expect(profileImages).toHaveCount(3);
+  await expect(
+    teamSection.getByRole("img", {
+      name: "Portrait pending for SEO Specialist profile",
+    }),
+  ).toHaveCount(1);
   for (const image of await profileImages.all()) {
     await expect(image).toHaveCSS("object-fit", "cover");
     await expect
@@ -162,41 +172,46 @@ test("team profiles use the correct names and portraits in both themes", async (
       profiles.nth(0).getByRole("heading", { name: "Sabir Ali" }),
     ).toBeVisible();
     await expect(
-      profiles.nth(1).getByRole("heading", { name: "Suleman Sagheer" }),
+      profiles.nth(1).getByRole("heading", { name: "Sulman Sagheer" }),
     ).toBeVisible();
     await expect(
       profiles.nth(2).getByRole("heading", { name: "Ali Haider" }),
+    ).toBeVisible();
+    await expect(
+      profiles.nth(3).getByRole("heading", { name: "Muhammad Abdullah" }),
     ).toBeVisible();
   }
 
   const expertise = [
     [
-      "Product Strategy",
-      "Full-Stack Development",
-      "Web Application Architecture",
-      "UI/UX Implementation",
-      "API Development",
-      "Performance Optimization",
-      "System Design & Scalable Architecture",
+      "Full-Stack Web Development",
+      "Frontend Architecture & Responsive UI",
+      "Backend Development & REST API Design",
+      "Database Design & Integration",
+      "Authentication & Authorization",
+      "Application Performance & Optimization",
+      "Maintainable and Scalable Architecture",
+      "Third-Party Service Integration",
     ],
     [
-      "WordPress Development",
-      "WooCommerce Solutions",
-      "Responsive Web Design",
-      "Website SEO Optimization",
-      "E-commerce Development",
-      "Website Performance Optimization",
+      "WordPress Website Development",
+      "WooCommerce Store Development",
+      "E-commerce Website Setup",
+      "Product and Store Structure",
+      "Responsive Storefront Design",
+      "Website SEO and Performance Improvements",
     ],
     [
       "Technical SEO",
-      "On-Page & Off-Page SEO",
+      "On-Page SEO and Metadata Updates",
       "Keyword Research & Search Intent",
+      "Competitor Search Analysis",
       "SEO Content Strategy",
-      "Website Audits & Optimization",
-      "Organic Traffic Growth",
-      "Search Performance Analysis",
-      "SEO Reporting & Analytics",
+      "Website SEO Audits",
+      "Search Performance Monitoring",
+      "SEO Recommendations and Reporting",
     ],
+    ["Search Engine Optimization (SEO)"],
   ];
   for (const [index, skills] of expertise.entries()) {
     const card = profiles.nth(index);
