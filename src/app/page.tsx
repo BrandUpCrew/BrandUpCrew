@@ -248,7 +248,7 @@ export default function HomePage() {
         </div>
       </RevealSection>
 
-      <RevealSection className="section-block team-section">
+      <RevealSection className="section-block team-section" id="team">
         <div className="content-width">
           <div className="section-heading-row">
             <SectionHeading
@@ -267,19 +267,32 @@ export default function HomePage() {
                 key={member.number}
                 className={`team-card team-card-${member.accent}`}
               >
-                <div className="team-profile-portrait">
+                <Link
+                  aria-label={`View ${member.name}'s full profile`}
+                  className="team-profile-portrait team-profile-link"
+                  href={`/team/${member.slug}`}
+                >
                   <TeamPortrait
                     name={member.name}
                     number={member.number}
                     role={member.role}
                     src={member.portrait}
                   />
-                </div>
+                </Link>
                 <div className="team-meta">
                   <p className="team-role">{member.role}</p>
-                  <h3>{member.name}</h3>
+                  <h3>
+                    <Link href={`/team/${member.slug}`}>{member.name}</Link>
+                  </h3>
                 </div>
                 <p className="team-bio">{member.bio}</p>
+                <Link
+                  className="underlined-link team-profile-cta"
+                  href={`/team/${member.slug}`}
+                >
+                  View Full Profile{" "}
+                  <ArrowUpRight aria-hidden="true" size={15} />
+                </Link>
                 <details className="team-profile-details">
                   <summary>
                     Areas of expertise
@@ -290,12 +303,17 @@ export default function HomePage() {
                       <li key={skill}>{skill}</li>
                     ))}
                   </ul>
-                  {member.linkedin && (
-                    <a href={member.linkedin} rel="noreferrer" target="_blank">
-                      LinkedIn profile
+                  {member.socialLinks.map((social) => (
+                    <a
+                      href={social.href}
+                      key={social.href}
+                      rel="noreferrer"
+                      target="_blank"
+                    >
+                      {social.label}
                       <ArrowUpRight aria-hidden="true" size={14} />
                     </a>
-                  )}
+                  ))}
                 </details>
               </article>
             ))}
