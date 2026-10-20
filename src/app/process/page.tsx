@@ -6,7 +6,7 @@ import { PageIntro, SectionHeading } from "@/components/site/page-intro";
 import { processSteps } from "@/content/content";
 
 export const metadata: Metadata = {
-  title: "Our process",
+  title: "Our Digital Project Process",
   description:
     "A collaborative, evidence-informed approach from discovery through delivery and continuous improvement.",
   alternates: { canonical: "/process" },
