@@ -4827,7 +4827,7 @@ html[data-initial-loader="leaving"] .brand-loader-initial {
   font-weight: 700;
 }
 
-.form-field label > span:not(.optional-label),
+.form-field > label > span:not(.optional-label),
 .form-field legend > span:not(.optional-label) {
   color: #b42318;
 }
@@ -5436,6 +5436,17 @@ html[data-initial-loader="leaving"] .brand-loader-initial {
   }
 }
 
+@media (max-width: 1000px) {
+  .hero {
+    justify-content: flex-start;
+    padding-top: 40px;
+  }
+
+  .hero-shell {
+    min-height: auto;
+  }
+}
+
 @media (max-width: 900px) {
   .content-width,
   .site-header-inner,
@@ -5445,17 +5456,39 @@ html[data-initial-loader="leaving"] .brand-loader-initial {
     width: min(100% - 48px, 1280px);
   }
 
-  .hero {
-    padding: 64px 0 56px;
+  .site-header-inner {
+    justify-content: flex-start;
+    gap: 12px;
   }
 
-  .hero-stage {
-    inset: 0 0 0 20%;
+  .desktop-nav {
+    display: none;
+  }
+
+  .theme-toggle {
+    margin-left: auto;
+  }
+
+  .nav-toggle {
+    display: grid;
+  }
+
+  .mobile-nav {
+    display: block;
+  }
+
+  .hero-stage,
+  .hero-scrim {
+    display: none;
+  }
+
+  .hero {
+    padding: 40px 0 56px;
   }
 
   .hero-shell {
-    grid-template-columns: minmax(0, 580px) minmax(220px, 1fr);
-    gap: 36px;
+    grid-template-columns: minmax(0, 1fr);
+    min-height: auto;
   }
 
   .hero-detail-card {
@@ -5596,7 +5629,7 @@ html[data-initial-loader="leaving"] .brand-loader-initial {
 
   .hero {
     min-height: min(94svh, 860px);
-    padding: 112px 0 60px;
+    padding: 40px 0 60px;
   }
 
   .hero-stage {
@@ -5754,6 +5787,10 @@ html[data-initial-loader="leaving"] .brand-loader-initial {
     grid-template-columns: 32px 1fr 18px;
     gap: 12px;
     padding-inline: 12px 10px;
+  }
+
+  .process-rail li {
+    grid-template-columns: minmax(0, 1fr) 18px;
   }
 
   .project-art {
@@ -6029,6 +6066,14 @@ html[data-initial-loader="leaving"] .brand-loader-initial {
   .footer-bottom,
   .page-intro-inner {
     width: min(100% - 32px, 1280px);
+  }
+
+  .process-commitments h2 {
+    font-size: clamp(34px, 10vw, 37px);
+  }
+
+  .section-heading h2 {
+    font-size: clamp(32px, 10vw, 38px);
   }
 
   .hero-actions {
