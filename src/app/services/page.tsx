@@ -8,7 +8,7 @@ import { PageIntro, SectionHeading } from "@/components/site/page-intro";
 import { services } from "@/content/content";
 
 export const metadata: Metadata = {
-  title: "Services",
+  title: "Digital Strategy, Design & Development Services",
   description:
     "Explore strategy, design, development, and marketing services built around your business priorities.",
   alternates: { canonical: "/services" },
