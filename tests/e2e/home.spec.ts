@@ -309,6 +309,34 @@ test("mobile navigation works and the home page fits the viewport", async ({
   ).toBeTruthy();
 });
 
+test("tablet and mobile header controls stay grouped at the right", async ({
+  page,
+}) => {
+  await page.goto("/");
+
+  for (const width of [320, 390, 680, 768, 900]) {
+    await page.setViewportSize({ width, height: 844 });
+    const themeToggle = page.locator(".theme-toggle");
+    const navToggle = page.locator(".nav-toggle");
+    await expect(themeToggle).toBeVisible();
+    await expect(navToggle).toBeVisible();
+    await expect(page.locator(".desktop-nav")).toBeHidden();
+
+    const gap = await page.evaluate(() => {
+      const theme = document.querySelector(".theme-toggle");
+      const menu = document.querySelector(".nav-toggle");
+      if (!theme || !menu) return Number.POSITIVE_INFINITY;
+      return Math.round(
+        menu.getBoundingClientRect().left - theme.getBoundingClientRect().right,
+      );
+    });
+    expect(gap, `Header icon gap at ${width}px`).toBe(12);
+  }
+
+  await page.setViewportSize({ width: 1024, height: 900 });
+  await expect(page.locator(".desktop-nav")).toBeVisible();
+});
+
 test("dark mode maintains contrast in dark and accent sections", async ({
   page,
 }) => {
@@ -365,6 +393,75 @@ test("representative layouts do not overflow at supported viewport widths", asyn
         `${path} overflows at ${width}px`,
       ).toBeTruthy();
     }
+  }
+});
+
+test("process preview keeps step descriptions readable on mobile", async ({
+  page,
+}) => {
+  await page.goto("/");
+
+  for (const width of [320, 390, 680]) {
+    await page.setViewportSize({ width, height: 844 });
+    const description = page.locator(".process-rail li > div").first();
+    await expect(description).toBeVisible();
+    expect(
+      await description.evaluate((element) =>
+        Math.round(element.getBoundingClientRect().width),
+      ),
+      `Process step description is too narrow at ${width}px`,
+    ).toBeGreaterThan(150);
+  }
+});
+
+test("hero animation is disabled on small screens without obscuring the content", async ({
+  page,
+}) => {
+  await page.goto("/");
+
+  for (const width of [320, 390, 680, 768, 900]) {
+    await page.setViewportSize({ width, height: 844 });
+    await expect(page.locator(".hero-stage")).toBeHidden();
+    await expect(page.locator(".hero-canvas")).toHaveCount(0);
+    await expect(
+      page.getByRole("heading", {
+        level: 1,
+        name: "Make your next move matter.",
+      }),
+    ).toBeVisible();
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= window.innerWidth,
+      ),
+      `Home page overflows at ${width}px`,
+    ).toBeTruthy();
+  }
+
+  await page.setViewportSize({ width: 1024, height: 900 });
+  await expect(page.locator(".hero-stage")).toBeVisible();
+});
+
+test("home hero does not leave excessive space above the content below 1000px", async ({
+  page,
+}) => {
+  await page.goto("/");
+
+  for (const width of [320, 390, 680, 768, 900, 999]) {
+    await page.setViewportSize({ width, height: 900 });
+    const gap = await page.evaluate(() => {
+      const header = document
+        .querySelector(".site-header")
+        ?.getBoundingClientRect();
+      const eyebrow = document
+        .querySelector(".hero-eyebrow")
+        ?.getBoundingClientRect();
+      if (!header || !eyebrow) return Number.POSITIVE_INFINITY;
+      return Math.round(eyebrow.top - header.bottom);
+    });
+    expect(
+      gap,
+      `Hero content starts too far below the header at ${width}px`,
+    ).toBeLessThanOrEqual(90);
   }
 });
 
@@ -429,6 +526,16 @@ test("contact form reports a provider-unavailable response", async ({
     }),
   );
   await page.goto("/contact?service=web-design-development");
+  await page.evaluate(() => {
+    document.documentElement.dataset.theme = "dark";
+  });
+  await expect(page.locator(".checkbox-label span").first()).toHaveCSS(
+    "color",
+    "rgb(233, 238, 255)",
+  );
+  await expect(
+    page.locator(".service-checkboxes legend > span").first(),
+  ).toHaveCSS("color", "rgb(180, 35, 24)");
   await expect(
     page.getByRole("checkbox", { name: "Web design & development" }),
   ).toBeChecked();
