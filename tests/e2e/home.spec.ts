@@ -38,7 +38,9 @@ test("home page includes an editorial team section with senior disciplines", asy
   await page.goto("/");
 
   const teamSection = page.locator("section.team-section");
-  await expect(teamSection.getByText("The people behind the work")).toBeVisible();
+  await expect(
+    teamSection.getByText("The people behind the work"),
+  ).toBeVisible();
   await expect(
     teamSection.getByRole("heading", {
       name: "A senior team, shaped around the brief.",
@@ -49,6 +51,28 @@ test("home page includes an editorial team section with senior disciplines", asy
   ).toBeVisible();
 });
 
+test("team profiles show clear placeholders and expandable expertise", async ({
+  page,
+}) => {
+  await page.goto("/");
+
+  const teamSection = page.locator("section.team-section");
+  const profiles = teamSection.locator(".team-card");
+  await expect(profiles).toHaveCount(3);
+
+  const firstProfile = profiles.first();
+  await expect(
+    firstProfile.getByRole("heading", { name: "Name to be added" }),
+  ).toBeVisible();
+  await expect(firstProfile.getByRole("img")).toHaveAttribute(
+    "aria-label",
+    "Portrait pending for Strategy & design profile",
+  );
+
+  await firstProfile.getByText("Areas of expertise").click();
+  await expect(firstProfile.getByText("Customer journeys")).toBeVisible();
+  await expect(firstProfile.getByText("Actionable positioning")).toBeVisible();
+});
 test("core pages and a service detail render with page headings", async ({
   page,
 }) => {
