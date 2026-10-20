@@ -780,39 +780,443 @@ export const processSteps = [
   },
 ];
 
-export const teamDisciplines = [
+export type TeamService = {
+  title: string;
+  description: string;
+  problem: string;
+  deliverables: string[];
+  suitableFor: string;
+};
+
+export type TeamProject = {
+  title: string;
+  summary: string;
+  contribution: string;
+  href: string | null;
+  image: string | null;
+  outcome: string | null;
+};
+
+export type TeamMember = {
+  slug: string;
+  number: string;
+  name: string;
+  role: string;
+  portrait: string;
+  email: string | null;
+  socialLinks: { label: string; href: string }[];
+  bio: string;
+  overview: string;
+  expertise: string[];
+  technologies: string[];
+  services: TeamService[];
+  process: { title: string; description: string }[];
+  experience: { summary: string; detail: string } | null;
+  projects: TeamProject[];
+  faqs: { question: string; answer: string }[];
+  inquiryService: string;
+  accent: string;
+};
+
+export const teamDisciplines: TeamMember[] = [
   {
+    slug: "sabir-ali",
     number: "01",
     name: "Sabir Ali",
-    role: "Strategy & design",
+    role: "Full-Stack Engineer",
     portrait: "/Sabir.png",
-    linkedin: null as string | null,
-    bio: "Shapes the brief, the story, and the decisions that keep the work useful from the first question to the final handoff.",
-    expertise: ["Customer journeys", "Brand clarity", "Actionable positioning"],
+    email: null,
+    socialLinks: [],
+    bio: "Sabir Ali is a Full-Stack Engineer specializing in scalable web applications, digital products, and business solutions. He works across frontend and backend development, focusing on clean architecture, intuitive interfaces, robust APIs, performance, security, and maintainable code to deliver production-ready applications that solve real-world problems and drive business growth.",
+    overview:
+      "Sabir's role connects product strategy with hands-on full-stack engineering. His stated focus is turning business goals into practical digital products, with scalable web application architecture, intuitive UI/UX implementation, API development, performance optimization, and reliable delivery from concept to launch.",
+    expertise: [
+      "Product Strategy",
+      "Full-Stack Development",
+      "Web Application Architecture",
+      "UI/UX Implementation",
+      "API Development",
+      "Performance Optimization",
+      "System Design & Scalable Architecture",
+    ],
+    technologies: [],
+    services: [
+      {
+        title: "Full-Stack Web Application Development",
+        description:
+          "Plan and build web applications with product goals, user experience, and engineering considered together.",
+        problem:
+          "A business may need a purpose-built application when existing processes or off-the-shelf tools do not fit its needs.",
+        deliverables: [
+          "Product and technical discovery",
+          "Application architecture",
+          "Frontend and backend implementation",
+          "Review and handover",
+        ],
+        suitableFor:
+          "Teams planning a new web application or a focused first release.",
+      },
+      {
+        title: "Custom Business Platforms",
+        description:
+          "Shape a digital platform around a defined business goal and the people who will use it.",
+        problem:
+          "Disconnected workflows can make important tasks harder to complete and maintain.",
+        deliverables: [
+          "Requirements and product direction",
+          "Architecture recommendations",
+          "Interface implementation",
+          "Documented handover",
+        ],
+        suitableFor:
+          "Organizations exploring a custom platform or internal digital product.",
+      },
+      {
+        title: "API Development & Integration",
+        description:
+          "Connect application capabilities through APIs as part of a scoped product implementation.",
+        problem:
+          "Systems that do not share information can create unnecessary manual steps.",
+        deliverables: [
+          "Integration requirements",
+          "API implementation",
+          "Application-level integration",
+          "Validation and documentation",
+        ],
+        suitableFor:
+          "Projects that need an application to exchange data with another service.",
+      },
+      {
+        title: "Application Improvement & Optimization",
+        description:
+          "Review an existing application and identify practical engineering or experience improvements.",
+        problem:
+          "An application may need clearer interactions, a more scalable structure, or better performance.",
+        deliverables: [
+          "Application review",
+          "Prioritized improvement plan",
+          "Agreed engineering changes",
+          "Quality review",
+        ],
+        suitableFor:
+          "Teams improving an existing web product or preparing it to evolve.",
+      },
+    ],
+    process: [
+      {
+        title: "Understand the product",
+        description:
+          "Discuss business goals, users, requirements, and the constraints around the application.",
+      },
+      {
+        title: "Set product and technical direction",
+        description:
+          "Turn the brief into a practical scope, architecture, and sequence of work.",
+      },
+      {
+        title: "Build and review",
+        description:
+          "Implement the agreed experience and application capabilities, reviewing the work as it takes shape.",
+      },
+      {
+        title: "Validate and hand over",
+        description:
+          "Check the agreed requirements, document the result, and clarify useful next steps.",
+      },
+    ],
+    experience: null,
+    projects: [],
+    faqs: [
+      {
+        question: "What types of web applications can you help build?",
+        answer:
+          "Sabir's stated focus is full-stack web applications and custom digital products. Scope and technical fit are assessed together before work is agreed.",
+      },
+      {
+        question: "Can you improve an existing application?",
+        answer:
+          "Yes. Application review and improvement are among the areas listed on this profile. The work begins by understanding the current product and the changes that matter.",
+      },
+      {
+        question: "Can you integrate APIs and third-party services?",
+        answer:
+          "API development is a stated area of expertise. Specific integrations depend on the service, access, and requirements confirmed during discovery.",
+      },
+    ],
+    inquiryService: "custom-software",
     accent: "sage",
   },
   {
+    slug: "suleman-sagheer",
     number: "02",
-    name: "Sulman Sagheer",
-    role: "Product & experience",
+    name: "Suleman Sagheer",
+    role: "WordPress & WooCommerce Specialist",
     portrait: "/Suleman.png",
-    linkedin: null as string | null,
-    bio: "Turns complexity into clear systems, making the important work easier to navigate, trust, and maintain.",
+    email: null,
+    socialLinks: [],
+    bio: "I’m Suleman Sagheer, a WordPress and WooCommerce Specialist with 5+ years of experience in website development, responsive design, SEO, and digital solutions. I help businesses strengthen their online presence through professional websites and effective digital strategies that support sustainable growth and measurable results.",
+    overview:
+      "Suleman specializes in WordPress and WooCommerce, with 5+ years of experience in website development, responsive design, SEO, and digital solutions. His work focuses on professional websites and e-commerce experiences that support a business's online presence. Project goals and scope are agreed before work begins.",
     expertise: [
-      "UX systems",
-      "Research synthesis",
-      "Digital experience strategy",
+      "WordPress Development",
+      "WooCommerce Solutions",
+      "Responsive Web Design",
+      "Website SEO Optimization",
+      "E-commerce Development",
+      "Website Performance Optimization",
     ],
+    technologies: [],
+    services: [
+      {
+        title: "WordPress Business Websites",
+        description:
+          "Develop a professional WordPress website around a business's content, goals, and customer needs.",
+        problem:
+          "An unclear or dated website can make it harder for visitors to understand a business and its offer.",
+        deliverables: [
+          "Website structure",
+          "Responsive page implementation",
+          "Content integration",
+          "Review and handover",
+        ],
+        suitableFor:
+          "Businesses creating a WordPress site or improving an existing one.",
+      },
+      {
+        title: "WooCommerce Store Development",
+        description:
+          "Create an e-commerce experience using WooCommerce, shaped around the products and customer journey.",
+        problem:
+          "An online store needs clear product information and a usable path through browsing and purchase.",
+        deliverables: [
+          "Store and product structure",
+          "Responsive storefront",
+          "WooCommerce implementation",
+          "Store review and handover",
+        ],
+        suitableFor:
+          "Businesses planning a WooCommerce shop or refining their current store.",
+      },
+      {
+        title: "Responsive Website Design",
+        description:
+          "Make website layouts and content work across common screen sizes and devices.",
+        problem:
+          "A site that is difficult to use on smaller screens can create friction for visitors.",
+        deliverables: [
+          "Responsive layout improvements",
+          "Page and content adjustments",
+          "Cross-screen review",
+          "Refinement of agreed issues",
+        ],
+        suitableFor:
+          "Teams whose websites need clearer, more usable mobile and tablet experiences.",
+      },
+      {
+        title: "Website SEO & Performance Improvements",
+        description:
+          "Address agreed website-level SEO and performance improvements as part of a WordPress project.",
+        problem:
+          "Technical and content issues can make a website harder to use and discover.",
+        deliverables: [
+          "Website review",
+          "Prioritized on-site improvements",
+          "Implementation of agreed updates",
+          "Post-change review",
+        ],
+        suitableFor:
+          "Businesses improving the technical quality and discoverability of a WordPress site.",
+      },
+    ],
+    process: [
+      {
+        title: "Discuss the website or store",
+        description:
+          "Clarify the business goals, audience, content, and current platform needs.",
+      },
+      {
+        title: "Plan the experience",
+        description:
+          "Agree the page or store structure and the responsive experience to be delivered.",
+      },
+      {
+        title: "Develop and review",
+        description:
+          "Build the agreed WordPress or WooCommerce experience and review it across screen sizes.",
+      },
+      {
+        title: "Refine and hand over",
+        description:
+          "Address agreed feedback, check the finished work, and provide a clear handover.",
+      },
+    ],
+    experience: {
+      summary: "5+ years of experience",
+      detail:
+        "Website development, responsive design, SEO, and digital solutions.",
+    },
+    projects: [],
+    faqs: [
+      {
+        question: "Can you build a complete WooCommerce store?",
+        answer:
+          "WooCommerce solutions and e-commerce development are listed areas of expertise. The store structure and deliverables are defined to fit the products and project scope.",
+      },
+      {
+        question: "Can you improve an existing WordPress website?",
+        answer:
+          "WordPress development, responsive design, SEO, and performance optimization are listed areas of expertise. An initial review helps identify what to improve.",
+      },
+      {
+        question: "Can you help with responsive design and website SEO?",
+        answer:
+          "Both responsive web design and website SEO optimization are included in Suleman's stated expertise. The specific work depends on the site and its needs.",
+      },
+    ],
+    inquiryService: "web-design-development",
     accent: "rose",
   },
   {
+    slug: "ali-haider",
     number: "03",
     name: "Ali Haider",
-    role: "Technology & growth",
+    role: "SEO Specialist & Organic Growth Expert",
     portrait: "/ali.jpeg",
-    linkedin: null as string | null,
-    bio: "Connects product intent with sound implementation, thoughtful performance, and the practical realities of ongoing delivery.",
-    expertise: ["Web foundations", "Integrations", "Product improvement"],
+    email: null,
+    socialLinks: [],
+    bio: "Specializes in search engine optimization and organic growth, helping businesses improve search visibility, attract relevant audiences, and build sustainable online traffic. Focuses on technical SEO, on-page optimization, keyword research, content strategy, and data-driven improvements that support long-term search performance.",
+    overview:
+      "Ali focuses on search engine optimization and organic growth. His stated areas include technical and on-page SEO, keyword research and search intent, content strategy, website audits, and search performance analysis. Recommendations are grounded in review and measurement; rankings or traffic outcomes are not guaranteed.",
+    expertise: [
+      "Technical SEO",
+      "On-Page & Off-Page SEO",
+      "Keyword Research & Search Intent",
+      "SEO Content Strategy",
+      "Website Audits & Optimization",
+      "Organic Traffic Growth",
+      "Search Performance Analysis",
+      "SEO Reporting & Analytics",
+    ],
+    technologies: [],
+    services: [
+      {
+        title: "Technical SEO Audits",
+        description:
+          "Review a website's technical search foundations and identify issues to prioritize.",
+        problem:
+          "Technical barriers or unclear site structure can make pages harder for search engines and people to navigate.",
+        deliverables: [
+          "Technical site review",
+          "Prioritized findings",
+          "Actionable recommendations",
+          "Review of agreed changes",
+        ],
+        suitableFor:
+          "Businesses seeking a clearer view of technical SEO opportunities.",
+      },
+      {
+        title: "On-Page SEO Optimization",
+        description:
+          "Improve page-level search relevance and clarity using the agreed target topics and audience needs.",
+        problem:
+          "Pages may not clearly answer the questions or intent behind relevant searches.",
+        deliverables: [
+          "Page and content review",
+          "On-page recommendations",
+          "Agreed content or metadata updates",
+          "Follow-up review",
+        ],
+        suitableFor:
+          "Teams refining important pages and their organic search foundations.",
+      },
+      {
+        title: "Keyword Research & Competitor Analysis",
+        description:
+          "Explore search terms, intent, and the visible search landscape to help inform priorities.",
+        problem:
+          "Content planning is less focused when customer search needs and competing pages are unclear.",
+        deliverables: [
+          "Keyword and intent research",
+          "Competitor search review",
+          "Opportunity summary",
+          "Prioritized recommendations",
+        ],
+        suitableFor:
+          "Businesses planning SEO improvements or a more focused content direction.",
+      },
+      {
+        title: "SEO Content Strategy",
+        description:
+          "Use search intent and content priorities to guide useful, discoverable website content.",
+        problem:
+          "Unstructured content can leave important audience questions unanswered.",
+        deliverables: [
+          "Content and search review",
+          "Topic and intent priorities",
+          "Content recommendations",
+          "Measurement considerations",
+        ],
+        suitableFor:
+          "Teams seeking a clearer, search-informed approach to content.",
+      },
+      {
+        title: "Organic Search Monitoring & Reporting",
+        description:
+          "Review search performance data and use it to inform ongoing SEO priorities.",
+        problem:
+          "Without regular analysis, teams may miss changes or lack context for their next SEO decisions.",
+        deliverables: [
+          "Search performance review",
+          "Clear reporting",
+          "Observed issues and opportunities",
+          "Recommended next steps",
+        ],
+        suitableFor:
+          "Businesses that want to review organic search trends and plan improvements.",
+      },
+    ],
+    process: [
+      {
+        title: "Understand the search goals",
+        description:
+          "Discuss the business context, audience, website, and questions the SEO work should address.",
+      },
+      {
+        title: "Audit and research",
+        description:
+          "Review technical foundations, pages, search intent, and available performance information.",
+      },
+      {
+        title: "Prioritize improvements",
+        description:
+          "Turn findings into a practical sequence of technical, on-page, or content recommendations.",
+      },
+      {
+        title: "Review and learn",
+        description:
+          "Assess available search data after agreed changes and use the findings to inform next steps.",
+      },
+    ],
+    experience: null,
+    projects: [],
+    faqs: [
+      {
+        question: "What does a technical SEO audit cover?",
+        answer:
+          "An audit reviews technical foundations and site structure to identify issues and opportunities. The exact checks depend on the website and the agreed scope.",
+      },
+      {
+        question: "How do you identify SEO opportunities?",
+        answer:
+          "The stated approach includes technical and website audits, keyword research, search intent, content strategy, and performance analysis.",
+      },
+      {
+        question: "Can you guarantee first-page rankings or traffic growth?",
+        answer:
+          "No. Search performance depends on many factors beyond any one specialist's control. The focus is on clear analysis, sound improvements, and honest measurement.",
+      },
+    ],
+    inquiryService: "search-engine-optimization",
     accent: "blue",
   },
 ];
