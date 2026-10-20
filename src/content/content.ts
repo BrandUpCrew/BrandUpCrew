@@ -808,7 +808,7 @@ export type TeamMember = {
   bio: string;
   overview: string;
   expertise: string[];
-  technologies: string[];
+  technologyGroups: { title: string; items: string[] }[];
   services: TeamService[];
   process: { title: string; description: string }[];
   experience: { summary: string; detail: string } | null;
@@ -827,19 +827,50 @@ export const teamDisciplines: TeamMember[] = [
     portrait: "/Sabir.png",
     email: null,
     socialLinks: [],
-    bio: "Sabir Ali is a Full-Stack Engineer specializing in scalable web applications, digital products, and business solutions. He works across frontend and backend development, focusing on clean architecture, intuitive interfaces, robust APIs, performance, security, and maintainable code to deliver production-ready applications that solve real-world problems and drive business growth.",
+    bio: "Sabir Ali is a Full-Stack Engineer who builds modern web applications across frontend experiences, backend services, APIs, and data stores. He combines thoughtful interface implementation with practical system design, authentication, integrations, and maintainable application architecture.",
     overview:
-      "Sabir's role connects product strategy with hands-on full-stack engineering. His stated focus is turning business goals into practical digital products, with scalable web application architecture, intuitive UI/UX implementation, API development, performance optimization, and reliable delivery from concept to launch.",
+      "Sabir works across the application lifecycle, from React and Next.js interfaces to Node.js services, REST APIs, and database-backed applications. His public project work spans e-commerce, workforce operations, and AI/ML exploration. He focuses on responsive experiences, reliable integrations, and maintainable software shaped around real product needs.",
     expertise: [
-      "Product Strategy",
-      "Full-Stack Development",
-      "Web Application Architecture",
-      "UI/UX Implementation",
-      "API Development",
-      "Performance Optimization",
-      "System Design & Scalable Architecture",
+      "Full-Stack Web Development",
+      "Frontend Architecture & Responsive UI",
+      "Backend Development & REST API Design",
+      "Database Design & Integration",
+      "Authentication & Authorization",
+      "Application Performance & Optimization",
+      "Maintainable and Scalable Architecture",
+      "Third-Party Service Integration",
     ],
-    technologies: [],
+    technologyGroups: [
+      {
+        title: "Web application stack",
+        items: [
+          "JavaScript",
+          "TypeScript",
+          "React",
+          "Next.js",
+          "Vite",
+          "Tailwind CSS",
+        ],
+      },
+      {
+        title: "Backend and data",
+        items: ["Node.js", "Express.js", "MongoDB", "REST APIs"],
+      },
+      {
+        title: "Libraries and integrations",
+        items: ["TanStack Query", "Stripe", "Cloudinary", "Git and GitHub"],
+      },
+      {
+        title: "Developing skills and project exposure",
+        items: [
+          "Python",
+          "Flask",
+          "OpenCV",
+          "Keras and TensorFlow",
+          "Applied AI/ML",
+        ],
+      },
+    ],
     services: [
       {
         title: "Full-Stack Web Application Development",
@@ -925,7 +956,38 @@ export const teamDisciplines: TeamMember[] = [
       },
     ],
     experience: null,
-    projects: [],
+    projects: [
+      {
+        title: "StaffPilot",
+        summary:
+          "A role-based workforce operations platform for managing teams, attendance, projects, tasks, and workspace settings.",
+        contribution:
+          "Full-stack project work across a React and TypeScript client and an Express API backed by MongoDB.",
+        href: "https://github.com/sabiralidev/StaffPilot",
+        image: null,
+        outcome: null,
+      },
+      {
+        title: "ECom Store",
+        summary:
+          "A clothing e-commerce application with customer storefront, administration tools, product catalog, carts, and checkout.",
+        contribution:
+          "Public contribution history confirms his project involvement; repository documentation describes a React storefront and Express REST API backed by MongoDB, with optional Stripe checkout.",
+        href: "https://github.com/sabiralidev/ECom",
+        image: null,
+        outcome: null,
+      },
+      {
+        title: "Face-Emotions",
+        summary:
+          "An AI/ML exploration of facial emotion detection and speech-based emotion recognition.",
+        contribution:
+          "A Python and Flask project using OpenCV and Keras/TensorFlow; presented as project exposure rather than a core engineering specialty.",
+        href: "https://github.com/sabiralidev/Face-Emotions",
+        image: null,
+        outcome: null,
+      },
+    ],
     faqs: [
       {
         question: "What types of web applications can you help build?",
@@ -949,23 +1011,28 @@ export const teamDisciplines: TeamMember[] = [
   {
     slug: "suleman-sagheer",
     number: "02",
-    name: "Suleman Sagheer",
+    name: "Sulman Sagheer",
     role: "WordPress & WooCommerce Specialist",
     portrait: "/Suleman.png",
     email: null,
     socialLinks: [],
-    bio: "I’m Suleman Sagheer, a WordPress and WooCommerce Specialist with 5+ years of experience in website development, responsive design, SEO, and digital solutions. I help businesses strengthen their online presence through professional websites and effective digital strategies that support sustainable growth and measurable results.",
+    bio: "Sulman Sagheer is a WordPress and WooCommerce Specialist who builds and customizes professional websites and e-commerce experiences. His work focuses on clear site structure, responsive storefronts, and practical store setup tailored to each business.",
     overview:
-      "Suleman specializes in WordPress and WooCommerce, with 5+ years of experience in website development, responsive design, SEO, and digital solutions. His work focuses on professional websites and e-commerce experiences that support a business's online presence. Project goals and scope are agreed before work begins.",
+      "Sulman specializes in WordPress websites and WooCommerce stores. He helps businesses shape their site structure, storefront, and product experience, with responsive implementation and agreed website optimization where the project calls for it.",
     expertise: [
-      "WordPress Development",
-      "WooCommerce Solutions",
-      "Responsive Web Design",
-      "Website SEO Optimization",
-      "E-commerce Development",
-      "Website Performance Optimization",
+      "WordPress Website Development",
+      "WooCommerce Store Development",
+      "E-commerce Website Setup",
+      "Product and Store Structure",
+      "Responsive Storefront Design",
+      "Website SEO and Performance Improvements",
     ],
-    technologies: [],
+    technologyGroups: [
+      {
+        title: "WordPress and e-commerce platforms",
+        items: ["WordPress", "WooCommerce"],
+      },
+    ],
     services: [
       {
         title: "WordPress Business Websites",
@@ -1050,11 +1117,7 @@ export const teamDisciplines: TeamMember[] = [
           "Address agreed feedback, check the finished work, and provide a clear handover.",
       },
     ],
-    experience: {
-      summary: "5+ years of experience",
-      detail:
-        "Website development, responsive design, SEO, and digital solutions.",
-    },
+    experience: null,
     projects: [],
     faqs: [
       {
@@ -1065,12 +1128,12 @@ export const teamDisciplines: TeamMember[] = [
       {
         question: "Can you improve an existing WordPress website?",
         answer:
-          "WordPress development, responsive design, SEO, and performance optimization are listed areas of expertise. An initial review helps identify what to improve.",
+          "WordPress development, responsive design, and website optimization are areas of support. An initial review helps identify what to improve.",
       },
       {
         question: "Can you help with responsive design and website SEO?",
         answer:
-          "Both responsive web design and website SEO optimization are included in Suleman's stated expertise. The specific work depends on the site and its needs.",
+          "Responsive web design and WordPress website optimization are included in Sulman's stated expertise. The specific work depends on the site and its needs.",
       },
     ],
     inquiryService: "web-design-development",
@@ -1080,24 +1143,24 @@ export const teamDisciplines: TeamMember[] = [
     slug: "ali-haider",
     number: "03",
     name: "Ali Haider",
-    role: "SEO Specialist & Organic Growth Expert",
+    role: "SEO Specialist",
     portrait: "/ali.jpeg",
     email: null,
     socialLinks: [],
-    bio: "Specializes in search engine optimization and organic growth, helping businesses improve search visibility, attract relevant audiences, and build sustainable online traffic. Focuses on technical SEO, on-page optimization, keyword research, content strategy, and data-driven improvements that support long-term search performance.",
+    bio: "Ali Haider is an SEO Specialist focused on helping businesses improve organic search visibility through technical reviews, keyword research, on-page optimization, and useful content recommendations. His approach combines website audits with search performance analysis to guide clear, evidence-led priorities.",
     overview:
-      "Ali focuses on search engine optimization and organic growth. His stated areas include technical and on-page SEO, keyword research and search intent, content strategy, website audits, and search performance analysis. Recommendations are grounded in review and measurement; rankings or traffic outcomes are not guaranteed.",
+      "Ali helps businesses understand and improve their organic search foundations. His work includes technical and on-page audits, keyword and competitor research, content strategy, and performance monitoring. Recommendations are based on available evidence; rankings and traffic outcomes are not guaranteed.",
     expertise: [
       "Technical SEO",
-      "On-Page & Off-Page SEO",
+      "On-Page SEO and Metadata Updates",
       "Keyword Research & Search Intent",
+      "Competitor Search Analysis",
       "SEO Content Strategy",
-      "Website Audits & Optimization",
-      "Organic Traffic Growth",
-      "Search Performance Analysis",
-      "SEO Reporting & Analytics",
+      "Website SEO Audits",
+      "Search Performance Monitoring",
+      "SEO Recommendations and Reporting",
     ],
-    technologies: [],
+    technologyGroups: [],
     services: [
       {
         title: "Technical SEO Audits",
