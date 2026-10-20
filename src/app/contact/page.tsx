@@ -3,7 +3,7 @@ import { Mail, ShieldCheck } from "lucide-react";
 
 import { ContactForm } from "@/components/site/contact-form";
 import { PageIntro } from "@/components/site/page-intro";
-import { services } from "@/content/content";
+import { services, teamDisciplines } from "@/content/content";
 
 export const metadata: Metadata = {
   title: "Start a Digital Project",
@@ -13,16 +13,19 @@ export const metadata: Metadata = {
 };
 
 type ContactPageProps = {
-  searchParams: Promise<{ service?: string }>;
+  searchParams: Promise<{ service?: string; team?: string }>;
 };
 
 export default async function ContactPage({ searchParams }: ContactPageProps) {
-  const { service: serviceSlug } = await searchParams;
+  const { service: serviceSlug, team: teamSlug } = await searchParams;
   const initialService = services.some(
     (service) => service.slug === serviceSlug,
   )
     ? serviceSlug
     : "";
+  const initialMember = teamDisciplines.find(
+    (member) => member.slug === teamSlug,
+  );
   return (
     <main id="main">
       <PageIntro
@@ -64,7 +67,14 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
           </aside>
           <div>
             <h2>Tell us a little about it.</h2>
-            <ContactForm initialService={initialService} />
+            <ContactForm
+              initialMember={
+                initialMember
+                  ? { slug: initialMember.slug, name: initialMember.name }
+                  : undefined
+              }
+              initialService={initialService}
+            />
           </div>
         </div>
       </section>

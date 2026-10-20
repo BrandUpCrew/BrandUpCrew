@@ -1,7 +1,12 @@
 import type { MetadataRoute } from "next";
 
 import { siteConfig } from "@/config/site";
-import { articles, caseStudies, services } from "@/content/content";
+import {
+  articles,
+  caseStudies,
+  services,
+  teamDisciplines,
+} from "@/content/content";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const routes = [
@@ -32,6 +37,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: new URL(`/work/${slug}`, siteConfig.url).toString(),
       changeFrequency: "monthly" as const,
       priority: 0.5,
+    })),
+    ...teamDisciplines.map(({ slug }) => ({
+      url: new URL(`/team/${slug}`, siteConfig.url).toString(),
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
     })),
     ...articles.map(({ slug, published }) => ({
       url: new URL(`/insights/${slug}`, siteConfig.url).toString(),

@@ -8,11 +8,13 @@ export function TeamPortrait({
   name,
   role,
   number,
+  preload = false,
 }: {
   src: string | null;
   name: string;
   role: string;
   number: string;
+  preload?: boolean;
 }) {
   const [failed, setFailed] = useState(false);
 
@@ -34,6 +36,7 @@ export function TeamPortrait({
       alt={`${name}, ${role}`}
       className="team-profile-image"
       fill
+      preload={preload}
       sizes="(max-width: 760px) 100vw, (max-width: 1080px) 50vw, 33vw"
       src={src}
       onError={() => setFailed(true)}

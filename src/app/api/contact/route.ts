@@ -3,7 +3,7 @@ import "server-only";
 import { isIP } from "node:net";
 import { z } from "zod";
 
-import { services } from "@/content/content";
+import { services, teamDisciplines } from "@/content/content";
 import { env } from "@/lib/env";
 
 const serviceSlugs = new Set(services.map(({ slug }) => slug));
@@ -26,6 +26,15 @@ const contactSchema = z
       .min(1, "Choose at least one service.")
       .max(12)
       .refine((values) => values.every((value) => serviceSlugs.has(value))),
+    teamMember: z
+      .string()
+      .optional()
+      .refine(
+        (value) =>
+          value === undefined ||
+          teamDisciplines.some((member) => member.slug === value),
+        "Choose a valid team member.",
+      ),
     budget: z
       .enum(["", "under-5k", "5k-15k", "15k-50k", "50k-plus", "not-sure"])
       .optional()
@@ -115,6 +124,7 @@ function formatInquiry(data: z.infer<typeof contactSchema>) {
     `Email: ${data.email}`,
     `Company: ${data.company || "Not provided"}`,
     `Website: ${data.website || "Not provided"}`,
+    `Team member requested: ${teamDisciplines.find((member) => member.slug === data.teamMember)?.name ?? "Not specified"}`,
     `Services: ${selectedServices}`,
     `Budget: ${data.budget || "Not provided"}`,
     `Timeline: ${data.timeline || "Not provided"}`,
@@ -213,7 +223,9 @@ export async function POST(request: Request) {
         from: env.CONTACT_FROM_EMAIL,
         to: [env.CONTACT_TO_EMAIL],
         reply_to: result.data.email,
-        subject: "New project inquiry",
+        subject: result.data.teamMember
+          ? `New project inquiry for ${teamDisciplines.find((member) => member.slug === result.data.teamMember)?.name}`
+          : "New project inquiry",
         text: formatInquiry(result.data),
       }),
       cache: "no-store",

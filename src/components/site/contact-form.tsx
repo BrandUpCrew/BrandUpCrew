@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 import { ArrowUpRight, LoaderCircle } from "lucide-react";
 
 import { services } from "@/content/content";
+import type { TeamMember } from "@/content/content";
 
 type SubmitState = {
   status: "idle" | "submitting" | "success" | "error";
@@ -15,8 +16,10 @@ const initialState: SubmitState = { status: "idle", message: "" };
 
 export function ContactForm({
   initialService = "",
+  initialMember,
 }: {
   initialService?: string;
+  initialMember?: Pick<TeamMember, "slug" | "name">;
 }) {
   const [state, setState] = useState<SubmitState>(initialState);
 
@@ -43,6 +46,9 @@ export function ContactForm({
       company: String(formData.get("company") ?? ""),
       website: String(formData.get("website") ?? ""),
       services: selectedServices,
+      ...(initialMember
+        ? { teamMember: String(formData.get("teamMember") ?? "") }
+        : {}),
       budget: String(formData.get("budget") ?? ""),
       timeline: String(formData.get("timeline") ?? ""),
       details: String(formData.get("details") ?? ""),
@@ -90,6 +96,16 @@ export function ContactForm({
 
   return (
     <form className="contact-form" onSubmit={submit} noValidate={false}>
+      {initialMember && (
+        <>
+          <input name="teamMember" type="hidden" value={initialMember.slug} />
+          <p className="profile-inquiry-context">
+            You selected {initialMember.name}. This inquiry goes to the
+            studio&apos;s configured contact inbox, not directly to the team
+            member.
+          </p>
+        </>
+      )}
       <div className="form-grid">
         <div className="form-field">
           <label htmlFor="fullName">
