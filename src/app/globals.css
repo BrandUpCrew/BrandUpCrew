@@ -325,6 +325,7 @@ html[data-initial-loader="leaving"] .brand-loader-initial {
 html[data-initial-loader="leaving"] .brand-loader-initial {
   opacity: 0;
   visibility: hidden;
+  pointer-events: none;
 }
 
 .brand-loader-emblem-wrap {
