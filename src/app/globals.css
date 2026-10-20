@@ -2490,7 +2490,7 @@ html[data-initial-loader="leaving"] .brand-loader-initial {
 
 .team-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 22px;
   margin-top: 30px;
 }
