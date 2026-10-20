@@ -109,22 +109,22 @@ function getQuality(): Quality {
   if (compact || cores <= 4 || memory <= 4)
     return {
       tier: "low",
-      dpr: [1, 1.2],
-      antialias: false,
+      dpr: [1.2, 1.35],
+      antialias: true,
       envResolution: 64,
       shadows: false,
     };
   if (coarse || window.innerWidth < 1280 || cores <= 8)
     return {
       tier: "medium",
-      dpr: [1, 1.5],
+      dpr: [1.2, 1.6],
       antialias: true,
       envResolution: 128,
       shadows: false,
     };
   return {
     tier: "high",
-    dpr: [1, 1.8],
+    dpr: [1.2, 1.8],
     antialias: true,
     envResolution: 256,
     shadows: true,
