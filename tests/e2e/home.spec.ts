@@ -32,6 +32,21 @@ test("home page presents the agency and primary journeys", async ({ page }) => {
   ).toBeVisible();
 });
 
+test("the selected-concepts showcase appears on Work only", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await expect(page.locator(".work-preview")).toHaveCount(0);
+
+  await page.goto("/work");
+  await expect(page.locator(".portfolio-note")).toBeVisible();
+  const showcase = page.locator("main > .work-preview");
+  await expect(showcase).toBeVisible();
+  await expect(
+    showcase.getByRole("heading", { name: "A glimpse of how we think." }),
+  ).toBeVisible();
+  await expect(showcase.locator(".project-card")).toHaveCount(3);
+});
 test("initial loader appears on every page reload and internal navigation remains usable", async ({
   page,
 }) => {
