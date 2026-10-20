@@ -802,7 +802,7 @@ export type TeamMember = {
   number: string;
   name: string;
   role: string;
-  portrait: string;
+  portrait: string | null;
   email: string | null;
   socialLinks: { label: string; href: string }[];
   bio: string;
@@ -1279,6 +1279,27 @@ export const teamDisciplines: TeamMember[] = [
           "No. Search performance depends on many factors beyond any one specialist's control. The focus is on clear analysis, sound improvements, and honest measurement.",
       },
     ],
+    inquiryService: "search-engine-optimization",
+    accent: "blue",
+  },
+  {
+    slug: "muhammad-abdullah",
+    number: "04",
+    name: "Muhammad Abdullah",
+    role: "SEO Specialist",
+    portrait: null,
+    email: null,
+    socialLinks: [],
+    bio: "Muhammad Abdullah is an SEO Specialist at BrandUpCrew. Additional profile details are being prepared.",
+    overview:
+      "Muhammad's profile is focused on search engine optimization. Specific tools, services, and project contributions will be added when confirmed.",
+    expertise: ["Search Engine Optimization (SEO)"],
+    technologyGroups: [],
+    services: [],
+    process: [],
+    experience: null,
+    projects: [],
+    faqs: [],
     inquiryService: "search-engine-optimization",
     accent: "blue",
   },
