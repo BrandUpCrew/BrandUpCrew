@@ -9,6 +9,8 @@ import {
 } from "lucide-react";
 
 import { TeamPortrait } from "@/components/site/team-portrait";
+import { Magnetic, PerspectiveTilt } from "@/components/site/motion";
+import { StaggerGroup, StaggerItem } from "@/components/site/animated";
 import type { TeamMember } from "@/content/content";
 
 function contactHref(member: TeamMember) {
@@ -49,9 +51,11 @@ export function TeamProfilePage({
             <p className="team-profile-title">{member.role}</p>
             <p className="team-profile-lead">{member.bio}</p>
             <div className="team-profile-actions">
-              <Link className="button button-dark" href={inquiryHref}>
-                Work With Me <ArrowUpRight aria-hidden="true" size={16} />
-              </Link>
+              <Magnetic strength={0.22}>
+                <Link className="button button-dark" href={inquiryHref}>
+                  Work With Me <ArrowUpRight aria-hidden="true" size={16} />
+                </Link>
+              </Magnetic>
               <a className="underlined-link" href="#expertise">
                 View My Expertise{" "}
                 <ArrowDownRight aria-hidden="true" size={15} />
@@ -74,13 +78,15 @@ export function TeamProfilePage({
             )}
           </div>
           <div className="team-profile-hero-image">
-            <TeamPortrait
-              name={member.name}
-              number={member.number}
-              preload
-              role={member.role}
-              src={member.portrait}
-            />
+            <PerspectiveTilt intensity={9}>
+              <TeamPortrait
+                name={member.name}
+                number={member.number}
+                preload
+                role={member.role}
+                src={member.portrait}
+              />
+            </PerspectiveTilt>
           </div>
         </div>
       </section>
@@ -121,15 +127,17 @@ export function TeamProfilePage({
               profile.
             </p>
           </div>
-          <ul className="team-profile-skill-list">
+          <StaggerGroup className="team-profile-skill-list" stagger={0.04}>
             {member.expertise.map((skill, index) => (
-              <li key={skill}>
-                <span>{String(index + 1).padStart(2, "0")}</span>
-                <strong>{skill}</strong>
-                <Check aria-hidden="true" size={16} />
-              </li>
+              <StaggerItem key={skill}>
+                <li>
+                  <span>{String(index + 1).padStart(2, "0")}</span>
+                  <strong>{skill}</strong>
+                  <Check aria-hidden="true" size={16} />
+                </li>
+              </StaggerItem>
             ))}
-          </ul>
+          </StaggerGroup>
           {member.technologyGroups.length > 0 && (
             <div className="team-profile-technologies">
               <h3>Technologies and tools</h3>
@@ -171,35 +179,34 @@ export function TeamProfilePage({
             </div>
             <div className="team-profile-service-grid">
               {member.services.map((service, index) => (
-                <article
-                  className="team-profile-service-card"
-                  key={service.title}
-                >
-                  <span className="team-profile-card-index">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                  <h3>{service.title}</h3>
-                  <p>{service.description}</p>
-                  <div>
-                    <h4>Problem addressed</h4>
-                    <p>{service.problem}</p>
-                  </div>
-                  <div>
-                    <h4>Possible deliverables</h4>
-                    <ul>
-                      {service.deliverables.map((deliverable) => (
-                        <li key={deliverable}>{deliverable}</li>
-                      ))}
-                    </ul>
-                  </div>
-                  <p className="team-profile-service-fit">
-                    <strong>May suit:</strong> {service.suitableFor}
-                  </p>
-                  <Link className="underlined-link" href={inquiryHref}>
-                    Discuss this service{" "}
-                    <ArrowUpRight aria-hidden="true" size={14} />
-                  </Link>
-                </article>
+                <PerspectiveTilt key={service.title} intensity={6}>
+                  <article className="team-profile-service-card">
+                    <span className="team-profile-card-index">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    <h3>{service.title}</h3>
+                    <p>{service.description}</p>
+                    <div>
+                      <h4>Problem addressed</h4>
+                      <p>{service.problem}</p>
+                    </div>
+                    <div>
+                      <h4>Possible deliverables</h4>
+                      <ul>
+                        {service.deliverables.map((deliverable) => (
+                          <li key={deliverable}>{deliverable}</li>
+                        ))}
+                      </ul>
+                    </div>
+                    <p className="team-profile-service-fit">
+                      <strong>May suit:</strong> {service.suitableFor}
+                    </p>
+                    <Link className="underlined-link" href={inquiryHref}>
+                      Discuss this service{" "}
+                      <ArrowUpRight aria-hidden="true" size={14} />
+                    </Link>
+                  </article>
+                </PerspectiveTilt>
               ))}
             </div>
           </div>
@@ -259,28 +266,29 @@ export function TeamProfilePage({
                 );
 
                 return (
-                  <article
-                    className="team-profile-project-card"
-                    key={project.title}
-                  >
-                    {project.href ? (
-                      <a
-                        href={project.href}
-                        rel={
-                          project.href.startsWith("http")
-                            ? "noreferrer"
-                            : undefined
-                        }
-                        target={
-                          project.href.startsWith("http") ? "_blank" : undefined
-                        }
-                      >
-                        {projectContent}
-                      </a>
-                    ) : (
-                      projectContent
-                    )}
-                  </article>
+                  <PerspectiveTilt key={project.title} intensity={6}>
+                    <article className="team-profile-project-card">
+                      {project.href ? (
+                        <a
+                          href={project.href}
+                          rel={
+                            project.href.startsWith("http")
+                              ? "noreferrer"
+                              : undefined
+                          }
+                          target={
+                            project.href.startsWith("http")
+                              ? "_blank"
+                              : undefined
+                          }
+                        >
+                          {projectContent}
+                        </a>
+                      ) : (
+                        projectContent
+                      )}
+                    </article>
+                  </PerspectiveTilt>
                 );
               })}
             </div>
@@ -356,9 +364,11 @@ export function TeamProfilePage({
               The studio will review your inquiry and follow up if contact
               delivery is configured.
             </p>
-            <Link className="button button-light" href={inquiryHref}>
-              Discuss a Project <ArrowUpRight aria-hidden="true" size={16} />
-            </Link>
+            <Magnetic strength={0.25}>
+              <Link className="button button-light" href={inquiryHref}>
+                Discuss a Project <ArrowUpRight aria-hidden="true" size={16} />
+              </Link>
+            </Magnetic>
             {member.email && (
               <a
                 className="team-profile-contact-email"
@@ -394,30 +404,32 @@ export function TeamProfilePage({
           </div>
           <div className="team-profile-related-grid">
             {relatedMembers.map((related) => (
-              <article className="team-profile-related-card" key={related.slug}>
-                <Link
-                  aria-label={`View ${related.name}'s profile`}
-                  className="team-profile-related-image"
-                  href={`/team/${related.slug}`}
-                >
-                  <TeamPortrait
-                    name={related.name}
-                    number={related.number}
-                    role={related.role}
-                    src={related.portrait}
-                  />
-                </Link>
-                <div>
-                  <p>{related.role}</p>
-                  <h3>{related.name}</h3>
+              <PerspectiveTilt key={related.slug} intensity={6}>
+                <article className="team-profile-related-card">
                   <Link
-                    className="underlined-link"
+                    aria-label={`View ${related.name}'s profile`}
+                    className="team-profile-related-image"
                     href={`/team/${related.slug}`}
                   >
-                    View Profile <ArrowUpRight aria-hidden="true" size={14} />
+                    <TeamPortrait
+                      name={related.name}
+                      number={related.number}
+                      role={related.role}
+                      src={related.portrait}
+                    />
                   </Link>
-                </div>
-              </article>
+                  <div>
+                    <p>{related.role}</p>
+                    <h3>{related.name}</h3>
+                    <Link
+                      className="underlined-link"
+                      href={`/team/${related.slug}`}
+                    >
+                      View Profile <ArrowUpRight aria-hidden="true" size={14} />
+                    </Link>
+                  </div>
+                </article>
+              </PerspectiveTilt>
             ))}
           </div>
         </div>
