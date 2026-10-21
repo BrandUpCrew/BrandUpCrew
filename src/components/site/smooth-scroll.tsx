@@ -16,6 +16,9 @@ export function SmoothScroll() {
   useEffect(() => {
     const root = document.documentElement;
 
+    let lastY = window.scrollY;
+    let lastTime = performance.now();
+
     const sync = (y: number) => {
       const hero = document.getElementById("hero");
       const heroSpan = hero
@@ -23,17 +26,28 @@ export function SmoothScroll() {
         : 1;
       const max = root.scrollHeight - window.innerHeight;
 
+      const now = performance.now();
+      const dt = Math.max((now - lastTime) / 1000, 0.001);
+      const deltaY = y - lastY;
+      const currentVelocity = deltaY / dt;
+      lastY = y;
+      lastTime = now;
+
       scrollStore.y = y;
       scrollStore.hero = clamp(y / heroSpan, 0, 1);
       scrollStore.progress = max > 0 ? clamp(y / max, 0, 1) : 0;
+      scrollStore.velocity = currentVelocity;
+      scrollStore.direction = deltaY > 0 ? 1 : deltaY < 0 ? -1 : 0;
     };
 
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
 
     const onNativeScroll = () => sync(window.scrollY);
     const refresh = () => scrollTrigger?.refresh();
-    let scrollTrigger: typeof import("gsap/ScrollTrigger").ScrollTrigger | null =
-      null;
+    let scrollTrigger:
+      typeof import("gsap/ScrollTrigger").ScrollTrigger | null = null;
     let lenis: import("lenis").default | null = null;
     let gsap: typeof import("gsap").gsap | null = null;
     let tickerActive = false;
@@ -55,9 +69,12 @@ export function SmoothScroll() {
 
     const initializeSmoothScroll = async () => {
       try {
-        const [lenisModule, gsapModule, scrollTriggerModule] = await Promise.all(
-          [import("lenis"), import("gsap"), import("gsap/ScrollTrigger")],
-        );
+        const [lenisModule, gsapModule, scrollTriggerModule] =
+          await Promise.all([
+            import("lenis"),
+            import("gsap"),
+            import("gsap/ScrollTrigger"),
+          ]);
         if (cancelled) return;
 
         gsap = gsapModule.default;
