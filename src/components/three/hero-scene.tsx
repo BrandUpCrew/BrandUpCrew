@@ -1003,6 +1003,7 @@ function drawGrowthModule(
 }
 
 function useAnimatedUiTexture(id: ModuleId, reduced: boolean) {
+  const lastUpdate = useRef(-1);
   const controller = useMemo(() => {
     const canvas = document.createElement("canvas");
     // Crisp native dimensions matching mesh aspect ratios perfectly:
@@ -1025,8 +1026,6 @@ function useAnimatedUiTexture(id: ModuleId, reduced: boolean) {
     texture.minFilter = THREE.LinearFilter;
     texture.magFilter = THREE.LinearFilter;
     texture.anisotropy = 8;
-
-    let lastUpdate = -1;
 
     // Staggered update cadence & phase offsets so no two modules ever upload on the same frame
     const interval =
@@ -1065,7 +1064,10 @@ function useAnimatedUiTexture(id: ModuleId, reduced: boolean) {
     render(0);
 
     const update = (time: number) => {
-      // Direct render every frame for maximum fluid animation as requested
+      if (reduced) return;
+      const elapsed = time + phaseOffset;
+      if (elapsed - lastUpdate.current < interval) return;
+      lastUpdate.current = elapsed;
       render(time);
     };
 
@@ -1560,7 +1562,7 @@ function Scene({
 }
 
 export default function HeroScene({
-  active: _active = true,
+  active = true,
   onReady,
 }: {
   active?: boolean;
@@ -1584,7 +1586,7 @@ export default function HeroScene({
       className="hero-canvas"
       dpr={quality.dpr}
       shadows={quality.shadows}
-      frameloop="always"
+      frameloop={active ? "always" : "never"}
       gl={{
         antialias: quality.antialias,
         alpha: true,
