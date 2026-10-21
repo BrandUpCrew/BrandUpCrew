@@ -97,7 +97,7 @@ export function SmoothScroll() {
         window.removeEventListener("resize", onNativeScroll);
         lenis.on("scroll", onScroll);
         gsap.ticker.add(raf);
-        gsap.ticker.lagSmoothing(0);
+        gsap.ticker.lagSmoothing(500, 33);
         tickerActive = true;
         sync(window.scrollY);
         scrollTrigger.refresh();
