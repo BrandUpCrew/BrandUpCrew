@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 
-import { Magnetic, MaskedHeading } from "@/components/site/motion";
+import { Magnetic, MaskedHeading, SpatialCta } from "@/components/site/motion";
 
 export function CtaSection({
   title = "Good work starts with a good conversation.",
@@ -11,7 +11,7 @@ export function CtaSection({
   description?: string;
 }) {
   return (
-    <section className="cta-section">
+    <SpatialCta>
       <div className="cta-mark" aria-hidden="true">
         ↗
       </div>
@@ -27,6 +27,6 @@ export function CtaSection({
           <ArrowUpRight aria-hidden="true" size={16} />
         </Link>
       </Magnetic>
-    </section>
+    </SpatialCta>
   );
 }
