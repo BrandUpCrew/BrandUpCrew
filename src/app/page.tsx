@@ -4,23 +4,26 @@ import type { Metadata } from "next";
 
 import { ArticleCard } from "@/components/site/cards";
 import { CtaSection } from "@/components/site/cta-section";
-import { FaqList } from "@/components/site/faq-list";
 import { HeroVisual } from "@/components/site/hero-visual";
 import {
+  HeroSpatialExit,
+  HeroStatGrid3D,
   Magnetic,
   MaskedHeading,
-  Parallax,
   PerspectiveTilt,
-  ScrollStorySection,
+  SpatialArticleGrid,
+  SpatialFaqList,
+  SpatialIndustryGrid,
+  SpatialMarquee,
+  SpatialProcessRail,
+  SpatialSectionTransition,
+  SpatialServiceLead,
+  SpatialServiceRail,
   TimelineProgress,
 } from "@/components/site/motion";
 import {
   HeroBlock,
-  Marquee,
-  RevealSection,
   StatCounter,
-  StaggerGroup,
-  StaggerItem,
 } from "@/components/site/animated";
 import { SectionHeading } from "@/components/site/page-intro";
 import { TeamPortrait } from "@/components/site/team-portrait";
@@ -60,7 +63,7 @@ export default function HomePage() {
 
         <div className="content-width">
           <div className="hero-shell">
-            <div className="hero-content">
+            <HeroSpatialExit className="hero-content">
               <HeroBlock delay={0.05}>
                 <p className="eyebrow hero-eyebrow">
                   <span />
@@ -98,7 +101,7 @@ export default function HomePage() {
                   </Link>
                 </div>
 
-                <div className="hero-stats">
+                <HeroStatGrid3D>
                   <StatCounter value={services.length} label="Capabilities" />
                   <StatCounter
                     value={industries.length}
@@ -110,22 +113,22 @@ export default function HomePage() {
                     label="Process steps"
                     delay={0.2}
                   />
-                </div>
+                </HeroStatGrid3D>
 
                 <p className="hero-cue">
                   <span aria-hidden="true" />
                   Scroll to explore
                 </p>
               </HeroBlock>
-            </div>
+            </HeroSpatialExit>
           </div>
         </div>
       </section>
 
-      <Marquee items={services.map((service) => service.title)} />
+      <SpatialMarquee items={services.map((service) => service.title)} />
 
-      <ScrollStorySection>
-        <RevealSection className="section-block service-section">
+      <SpatialSectionTransition>
+        <section className="section-block service-section">
           <div className="content-width">
             <div className="section-heading-row">
               <SectionHeading
@@ -139,33 +142,31 @@ export default function HomePage() {
             </div>
 
             <div className="service-feature-grid">
-              <Parallax className="service-feature-slot" distance={5}>
-                <PerspectiveTilt intensity={8}>
-                  <Link
-                    className="service-feature"
-                    href={`/services/${leadService.slug}`}
-                  >
-                    <span aria-hidden="true" className="service-feature-art" />
-                    <span className="service-feature-index">01</span>
-                    <p className="service-feature-kicker">Lead discipline</p>
-                    <h3>{leadService.title}</h3>
-                    <p className="service-feature-copy">
-                      {leadService.summary}
-                    </p>
-                    <ul className="service-feature-tags">
-                      {leadService.deliverables.slice(0, 3).map((item) => (
-                        <li key={item}>{item}</li>
-                      ))}
-                    </ul>
-                    <span className="service-feature-cta">
-                      Explore capability
-                      <ArrowUpRight aria-hidden="true" size={16} />
-                    </span>
-                  </Link>
-                </PerspectiveTilt>
-              </Parallax>
+              <SpatialServiceLead>
+                <Link
+                  className="service-feature"
+                  href={`/services/${leadService.slug}`}
+                >
+                  <span aria-hidden="true" className="service-feature-art" />
+                  <span className="service-feature-index">01</span>
+                  <p className="service-feature-kicker">Lead discipline</p>
+                  <h3>{leadService.title}</h3>
+                  <p className="service-feature-copy">
+                    {leadService.summary}
+                  </p>
+                  <ul className="service-feature-tags">
+                    {leadService.deliverables.slice(0, 3).map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                  <span className="service-feature-cta">
+                    Explore capability
+                    <ArrowUpRight aria-hidden="true" size={16} />
+                  </span>
+                </Link>
+              </SpatialServiceLead>
 
-              <ul className="service-rail">
+              <SpatialServiceRail>
                 {supportingServices.slice(0, 5).map((service, index) => (
                   <li key={service.slug}>
                     <PerspectiveTilt intensity={5} glare={false}>
@@ -186,7 +187,7 @@ export default function HomePage() {
                     </PerspectiveTilt>
                   </li>
                 ))}
-              </ul>
+              </SpatialServiceRail>
             </div>
 
             <div className="service-more">
@@ -197,11 +198,11 @@ export default function HomePage() {
               </Link>
             </div>
           </div>
-        </RevealSection>
-      </ScrollStorySection>
+        </section>
+      </SpatialSectionTransition>
 
-      <ScrollStorySection>
-        <RevealSection className="section-block process-preview">
+      <SpatialSectionTransition>
+        <section className="section-block process-preview">
           <div className="content-width process-preview-grid">
             <div>
               <p className="eyebrow">
@@ -224,7 +225,7 @@ export default function HomePage() {
             </div>
             <div className="process-rail-wrap" style={{ position: "relative" }}>
               <TimelineProgress className="process-timeline-progress" />
-              <ol className="process-list process-rail">
+              <SpatialProcessRail>
                 {processSteps.map((step) => (
                   <li key={step.number}>
                     <span className="process-number">{step.number}</span>
@@ -235,14 +236,14 @@ export default function HomePage() {
                     <ArrowUpRight aria-hidden="true" size={16} />
                   </li>
                 ))}
-              </ol>
+              </SpatialProcessRail>
             </div>
           </div>
-        </RevealSection>
-      </ScrollStorySection>
+        </section>
+      </SpatialSectionTransition>
 
-      <ScrollStorySection>
-        <RevealSection className="industry-band">
+      <SpatialSectionTransition>
+        <section className="industry-band">
           <div className="content-width industry-band-inner">
             <div>
               <p className="eyebrow">
@@ -259,103 +260,94 @@ export default function HomePage() {
                 Explore industries <ArrowUpRight aria-hidden="true" size={15} />
               </Link>
             </div>
-            <StaggerGroup className="industry-list" stagger={0.06}>
+            <SpatialIndustryGrid>
               {industries.map((industry, index) => (
-                <StaggerItem key={industry.slug}>
-                  <PerspectiveTilt intensity={6} glare={false}>
-                    <li>
-                      <span>0{index + 1}</span>
-                      {industry.title}
-                      <ArrowUpRight aria-hidden="true" size={15} />
-                    </li>
-                  </PerspectiveTilt>
-                </StaggerItem>
+                <li key={industry.slug}>
+                  <span className="industry-index">0{index + 1}</span>
+                  <span className="industry-title">{industry.title}</span>
+                  <ArrowUpRight aria-hidden="true" size={15} />
+                </li>
               ))}
-            </StaggerGroup>
+            </SpatialIndustryGrid>
           </div>
-        </RevealSection>
-      </ScrollStorySection>
+        </section>
+      </SpatialSectionTransition>
 
-      <ScrollStorySection>
-        <RevealSection className="section-block team-section" id="team">
-          <div className="content-width">
-            <div className="section-heading-row">
-              <SectionHeading
-                eyebrow="The people behind the work"
-                title="A senior team, shaped around the brief."
-                description="A small team with a deliberate point of view, working closely enough to keep strategy, design, and delivery aligned."
-              />
-              <Link className="underlined-link" href="/about">
-                Meet the studio <ArrowUpRight aria-hidden="true" size={15} />
-              </Link>
-            </div>
+      <section className="section-block team-section" id="team">
+        <div className="content-width">
+          <div className="section-heading-row">
+            <SectionHeading
+              eyebrow="The people behind the work"
+              title="A senior team, shaped around the brief."
+              description="A small team with a deliberate point of view, working closely enough to keep strategy, design, and delivery aligned."
+            />
+            <Link className="underlined-link" href="/about">
+              Meet the studio <ArrowUpRight aria-hidden="true" size={15} />
+            </Link>
+          </div>
 
-            <div className="team-grid">
-              {teamDisciplines.map((member) => (
-                <PerspectiveTilt
-                  key={member.number}
-                  intensity={7}
-                  className="team-card-tilt"
+          <div className="team-grid">
+            {teamDisciplines.map((member) => (
+              <article
+                key={member.number}
+                className={`team-card team-card-${member.accent}`}
+              >
+                <Link
+                  aria-label={`View ${member.name}'s full profile`}
+                  className="team-profile-portrait team-profile-link"
+                  href={`/team/${member.slug}`}
                 >
-                  <article className={`team-card team-card-${member.accent}`}>
-                    <Link
-                      aria-label={`View ${member.name}'s full profile`}
-                      className="team-profile-portrait team-profile-link"
-                      href={`/team/${member.slug}`}
+                  <TeamPortrait
+                    name={member.name}
+                    number={member.number}
+                    role={member.role}
+                    src={member.portrait}
+                  />
+                </Link>
+                <div className="team-meta">
+                  <p className="team-role">{member.role}</p>
+                  <h3>
+                    <Link href={`/team/${member.slug}`}>{member.name}</Link>
+                  </h3>
+                </div>
+                <p className="team-bio">{member.bio}</p>
+                <Link
+                  className="underlined-link team-profile-cta"
+                  href={`/team/${member.slug}`}
+                >
+                  View Full Profile{" "}
+                  <ArrowUpRight aria-hidden="true" size={15} />
+                </Link>
+                <details className="team-profile-details">
+                  <summary>
+                    Areas of expertise
+                    <ArrowDownRight aria-hidden="true" size={16} />
+                  </summary>
+                  <ul>
+                    {member.expertise.map((skill) => (
+                      <li key={skill}>{skill}</li>
+                    ))}
+                  </ul>
+                  {member.socialLinks.map((social) => (
+                    <a
+                      href={social.href}
+                      key={social.href}
+                      rel="noreferrer"
+                      target="_blank"
                     >
-                      <TeamPortrait
-                        name={member.name}
-                        number={member.number}
-                        role={member.role}
-                        src={member.portrait}
-                      />
-                    </Link>
-                    <div className="team-meta">
-                      <p className="team-role">{member.role}</p>
-                      <h3>
-                        <Link href={`/team/${member.slug}`}>{member.name}</Link>
-                      </h3>
-                    </div>
-                    <p className="team-bio">{member.bio}</p>
-                    <Link
-                      className="underlined-link team-profile-cta"
-                      href={`/team/${member.slug}`}
-                    >
-                      View Full Profile{" "}
-                      <ArrowUpRight aria-hidden="true" size={15} />
-                    </Link>
-                    <details className="team-profile-details">
-                      <summary>
-                        Areas of expertise
-                        <ArrowDownRight aria-hidden="true" size={16} />
-                      </summary>
-                      <ul>
-                        {member.expertise.map((skill) => (
-                          <li key={skill}>{skill}</li>
-                        ))}
-                      </ul>
-                      {member.socialLinks.map((social) => (
-                        <a
-                          href={social.href}
-                          key={social.href}
-                          rel="noreferrer"
-                          target="_blank"
-                        >
-                          {social.label}
-                          <ArrowUpRight aria-hidden="true" size={14} />
-                        </a>
-                      ))}
-                    </details>
-                  </article>
-                </PerspectiveTilt>
-              ))}
-            </div>
+                      {social.label}
+                      <ArrowUpRight aria-hidden="true" size={14} />
+                    </a>
+                  ))}
+                </details>
+              </article>
+            ))}
           </div>
-        </RevealSection>
-      </ScrollStorySection>
+        </div>
+      </section>
 
-      <ScrollStorySection>
-        <RevealSection className="section-block insight-preview">
+      <SpatialSectionTransition>
+        <section className="section-block insight-preview">
           <div className="content-width">
             <div className="section-heading-row">
               <SectionHeading
@@ -367,17 +359,17 @@ export default function HomePage() {
                 All insights <ArrowUpRight aria-hidden="true" size={15} />
               </Link>
             </div>
-            <div className="article-grid">
+            <SpatialArticleGrid>
               {articles.slice(0, 3).map((article) => (
                 <ArticleCard key={article.slug} article={article} />
               ))}
-            </div>
+            </SpatialArticleGrid>
           </div>
-        </RevealSection>
-      </ScrollStorySection>
+        </section>
+      </SpatialSectionTransition>
 
-      <ScrollStorySection>
-        <RevealSection className="section-block home-faq">
+      <SpatialSectionTransition>
+        <section className="section-block home-faq">
           <div className="content-width home-faq-grid">
             <div>
               <p className="eyebrow">
@@ -393,10 +385,11 @@ export default function HomePage() {
                 <ArrowUpRight aria-hidden="true" size={15} />
               </Link>
             </div>
-            <FaqList items={faqs.slice(0, 4)} />
+            <SpatialFaqList items={faqs.slice(0, 4)} />
           </div>
-        </RevealSection>
-      </ScrollStorySection>
+        </section>
+      </SpatialSectionTransition>
+
       <CtaSection />
     </main>
   );
