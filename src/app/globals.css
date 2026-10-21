@@ -2448,26 +2448,41 @@ html[data-initial-loader="leaving"] .brand-loader-initial {
 
 .industry-list li {
   display: grid;
-  grid-template-columns: 38px 1fr 20px;
+  grid-template-columns: 42px 1fr 20px;
   align-items: center;
-  gap: 13px;
-  min-height: 56px;
-  padding-inline: 12px;
+  gap: 16px;
+  min-height: 58px;
+  padding-inline: 14px;
   border-bottom: 1px solid var(--line-dark);
-  font-size: 14px;
+  font-size: 15px;
   transition:
     background-color 260ms ease,
     padding-left 260ms var(--ease-out-soft);
 }
 
 .industry-list li:hover {
-  padding-left: 20px;
-  background-color: rgb(255 255 255 / 5%);
+  padding-left: 22px;
+  background-color: rgb(255 255 255 / 6%);
 }
 
-.industry-list li span {
+.industry-list li .industry-index,
+.industry-list li > span:first-child {
   color: var(--on-dark-muted);
-  font-size: 9.5px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.industry-list li .industry-title {
+  color: var(--on-dark);
+  font-size: 15px;
+  font-weight: 550;
+  letter-spacing: -0.015em;
+  line-height: 1.4;
+}
+
+[data-theme="light"] .industry-list li .industry-title {
+  color: var(--foreground);
 }
 
 .industry-list li svg {
@@ -6113,12 +6128,7 @@ html[data-initial-loader="leaving"] .brand-loader-initial {
 
 .perspective-tilt-inner {
   transform-style: preserve-3d;
-  transition: transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
   will-change: transform;
-}
-
-.perspective-tilt-wrap:hover .perspective-tilt-inner {
-  transition: transform 80ms ease-out;
 }
 
 .perspective-glare {
@@ -6174,6 +6184,208 @@ html[data-initial-loader="leaving"] .brand-loader-initial {
   display: inline-flex;
 }
 
+/* --- Spatial 3D Suite Elements --- */
+
+.hero-spatial-exit {
+  perspective: 1200px;
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
+}
+
+.spatial-stat-grid {
+  perspective: 800px;
+  transform-style: preserve-3d;
+}
+
+.spatial-stat-grid .stat-item {
+  transform-style: preserve-3d;
+  transition: transform 340ms var(--ease-out-soft);
+}
+
+.spatial-stat-grid .stat-item:hover {
+  transform: translateY(-4px) translateZ(12px);
+}
+
+.spatial-marquee {
+  perspective: 1000px;
+  transform-style: preserve-3d;
+  transform-origin: center center;
+}
+
+.spatial-service-lead-wrap {
+  perspective: 1200px;
+  transform-style: preserve-3d;
+  height: 100%;
+}
+
+.spatial-service-lead-inner {
+  transform-style: preserve-3d;
+  height: 100%;
+  will-change: transform;
+}
+
+.spatial-service-lead-inner .service-feature {
+  transform-style: preserve-3d;
+}
+
+.spatial-service-lead-inner .service-feature-index {
+  transform: translateZ(18px);
+}
+
+.spatial-service-lead-inner .service-feature-kicker {
+  transform: translateZ(16px);
+}
+
+.spatial-service-lead-inner h3 {
+  transform: translateZ(28px);
+}
+
+.spatial-service-lead-inner .service-feature-copy {
+  transform: translateZ(20px);
+}
+
+.spatial-service-lead-inner .service-feature-tags {
+  transform: translateZ(26px);
+}
+
+.spatial-service-lead-inner .service-feature-cta {
+  transform: translateZ(32px);
+}
+
+.spatial-service-lead-inner .service-feature-art {
+  transform: translateZ(-20px);
+}
+
+.spatial-service-rail {
+  perspective: 1000px;
+  transform-style: preserve-3d;
+}
+
+.spatial-service-rail li {
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
+}
+
+.spatial-service-rail li a {
+  transform-style: preserve-3d;
+  transition:
+    transform 320ms var(--ease-out-soft),
+    background-color 280ms ease,
+    padding-left 320ms var(--ease-out-soft);
+}
+
+.spatial-service-rail li:hover a {
+  transform: translateZ(16px);
+}
+
+.spatial-process-rail {
+  perspective: 900px;
+  transform-style: preserve-3d;
+}
+
+.spatial-process-rail li {
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
+  transition:
+    transform 320ms var(--ease-out-soft),
+    background-color 280ms ease,
+    padding-left 280ms var(--ease-out-soft);
+}
+
+.spatial-process-rail li:hover {
+  transform: translateZ(14px);
+}
+
+.spatial-process-rail .process-number {
+  transform: translateZ(20px);
+}
+
+.spatial-industry-grid {
+  perspective: 1000px;
+  transform-style: preserve-3d;
+}
+
+.spatial-industry-grid li {
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
+}
+
+.spatial-industry-grid li:hover {
+  transform: translateZ(14px);
+}
+
+.spatial-article-grid {
+  perspective: 1100px;
+  transform-style: preserve-3d;
+}
+
+.spatial-article-grid > * {
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
+}
+
+.article-card {
+  transform-style: preserve-3d;
+}
+
+.article-card-top {
+  transform: translateZ(20px);
+}
+
+.article-date {
+  transform: translateZ(14px);
+}
+
+.article-card h3 {
+  transform: translateZ(22px);
+}
+
+.article-read {
+  transform: translateZ(24px);
+}
+
+.spatial-faq-list {
+  perspective: 900px;
+  transform-style: preserve-3d;
+}
+
+.spatial-faq-list .faq-item-wrap {
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
+}
+
+.spatial-faq-list .faq-item {
+  transform-style: preserve-3d;
+  transition:
+    transform 300ms var(--ease-out-soft),
+    border-color 300ms ease;
+}
+
+.spatial-faq-list .faq-item:hover {
+  transform: translateZ(12px);
+  border-color: var(--accent-line);
+}
+
+.spatial-section-transition {
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
+}
+
+.spatial-cta-section {
+  transform-style: preserve-3d;
+  perspective: 1100px;
+  will-change: transform, opacity;
+}
+
+.spatial-cta-section .cta-mark {
+  will-change: transform;
+  transform: translateZ(-40px);
+}
+
+.spatial-cta-section .button {
+  transform: translateZ(25px);
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -6201,7 +6413,19 @@ html[data-initial-loader="leaving"] .brand-loader-initial {
   .perspective-tilt-inner,
   .perspective-glare,
   .timeline-progress-fill,
-  .scroll-story-section {
+  .scroll-story-section,
+  .hero-spatial-exit,
+  .spatial-stat-grid .stat-item,
+  .spatial-marquee,
+  .spatial-service-lead-inner,
+  .spatial-service-rail li,
+  .spatial-process-rail li,
+  .spatial-industry-grid li,
+  .spatial-team-card-inner,
+  .spatial-article-grid > *,
+  .spatial-faq-list .faq-item-wrap,
+  .spatial-section-transition,
+  .spatial-cta-section {
     transform: none !important;
     transition: none !important;
     animation: none !important;
