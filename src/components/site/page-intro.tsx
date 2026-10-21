@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { MaskedHeading } from "@/components/site/motion";
 
 export function PageIntro({
   eyebrow,
@@ -20,7 +21,12 @@ export function PageIntro({
           <span />
           {eyebrow}
         </p>
-        <h1>{title}</h1>
+        <MaskedHeading
+          lines={[title]}
+          tag="h1"
+          trigger="mount"
+          className="page-intro-title"
+        />
         <p className="page-intro-description">{description}</p>
         {children}
       </div>
@@ -50,7 +56,7 @@ export function SectionHeading({
           {eyebrow}
         </p>
       )}
-      <h2>{title}</h2>
+      <MaskedHeading lines={[title]} tag="h2" trigger="scroll" />
       {description && <p>{description}</p>}
     </div>
   );
