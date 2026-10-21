@@ -101,16 +101,18 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
                 The exact scope is shaped with you, but work may include:
               </p>
             </div>
-            <StaggerGroup className="check-list" stagger={0.05}>
+            <ul className="check-list">
               {service.deliverables.map((item) => (
-                <StaggerItem key={item}>
-                  <li>
-                    <Check aria-hidden="true" size={17} />
-                    {item}
-                  </li>
-                </StaggerItem>
+                <li key={item}>
+                  <StaggerItem>
+                    <div style={{ display: "contents" }}>
+                      <Check aria-hidden="true" size={17} />
+                      {item}
+                    </div>
+                  </StaggerItem>
+                </li>
               ))}
-            </StaggerGroup>
+            </ul>
           </div>
         </section>
       </ScrollStorySection>
@@ -124,12 +126,14 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
             />
             <ol className="service-steps">
               {service.process.map((step, index) => (
-                <PerspectiveTilt key={step} intensity={4} glare={false}>
-                  <li>
-                    <span>0{index + 1}</span>
-                    <p>{step}</p>
-                  </li>
-                </PerspectiveTilt>
+                <li key={step}>
+                  <PerspectiveTilt intensity={4} glare={false}>
+                    <div style={{ display: "contents" }}>
+                      <span>0{index + 1}</span>
+                      <p>{step}</p>
+                    </div>
+                  </PerspectiveTilt>
+                </li>
               ))}
             </ol>
             <div className="channel-list">
