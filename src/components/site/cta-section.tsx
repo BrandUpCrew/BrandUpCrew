@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 
+import { Magnetic, MaskedHeading } from "@/components/site/motion";
+
 export function CtaSection({
   title = "Good work starts with a good conversation.",
   description = "Share what you are working through. We will help you find a useful next step.",
@@ -17,11 +19,14 @@ export function CtaSection({
         <span />
         Next step
       </p>
-      <h2>{title}</h2>
+      <MaskedHeading lines={[title]} tag="h2" trigger="scroll" />
       <p className="cta-copy">{description}</p>
-      <Link className="button button-light" href="/contact">
-        Tell us about your project <ArrowUpRight aria-hidden="true" size={16} />
-      </Link>
+      <Magnetic strength={0.25}>
+        <Link className="button button-light" href="/contact">
+          Tell us about your project{" "}
+          <ArrowUpRight aria-hidden="true" size={16} />
+        </Link>
+      </Magnetic>
     </section>
   );
 }
