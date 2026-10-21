@@ -95,74 +95,60 @@ const COPY: Record<ModuleId, { label: string; title: string }> = {
 function getQuality(): Quality {
   if (typeof window === "undefined")
     return {
-      tier: "medium",
+      tier: "high",
       dpr: [1, 1.5],
       antialias: true,
       envResolution: 128,
-      shadows: false,
+      shadows: true,
     };
-  const cores = navigator.hardwareConcurrency ?? 4;
-  const memory =
-    (navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 8;
-  const compact = window.innerWidth < 720;
-  const coarse = window.matchMedia("(pointer: coarse)").matches;
-  if (compact || cores <= 4 || memory <= 4)
-    return {
-      tier: "low",
-      dpr: [1.25, 1.6],
-      antialias: true,
-      envResolution: 64,
-      shadows: false,
-    };
-  if (coarse || window.innerWidth < 1280 || cores <= 8)
-    return {
-      tier: "medium",
-      dpr: [1.4, 1.8],
-      antialias: true,
-      envResolution: 128,
-      shadows: false,
-    };
+  const dpr = typeof window !== "undefined" ? Math.min(window.devicePixelRatio || 1, 1.5) : 1;
   return {
     tier: "high",
-    dpr: [1.5, 2],
+    dpr: [1, dpr],
     antialias: true,
-    envResolution: 256,
+    envResolution: 128,
     shadows: true,
   };
 }
 
-function makeUiTexture(id: ModuleId) {
-  const canvas = document.createElement("canvas");
-  const pixelRatio = Math.min(Math.max(window.devicePixelRatio || 1, 2), 2.5);
-  const width = id === "product" ? 1200 : 800;
-  const height = id === "product" ? 760 : 540;
-  canvas.width = width * pixelRatio;
-  canvas.height = height * pixelRatio;
-  const context = canvas.getContext("2d");
-  if (!context) return new THREE.CanvasTexture(canvas);
+function drawRoundedRect(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  radius: number,
+) {
+  if (typeof ctx.roundRect === "function") {
+    ctx.roundRect(x, y, width, height, radius);
+  } else {
+    ctx.moveTo(x + radius, y);
+    ctx.lineTo(x + width - radius, y);
+    ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+    ctx.lineTo(x + width, y + height - radius);
+    ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+    ctx.lineTo(x + radius, y + height);
+    ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+    ctx.lineTo(x, y + radius);
+    ctx.quadraticCurveTo(x, y, x + radius, y);
+  }
+}
 
-  context.scale(pixelRatio, pixelRatio);
-  const w = width;
-  const h = height;
-  const blue = "#385cf4";
-  const ink = "#171b24";
-  const muted = "#78818f";
-  const fontFamily = getComputedStyle(document.body).fontFamily;
-  const light = id === "product" || id === "identity";
-  context.fillStyle = light ? "#f3f5f7" : "#111722";
-  context.fillRect(0, 0, w, h);
-  const drawText = (
-    value: string,
-    x: number,
-    y: number,
-    size: number,
-    color: string,
-    weight = 500,
-  ) => {
-    context.fillStyle = color;
-    context.font = `${weight} ${size}px ${fontFamily}`;
-    context.fillText(value, x, y);
-  };
+const UI_FONT =
+  '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Inter, Arial, sans-serif';
+const MONO_FONT =
+  '"JetBrains Mono", "SF Mono", Consolas, Menlo, Monaco, "Courier New", monospace';
+
+function drawProductModule(
+  ctx: CanvasRenderingContext2D,
+  w: number,
+  h: number,
+  time: number,
+) {
+  const blue = "#2563eb";
+  const ink = "#0f172a";
+  const muted = "#64748b";
+
   const rect = (
     x: number,
     y: number,
@@ -171,136 +157,932 @@ function makeUiTexture(id: ModuleId) {
     color: string,
     radius = 0,
   ) => {
-    context.fillStyle = color;
-    context.beginPath();
-    context.roundRect(x, y, width, height, radius);
-    context.fill();
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    if (radius > 0) {
+      drawRoundedRect(ctx, x, y, width, height, radius);
+    } else {
+      ctx.rect(x, y, width, height);
+    }
+    ctx.fill();
   };
 
-  if (id === "product") {
-    rect(0, 0, w, 72, "#ffffff");
-    drawText("DIGITAL / STUDIO", 40, 44, 18, ink, 700);
-    drawText("Work     Studio     Journal", 768, 43, 14, muted);
-    rect(1050, 19, 110, 36, blue, 18);
-    drawText("Let's talk", 1072, 42, 12, "#ffffff", 650);
-    rect(46, 112, 1108, 1, "#dce0e6");
-    drawText("DIGITAL PRODUCT STUDIO", 56, 178, 13, blue, 700);
-    drawText("Make space for", 54, 256, 54, ink, 650);
-    drawText("what comes next.", 54, 319, 54, ink, 650);
+  const drawText = (
+    val: string,
+    x: number,
+    y: number,
+    size: number,
+    color: string,
+    weight: number | string = 500,
+    mono = false,
+  ) => {
+    ctx.fillStyle = color;
+    ctx.font = `${weight} ${size}px ${mono ? MONO_FONT : UI_FONT}`;
+    ctx.fillText(val, x, y);
+  };
+
+  // Base background (pure crisp white / light slate)
+  ctx.fillStyle = "#f8fafc";
+  ctx.fillRect(0, 0, w, h);
+
+  // Top header bar
+  rect(0, 0, w, 72, "#ffffff");
+  rect(0, 71, w, 1, "#e2e8f0");
+
+  // Logo mark with cobalt dot
+  drawText("DIGITAL / STUDIO", 44, 44, 18, ink, 750);
+  ctx.beginPath();
+  ctx.arc(206, 38, 3.5, 0, Math.PI * 2);
+  ctx.fillStyle = blue;
+  ctx.fill();
+
+  // Address chip in center
+  rect(420, 22, 230, 28, "#f1f5f9", 14);
+  ctx.beginPath();
+  ctx.arc(438, 36, 4, 0, Math.PI * 2);
+  ctx.fillStyle = "#10b981";
+  ctx.fill();
+  drawText("brandupcrew.com/studio", 452, 40, 11, "#64748b", 500);
+
+  // Navigation tabs with smooth sliding capsule indicator
+  const tabs = [
+    { label: "Work", x: 746, w: 68 },
+    { label: "Studio", x: 826, w: 76 },
+    { label: "Journal", x: 914, w: 84 },
+  ];
+
+  const tabCycle = (time * 0.25) % 3;
+  const curTabIdx = Math.floor(tabCycle);
+  const nextTabIdx = (curTabIdx + 1) % 3;
+  const rawTabT = tabCycle % 1;
+  const transTabT = rawTabT < 0.72 ? 0 : (rawTabT - 0.72) / 0.28;
+  const smoothTabT = transTabT * transTabT * (3 - 2 * transTabT);
+  const tabPillX =
+    tabs[curTabIdx].x -
+    10 +
+    (tabs[nextTabIdx].x - tabs[curTabIdx].x) * smoothTabT;
+  const tabPillW =
+    tabs[curTabIdx].w + (tabs[nextTabIdx].w - tabs[curTabIdx].w) * smoothTabT;
+
+  rect(tabPillX, 22, tabPillW, 32, "rgba(37, 99, 235, 0.08)", 16);
+
+  tabs.forEach((tab, i) => {
+    const isAct = i === curTabIdx;
     drawText(
-      "A thoughtful digital home for ambitious ideas.",
-      58,
-      360,
-      18,
-      muted,
+      tab.label,
+      tab.x,
+      43,
+      13.5,
+      isAct ? ink : muted,
+      isAct ? 650 : 500,
     );
-    rect(58, 395, 134, 42, blue, 4);
-    drawText("Explore the work", 72, 421, 13, "#ffffff", 600);
-    rect(714, 151, 424, 274, "#dce4ef", 5);
-    rect(745, 178, 362, 220, "#eef2f5", 3);
-    rect(766, 200, 128, 172, "#c7d1df", 2);
-    rect(909, 200, 176, 10, "#8999ad", 5);
-    rect(909, 226, 145, 7, "#b8c2cf", 4);
-    rect(909, 248, 161, 7, "#b8c2cf", 4);
-    rect(909, 295, 82, 40, blue, 3);
-    rect(56, 474, 1086, 1, "#dce0e6");
-    ["Strategy", "Design", "Technology", "Growth"].forEach((label, i) => {
-      const x = 58 + i * 272;
-      drawText(label, x, 520, 15, ink, 600);
-      rect(x, 545, 210, 5, "#dfe3e8", 3);
-    });
-  } else if (id === "identity") {
-    drawText("BRAND SYSTEM", 36, 49, 20, ink, 700);
-    drawText("IDENTITY SYSTEM", 36, 94, 12, muted, 700);
-    drawText("A clear voice,", 36, 151, 24, ink, 600);
-    drawText("across every touchpoint", 36, 181, 24, ink, 600);
-    rect(36, 207, 728, 1, "#d7dce4");
-    rect(36, 232, 164, 124, blue, 3);
-    rect(216, 232, 164, 124, "#dfe6ee", 3);
-    rect(396, 232, 164, 124, "#d1c4ae", 3);
-    rect(576, 232, 188, 124, "#222833", 3);
-    drawText("Aa", 44, 427, 46, ink, 500);
-    drawText("Montserrat / Variable", 151, 414, 16, ink, 600);
-    drawText("TYPE, COLOR, MOTION", 151, 442, 11, muted, 600);
-  } else if (id === "engineering") {
-    rect(0, 0, w, 56, "#1b2431");
-    drawText("/ product-platform", 30, 36, 15, "#eef1f6", 600);
-    ["#e06d66", "#dfb663", "#64b88e"].forEach((color, i) => {
-      context.fillStyle = color;
-      context.beginPath();
-      context.arc(742 + i * 18, 28, 5, 0, Math.PI * 2);
-      context.fill();
-    });
-    [
-      "export function Experience() {",
-      "  const signal = useProductState();",
-      "  return (",
-      "    <System surface={signal.surface}",
-      '      motion="measured" />',
-      "  );",
-      "}",
-    ].forEach((line, i) => {
-      drawText(String(i + 1).padStart(2, "0"), 30, 105 + i * 43, 13, "#657286");
-      drawText(
-        line,
-        78,
-        105 + i * 43,
-        17,
-        i === 0 ? "#83a4ff" : "#d5dbe5",
-        500,
-      );
-    });
-    rect(30, 438, 740, 1, "#2b3543");
-    drawText("SYSTEMS ONLINE", 32, 480, 12, "#7dcaa9", 700);
-    drawText("SOFTWARE SYSTEMS", 620, 480, 12, "#8c98a8");
+  });
+
+  // "Let's talk" CTA button with continuous sheen sweep
+  rect(1040, 18, 122, 38, blue, 19);
+  ctx.save();
+  ctx.beginPath();
+  drawRoundedRect(ctx, 1040, 18, 122, 38, 19);
+  ctx.clip();
+  const shimX = 1040 + ((time * 110) % 280) - 60;
+  const shimGrad = ctx.createLinearGradient(shimX, 18, shimX + 50, 56);
+  shimGrad.addColorStop(0, "rgba(255, 255, 255, 0)");
+  shimGrad.addColorStop(0.5, "rgba(255, 255, 255, 0.42)");
+  shimGrad.addColorStop(1, "rgba(255, 255, 255, 0)");
+  ctx.fillStyle = shimGrad;
+  ctx.fillRect(shimX, 18, 60, 38);
+  ctx.restore();
+  drawText("Let's talk ↗", 1064, 42, 13, "#ffffff", 650);
+
+  // Left Content Area
+  // Radar beacon
+  ctx.beginPath();
+  ctx.arc(58, 172, 4.5, 0, Math.PI * 2);
+  ctx.fillStyle = blue;
+  ctx.fill();
+  const haloR = 4.5 + (Math.sin(time * 3.2) * 0.5 + 0.5) * 6;
+  ctx.beginPath();
+  ctx.arc(58, 172, haloR, 0, Math.PI * 2);
+  ctx.strokeStyle = `rgba(37, 99, 235, ${1 - (haloR - 4.5) / 6})`;
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  drawText("DIGITAL PRODUCT STUDIO", 74, 177, 12.5, blue, 750);
+  drawText("Make space for", 54, 254, 52, ink, 650);
+  drawText("what comes next.", 54, 316, 52, ink, 650);
+  drawText(
+    "A thoughtful digital home for ambitious ideas.",
+    58,
+    360,
+    17.5,
+    muted,
+  );
+
+  // Primary action button
+  rect(58, 394, 152, 44, blue, 6);
+  drawText("Explore the work ↗", 74, 421, 13.5, "#ffffff", 600);
+
+  // Right Mockup Window
+  rect(714, 148, 434, 282, "#ffffff", 8);
+  ctx.strokeStyle = "#dce4ef";
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  drawRoundedRect(ctx, 714, 148, 434, 282, 8);
+  ctx.stroke();
+
+  // Mockup top title bar
+  rect(714, 148, 434, 34, "#f1f5f9", 8);
+  rect(714, 176, 434, 6, "#f1f5f9");
+  rect(714, 182, 434, 1, "#e2e8f0");
+  [
+    { c: "#ef4444", x: 732 },
+    { c: "#f59e0b", x: 746 },
+    { c: "#10b981", x: 760 },
+  ].forEach((dot) => {
+    ctx.beginPath();
+    ctx.arc(dot.x, 165, 4, 0, Math.PI * 2);
+    ctx.fillStyle = dot.c;
+    ctx.fill();
+  });
+  rect(782, 157, 210, 18, "#ffffff", 9);
+  drawText("studio.digital/platform", 814, 170, 9.5, "#94a3b8");
+
+  // Inside mockup window: Left skeleton media card with continuous light wave
+  rect(734, 200, 140, 212, "#e2e8f0", 6);
+  ctx.save();
+  ctx.beginPath();
+  drawRoundedRect(ctx, 734, 200, 140, 212, 6);
+  ctx.clip();
+  const waveX = 734 + ((time * 125) % 360) - 80;
+  const waveGrad = ctx.createLinearGradient(waveX, 200, waveX + 80, 412);
+  waveGrad.addColorStop(0, "rgba(255, 255, 255, 0)");
+  waveGrad.addColorStop(0.5, "rgba(255, 255, 255, 0.48)");
+  waveGrad.addColorStop(1, "rgba(255, 255, 255, 0)");
+  ctx.fillStyle = waveGrad;
+  ctx.fillRect(waveX, 200, 80, 212);
+  ctx.restore();
+
+  // Left card bottom label
+  rect(744, 382, 84, 18, "rgba(15, 23, 42, 0.65)", 9);
+  drawText("● PROD v2.4", 754, 394, 8.5, "#ffffff", 600);
+
+  // Right column inside mockup window
+  const barW1 = 180 + Math.sin(time * 1.5) * 10;
+  const barW2 = 140 + Math.cos(time * 1.2) * 8;
+  const barW3 = 160 + Math.sin(time * 1.8) * 9;
+  rect(892, 206, barW1, 10, "#94a3b8", 5);
+  rect(892, 228, barW2, 7, "#cbd5e1", 4);
+  rect(892, 246, barW3, 7, "#cbd5e1", 4);
+
+  // Active status tag
+  rect(892, 272, 130, 24, "rgba(37, 99, 235, 0.08)", 12);
+  drawText(
+    `ACTIVE · ${Math.round(2420 + Math.sin(time * 2) * 80)}`,
+    906,
+    288,
+    9.5,
+    blue,
+    700,
+  );
+
+  // Deploy button inside mockup
+  rect(892, 312, 106, 36, blue, 5);
+  drawText("Deploy now", 912, 335, 11, "#ffffff", 600);
+
+  // Smooth parametric mouse pointer animation
+  const curCycle = (time * 0.22) % 1;
+  let curX = 1080;
+  let curY = 400;
+  let clickRadius = 0;
+  let clickAlpha = 0;
+
+  if (curCycle < 0.38) {
+    // Glide to Deploy button
+    const t = curCycle / 0.38;
+    const ease = t * t * (3 - 2 * t);
+    curX = 1080 + (945 - 1080) * ease;
+    curY = 400 + (330 - 400) * ease;
+  } else if (curCycle < 0.5) {
+    // Click on Deploy button with expanding ripple
+    curX = 945;
+    curY = 330;
+    const clickT = (curCycle - 0.38) / 0.12;
+    clickRadius = clickT * 28;
+    clickAlpha = 1 - clickT;
+  } else if (curCycle < 0.76) {
+    // Glide across to media card
+    const t = (curCycle - 0.5) / 0.26;
+    const ease = t * t * (3 - 2 * t);
+    curX = 945 + (804 - 945) * ease;
+    curY = 330 + (285 - 330) * ease;
+  } else if (curCycle < 0.86) {
+    // Hover on media card with gentle ripple
+    curX = 804;
+    curY = 285;
+    const clickT = (curCycle - 0.76) / 0.1;
+    clickRadius = clickT * 20;
+    clickAlpha = (1 - clickT) * 0.7;
   } else {
-    drawText("GROWTH SIGNALS", 34, 47, 13, "#9db1ff", 700);
-    drawText("A clearer picture of progress", 34, 89, 21, "#edf1f8", 600);
-    drawText("CHANNEL PERFORMANCE", 36, 139, 11, "#8a95a7", 600);
-    const points: [number, number][] = [
-      [40, 370],
-      [110, 326],
-      [185, 340],
-      [260, 264],
-      [335, 290],
-      [410, 220],
-      [485, 245],
-      [560, 180],
-      [635, 200],
-      [760, 145],
-    ];
-    context.strokeStyle = "#7794ff";
-    context.lineWidth = 4;
-    context.beginPath();
-    points.forEach(([x, y], i) =>
-      i ? context.lineTo(x, y) : context.moveTo(x, y),
-    );
-    context.stroke();
-    points.forEach(([x, y]) => {
-      context.beginPath();
-      context.arc(x, y, 6, 0, Math.PI * 2);
-      context.fillStyle = "#111722";
-      context.fill();
-      context.strokeStyle = "#a9bcff";
-      context.lineWidth = 2;
-      context.stroke();
-    });
-    rect(34, 424, 732, 1, "#303b4a");
-    ["DISCOVERY", "ENGAGEMENT", "CONVERSION"].forEach((label, i) =>
-      drawText(label, 36 + i * 254, 468, 11, "#8a95a7", 600),
-    );
+    // Glide back to home position
+    const t = (curCycle - 0.86) / 0.14;
+    const ease = t * t * (3 - 2 * t);
+    curX = 804 + (1080 - 804) * ease;
+    curY = 285 + (400 - 285) * ease;
   }
 
-  const texture = new THREE.CanvasTexture(canvas);
-  texture.colorSpace = THREE.SRGBColorSpace;
-  texture.anisotropy = 16;
-  return texture;
+  // Draw click ripple if active
+  if (clickRadius > 0 && clickAlpha > 0) {
+    ctx.beginPath();
+    ctx.arc(curX, curY, clickRadius, 0, Math.PI * 2);
+    ctx.strokeStyle = `rgba(37, 99, 235, ${clickAlpha})`;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
+
+  // Draw razor-sharp vector mouse pointer
+  ctx.save();
+  ctx.translate(curX, curY);
+  ctx.shadowColor = "rgba(0, 0, 0, 0.22)";
+  ctx.shadowBlur = 6;
+  ctx.shadowOffsetY = 2;
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.lineTo(0, 17);
+  ctx.lineTo(4.8, 12.8);
+  ctx.lineTo(9.6, 22.4);
+  ctx.lineTo(12.8, 20.8);
+  ctx.lineTo(8, 11.2);
+  ctx.lineTo(14.4, 11.2);
+  ctx.closePath();
+  ctx.fillStyle = "#0f172a";
+  ctx.fill();
+  ctx.strokeStyle = "#ffffff";
+  ctx.lineWidth = 1.6;
+  ctx.stroke();
+  ctx.restore();
+
+  // Bottom Category Tabs with auto-progress fill
+  rect(56, 480, 1086, 1, "#e2e8f0");
+  const catCycle = (time * 0.28) % 4;
+  const activeCat = Math.floor(catCycle);
+  const catProgress = catCycle % 1;
+
+  ["Strategy", "Design", "Technology", "Growth"].forEach((label, i) => {
+    const x = 58 + i * 272;
+    const isCatActive = i === activeCat;
+    drawText(
+      label,
+      x,
+      524,
+      15,
+      isCatActive ? ink : muted,
+      isCatActive ? 650 : 500,
+    );
+
+    // Track
+    rect(x, 548, 210, 4, "#e2e8f0", 2);
+    if (isCatActive) {
+      rect(x, 548, Math.max(12, 210 * catProgress), 4, blue, 2);
+      drawText(
+        `${Math.round(catProgress * 100)}%`,
+        x + 178,
+        524,
+        12,
+        blue,
+        700,
+      );
+    }
+  });
 }
 
-function useUiTexture(id: ModuleId) {
-  const texture = useMemo(() => makeUiTexture(id), [id]);
-  useEffect(() => () => texture.dispose(), [texture]);
-  return texture;
+function drawIdentityModule(
+  ctx: CanvasRenderingContext2D,
+  w: number,
+  h: number,
+  time: number,
+) {
+  const ink = "#0f172a";
+  const muted = "#64748b";
+  const blue = "#2563eb";
+
+  const rect = (
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    color: string,
+    radius = 0,
+  ) => {
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    if (radius > 0) {
+      drawRoundedRect(ctx, x, y, width, height, radius);
+    } else {
+      ctx.rect(x, y, width, height);
+    }
+    ctx.fill();
+  };
+
+  const drawText = (
+    val: string,
+    x: number,
+    y: number,
+    size: number,
+    color: string,
+    weight: number | string = 500,
+    mono = false,
+  ) => {
+    ctx.fillStyle = color;
+    ctx.font = `${weight} ${size}px ${mono ? MONO_FONT : UI_FONT}`;
+    ctx.fillText(val, x, y);
+  };
+
+  // Base card surface
+  ctx.fillStyle = "#f8fafc";
+  ctx.fillRect(0, 0, w, h);
+
+  drawText("BRAND SYSTEM", 36, 48, 20, ink, 750);
+  drawText("IDENTITY SYSTEM", 36, 92, 11, muted, 700);
+
+  // Top-right live token badge
+  rect(608, 28, 156, 26, "rgba(16, 185, 129, 0.12)", 13);
+  ctx.beginPath();
+  ctx.arc(624, 41, 4, 0, Math.PI * 2);
+  ctx.fillStyle = "#10b981";
+  ctx.fill();
+  drawText("DESIGN TOKENS v3.4", 636, 45, 9.5, "#059669", 700);
+
+  drawText("A clear voice,", 36, 144, 24, ink, 650);
+  drawText("across every touchpoint", 36, 174, 24, ink, 650);
+  rect(36, 198, 728, 1, "#e2e8f0");
+
+  // 4 Color Swatches
+  const swatches = [
+    { name: "Cobalt Blue", hex: "#2563EB", bg: "#2563eb", x: 36, w: 164 },
+    { name: "Pale Surface", hex: "#DFE6EE", bg: "#dfe6ee", x: 216, w: 164 },
+    { name: "Warm Sand", hex: "#D1C4AE", bg: "#d1c4ae", x: 396, w: 164 },
+    { name: "Obsidian Slate", hex: "#1E2430", bg: "#1e2430", x: 576, w: 188 },
+  ];
+
+  // Smoothly animated focus viewfinder gliding between swatches
+  const cycle = (time * 0.38) % 4;
+  const curIdx = Math.floor(cycle);
+  const nextIdx = (curIdx + 1) % 4;
+  const rawT = cycle % 1;
+  const transT = rawT < 0.72 ? 0 : (rawT - 0.72) / 0.28;
+  const easeT = transT * transT * (3 - 2 * transT);
+
+  const focusX =
+    swatches[curIdx].x + (swatches[nextIdx].x - swatches[curIdx].x) * easeT;
+  const focusW =
+    swatches[curIdx].w + (swatches[nextIdx].w - swatches[curIdx].w) * easeT;
+
+  swatches.forEach((sw) => {
+    rect(sw.x, 222, sw.w, 124, sw.bg, 6);
+  });
+
+  // Gliding Focus Viewfinder
+  ctx.strokeStyle = blue;
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  drawRoundedRect(ctx, focusX - 4, 218, focusW + 8, 132, 8);
+  ctx.stroke();
+
+  // Active checkmark badge
+  rect(focusX + focusW - 24, 230, 16, 16, "#ffffff", 8);
+  drawText("✓", focusX + focusW - 20, 242, 11, blue, 700);
+
+  // Active Tooltip chip tracking viewfinder
+  const activeHex = swatches[curIdx].hex;
+  rect(focusX + 8, 356, focusW - 16, 22, "#0f172a", 4);
+  drawText(`${activeHex} · ACTIVE`, focusX + 18, 371, 9.5, "#ffffff", 650);
+
+  // Typography Section (Bottom half)
+  const wght = Math.round(300 + (Math.sin(time * 1.8) * 0.5 + 0.5) * 500);
+  ctx.fillStyle = ink;
+  ctx.font = `${wght} 54px ${UI_FONT}`;
+  ctx.fillText("Aa", 44, 442);
+
+  // Slider track under Aa
+  rect(144, 436, 110, 4, "#e2e8f0", 2);
+  const sliderThumbX = 144 + ((wght - 300) / 500) * 110;
+  rect(sliderThumbX - 5, 432, 10, 12, blue, 3);
+  drawText(`wght: ${wght}`, 268, 441, 11, blue, 700);
+
+  drawText("Montserrat / Variable", 144, 416, 16, ink, 650);
+  drawText("KERNING: OPTICAL · TRACKING: -0.02EM", 144, 464, 11, muted, 600);
+
+  // Contrast ratio pill
+  rect(620, 424, 144, 26, "rgba(37, 99, 235, 0.08)", 13);
+  drawText("AAA · 14.8:1 RATIO", 634, 441, 10, blue, 700);
+}
+
+function drawEngineeringModule(
+  ctx: CanvasRenderingContext2D,
+  w: number,
+  h: number,
+  time: number,
+) {
+  // Deep dark IDE background
+  ctx.fillStyle = "#0c101c";
+  ctx.fillRect(0, 0, w, h);
+
+  const rect = (
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    color: string,
+    radius = 0,
+  ) => {
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    if (radius > 0) {
+      drawRoundedRect(ctx, x, y, width, height, radius);
+    } else {
+      ctx.rect(x, y, width, height);
+    }
+    ctx.fill();
+  };
+
+  const drawText = (
+    val: string,
+    x: number,
+    y: number,
+    size: number,
+    color: string,
+    weight: number | string = 500,
+    mono = true,
+  ) => {
+    ctx.fillStyle = color;
+    ctx.font = `${weight} ${size}px ${mono ? MONO_FONT : UI_FONT}`;
+    ctx.fillText(val, x, y);
+  };
+
+  // Window top bar
+  rect(0, 0, w, 52, "#131929");
+  rect(0, 51, w, 1, "#1e293b");
+
+  // Window control dots with soft glow
+  [
+    { c: "#ef4444", x: 730 },
+    { c: "#f59e0b", x: 748 },
+    { c: "#10b981", x: 766 },
+  ].forEach((dot) => {
+    ctx.beginPath();
+    ctx.arc(dot.x, 26, 4.5, 0, Math.PI * 2);
+    ctx.fillStyle = dot.c;
+    ctx.fill();
+  });
+
+  // Breathing green halo on terminal green dot
+  const halo = 4.5 + (Math.sin(time * 3) * 0.5 + 0.5) * 4;
+  ctx.beginPath();
+  ctx.arc(766, 26, halo, 0, Math.PI * 2);
+  ctx.strokeStyle = "rgba(16, 185, 129, 0.45)";
+  ctx.lineWidth = 1.2;
+  ctx.stroke();
+
+  drawText("/ product-platform.tsx", 30, 32, 13.5, "#e2e8f0", 600, false);
+  drawText("TS 5.4 · main", 620, 32, 11, "#64748b", 500, false);
+
+  // Realistic code typing engine
+  const CODE_LINES = [
+    {
+      num: "01",
+      tokens: [
+        { t: "export", c: "#c084fc" },
+        { t: " function", c: "#c084fc" },
+        { t: " Experience", c: "#38bdf8" },
+        { t: "() {", c: "#e2e8f0" },
+      ],
+    },
+    {
+      num: "02",
+      tokens: [
+        { t: "  const", c: "#c084fc" },
+        { t: " signal", c: "#f8fafc" },
+        { t: " = ", c: "#38bdf8" },
+        { t: "useProductState", c: "#60a5fa" },
+        { t: '("live");', c: "#34d399" },
+      ],
+    },
+    {
+      num: "03",
+      tokens: [
+        { t: "  const", c: "#c084fc" },
+        { t: " motion", c: "#f8fafc" },
+        { t: " = ", c: "#38bdf8" },
+        { t: "useSystemMotion", c: "#60a5fa" },
+        { t: "({ fps: 60 });", c: "#fbbf24" },
+      ],
+    },
+    {
+      num: "04",
+      tokens: [{ t: "  return (", c: "#e2e8f0" }],
+    },
+    {
+      num: "05",
+      tokens: [
+        { t: "    <", c: "#e2e8f0" },
+        { t: "Canvas", c: "#38bdf8" },
+        { t: " surface", c: "#a5b4fc" },
+        { t: "={signal.active}>", c: "#e2e8f0" },
+      ],
+    },
+    {
+      num: "06",
+      tokens: [
+        { t: "      <", c: "#e2e8f0" },
+        { t: "Pipeline", c: "#38bdf8" },
+        { t: " deploy", c: "#a5b4fc" },
+        { t: '="instant"', c: "#34d399" },
+        { t: " />", c: "#e2e8f0" },
+      ],
+    },
+    {
+      num: "07",
+      tokens: [
+        { t: "    </", c: "#e2e8f0" },
+        { t: "Canvas", c: "#38bdf8" },
+        { t: ">", c: "#e2e8f0" },
+      ],
+    },
+    {
+      num: "08",
+      tokens: [{ t: "  );", c: "#e2e8f0" }],
+    },
+    {
+      num: "09",
+      tokens: [{ t: "}", c: "#e2e8f0" }],
+    },
+  ];
+
+  let totalChars = 0;
+  CODE_LINES.forEach((line) => {
+    line.tokens.forEach((tok) => {
+      totalChars += tok.t.length;
+    });
+  });
+
+  const cycleTime = 14;
+  const localTime = time % cycleTime;
+  const charsTyped = Math.min(totalChars, Math.floor(localTime * 24));
+
+  let charsAccounted = 0;
+  let caretX = 78;
+  let caretY = 105;
+
+  CODE_LINES.forEach((line, lineIdx) => {
+    const y = 98 + lineIdx * 37;
+    // Line number
+    drawText(line.num, 30, y, 12.5, "#475569", 500);
+
+    let curX = 78;
+    line.tokens.forEach((tok) => {
+      if (charsAccounted >= charsTyped) return;
+      const rem = charsTyped - charsAccounted;
+      const str = tok.t.slice(0, rem);
+      drawText(str, curX, y, 15, tok.c, 500);
+      charsAccounted += str.length;
+
+      ctx.font = `500 15px ${MONO_FONT}`;
+      const strWidth = ctx.measureText(str).width;
+      curX += strWidth;
+
+      if (charsAccounted >= charsTyped) {
+        caretX = curX;
+        caretY = y;
+      }
+    });
+  });
+
+  // Glowing Blinking Caret
+  if (Math.floor(time * 3.5) % 2 === 0) {
+    rect(caretX + 2, caretY - 14, 2.5, 17, "#38bdf8");
+  }
+
+  // Active line highlight
+  rect(72, caretY - 17, 700, 22, "rgba(56, 189, 248, 0.04)");
+
+  // Compilation toast when snippet completes
+  if (localTime > 10) {
+    rect(30, 424, 268, 26, "rgba(16, 185, 129, 0.15)", 4);
+    ctx.strokeStyle = "rgba(16, 185, 129, 0.4)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    drawRoundedRect(ctx, 30, 424, 268, 26, 4);
+    ctx.stroke();
+    drawText("✓ COMPILED IN 18MS · 0 ERRORS", 44, 441, 10.5, "#34d399", 700);
+  }
+
+  // Footer status bar
+  rect(30, 464, 740, 1, "#1e293b");
+  ctx.beginPath();
+  ctx.arc(38, 498, 4, 0, Math.PI * 2);
+  ctx.fillStyle = "#34d399";
+  ctx.fill();
+  drawText("SYSTEMS ONLINE", 50, 502, 11, "#34d399", 700, false);
+  drawText(
+    "EDGE COMPUTE: 14ms · 60 FPS",
+    340,
+    502,
+    10.5,
+    "#64748b",
+    500,
+    false,
+  );
+  drawText(
+    "BRANCH: main · 100% TESTED",
+    600,
+    502,
+    10.5,
+    "#94a3b8",
+    600,
+    false,
+  );
+}
+
+function drawGrowthModule(
+  ctx: CanvasRenderingContext2D,
+  w: number,
+  h: number,
+  time: number,
+) {
+  // Dark dashboard background
+  ctx.fillStyle = "#0c121e";
+  ctx.fillRect(0, 0, w, h);
+
+  const rect = (
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    color: string,
+    radius = 0,
+  ) => {
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    if (radius > 0) {
+      drawRoundedRect(ctx, x, y, width, height, radius);
+    } else {
+      ctx.rect(x, y, width, height);
+    }
+    ctx.fill();
+  };
+
+  const drawText = (
+    val: string,
+    x: number,
+    y: number,
+    size: number,
+    color: string,
+    weight: number | string = 500,
+    mono = false,
+  ) => {
+    ctx.fillStyle = color;
+    ctx.font = `${weight} ${size}px ${mono ? MONO_FONT : UI_FONT}`;
+    ctx.fillText(val, x, y);
+  };
+
+  drawText("GROWTH SIGNALS", 36, 46, 12, "#818cf8", 750);
+  drawText("A clearer picture of progress", 36, 86, 21, "#f8fafc", 650);
+
+  // Live telemetry badge
+  rect(590, 34, 174, 26, "rgba(56, 189, 248, 0.12)", 13);
+  ctx.beginPath();
+  ctx.arc(606, 47, 4, 0, Math.PI * 2);
+  ctx.fillStyle = "#38bdf8";
+  ctx.fill();
+  drawText("TELEMETRY · LIVE", 618, 51, 9.5, "#38bdf8", 700);
+
+  drawText("CHANNEL PERFORMANCE", 36, 136, 11, "#64748b", 600);
+
+  // Chart Grid Lines
+  [180, 250, 320].forEach((gridY) => {
+    rect(36, gridY, 728, 1, "rgba(255, 255, 255, 0.05)");
+  });
+
+  // Animated curve points with organic sine wave undulation
+  const BASE_POINTS: [number, number][] = [
+    [40, 360],
+    [115, 320],
+    [190, 335],
+    [265, 255],
+    [340, 280],
+    [415, 205],
+    [490, 230],
+    [565, 165],
+    [640, 185],
+    [750, 125],
+  ];
+
+  const points: [number, number][] = BASE_POINTS.map(([x, y], i) => [
+    x,
+    y + Math.sin(time * 2.2 + i * 0.85) * 8 + Math.cos(time * 1.3 + i * 0.4) * 4,
+  ]);
+
+  // Area fill under curve
+  ctx.beginPath();
+  points.forEach(([x, y], i) => {
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  });
+  ctx.lineTo(750, 370);
+  ctx.lineTo(40, 370);
+  ctx.closePath();
+  const areaGrad = ctx.createLinearGradient(0, 120, 0, 370);
+  areaGrad.addColorStop(0, "rgba(56, 189, 248, 0.24)");
+  areaGrad.addColorStop(1, "rgba(56, 189, 248, 0.0)");
+  ctx.fillStyle = areaGrad;
+  ctx.fill();
+
+  // Primary Curve Stroke
+  ctx.beginPath();
+  points.forEach(([x, y], i) => {
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  });
+  const strokeGrad = ctx.createLinearGradient(40, 0, 750, 0);
+  strokeGrad.addColorStop(0, "#6366f1");
+  strokeGrad.addColorStop(0.5, "#38bdf8");
+  strokeGrad.addColorStop(1, "#818cf8");
+  ctx.strokeStyle = strokeGrad;
+  ctx.lineWidth = 3.5;
+  ctx.stroke();
+
+  // Draw node rings
+  points.forEach(([x, y]) => {
+    ctx.beginPath();
+    ctx.arc(x, y, 7, 0, Math.PI * 2);
+    ctx.fillStyle = "#0c121e";
+    ctx.fill();
+    ctx.strokeStyle = "#38bdf8";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  });
+
+  // Moving Scrubber & Dynamic Tooltip
+  const scrubX = 50 + ((time * 70) % 680);
+  let interpY = 250;
+  for (let i = 0; i < points.length - 1; i++) {
+    if (scrubX >= points[i][0] && scrubX <= points[i + 1][0]) {
+      const segT =
+        (scrubX - points[i][0]) / (points[i + 1][0] - points[i][0]);
+      interpY = points[i][1] + (points[i + 1][1] - points[i][1]) * segT;
+      break;
+    }
+  }
+
+  // Vertical dashed scrubber
+  ctx.strokeStyle = "rgba(56, 189, 248, 0.4)";
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath();
+  ctx.moveTo(scrubX, 110);
+  ctx.lineTo(scrubX, 375);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Expanding ripple at curve intersection
+  const ripR = ((time * 2.5) % 1) * 14;
+  ctx.beginPath();
+  ctx.arc(scrubX, interpY, ripR, 0, Math.PI * 2);
+  ctx.strokeStyle = `rgba(56, 189, 248, ${1 - ripR / 14})`;
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  // Tooltip pill above cursor
+  const tooltipX = Math.min(Math.max(scrubX - 65, 40), 620);
+  rect(tooltipX, interpY - 48, 140, 32, "#131b2e", 6);
+  ctx.strokeStyle = "#38bdf8";
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  drawRoundedRect(ctx, tooltipX, interpY - 48, 140, 32, 6);
+  ctx.stroke();
+  const metricVal = Math.round(28 + Math.sin(time * 1.5) * 12);
+  const arrVal = Math.round(145 + Math.sin(time * 0.9) * 35);
+  drawText(
+    `+${metricVal}% · $${arrVal}k ARR`,
+    tooltipX + 14,
+    interpY - 28,
+    11,
+    "#ffffff",
+    650,
+  );
+
+  // Bottom Channels progress bars
+  rect(36, 420, 728, 1, "#1e293b");
+
+  const channels = [
+    { label: "DISCOVERY", basePct: 0.76, x: 36, speed: 1.0 },
+    { label: "ENGAGEMENT", basePct: 0.91, x: 280, speed: 0.8 },
+    { label: "CONVERSION", basePct: 0.83, x: 524, speed: 1.3 },
+  ];
+
+  channels.forEach((ch) => {
+    const pct = Math.min(
+      0.99,
+      ch.basePct + Math.sin(time * ch.speed) * 0.05,
+    );
+    drawText(ch.label, ch.x, 458, 11, "#94a3b8", 600);
+    drawText(
+      `${Math.round(pct * 100)}%`,
+      ch.x + 196,
+      458,
+      11,
+      "#38bdf8",
+      700,
+    );
+
+    // Track
+    rect(ch.x, 474, 230, 4, "#1e293b", 2);
+    // Fill
+    rect(ch.x, 474, 230 * pct, 4, "#38bdf8", 2);
+  });
+}
+
+function useAnimatedUiTexture(id: ModuleId, reduced: boolean) {
+  const lastUpdate = useRef(-1);
+  const controller = useMemo(() => {
+    const canvas = document.createElement("canvas");
+    // Crisp native dimensions matching mesh aspect ratios perfectly:
+    // Product is ~650px on screen; 1200px provides almost 2x Retina clarity
+    // Secondary cards are ~310px on screen; 800px provides 2.6x Retina clarity
+    const width = id === "product" ? 1200 : 800;
+    const height = id === "product" ? 764 : 540;
+
+    canvas.width = width;
+    canvas.height = height;
+    const context = canvas.getContext("2d", { alpha: false });
+    if (context) {
+      context.imageSmoothingEnabled = true;
+      context.imageSmoothingQuality = "high";
+    }
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.colorSpace = THREE.SRGBColorSpace;
+    // CRITICAL: Disable mipmaps and use direct linear filtering to eliminate all blur!
+    texture.generateMipmaps = false;
+    texture.minFilter = THREE.LinearFilter;
+    texture.magFilter = THREE.LinearFilter;
+    texture.anisotropy = 8;
+
+    // Staggered update cadence & phase offsets so no two modules ever upload on the same frame
+    const interval =
+      id === "product"
+        ? 0.033 // ~30 FPS for central studio preview
+        : id === "growth"
+          ? 0.040 // ~25 FPS for analytics chart
+          : id === "engineering"
+            ? 0.042 // ~24 FPS for code typing
+            : 0.048; // ~21 FPS for brand system
+
+    const phaseOffset =
+      id === "product"
+        ? 0
+        : id === "identity"
+          ? 0.012
+          : id === "engineering"
+            ? 0.024
+            : 0.036;
+
+    const render = (time: number) => {
+      if (!context) return;
+      if (id === "product") {
+        drawProductModule(context, width, height, time);
+      } else if (id === "identity") {
+        drawIdentityModule(context, width, height, time);
+      } else if (id === "engineering") {
+        drawEngineeringModule(context, width, height, time);
+      } else {
+        drawGrowthModule(context, width, height, time);
+      }
+      texture.needsUpdate = true;
+    };
+
+    // Render initial static frame immediately
+    render(0);
+
+    const update = (time: number) => {
+      if (reduced) return;
+      const elapsed = time + phaseOffset;
+      if (elapsed - lastUpdate.current < interval) return;
+      lastUpdate.current = elapsed;
+      render(time);
+    };
+
+    return {
+      texture,
+      update,
+      dispose: () => {
+        texture.dispose();
+      },
+    };
+  }, [id, reduced]);
+
+  useEffect(() => () => controller.dispose(), [controller]);
+
+  return controller;
 }
 
 function InterfaceModule({
@@ -313,7 +1095,7 @@ function InterfaceModule({
   theme: Theme;
 }) {
   const ref = useRef<THREE.Group>(null);
-  const texture = useUiTexture(config.id);
+  const controller = useAnimatedUiTexture(config.id, reduced);
   const [selected, setSelected] = useState(false);
   const hover = useRef(false);
   const touchSelected = useRef(false);
@@ -324,19 +1106,13 @@ function InterfaceModule({
     const group = ref.current;
     if (!group) return;
     const time = state.clock.elapsedTime;
-    const reveal = reduced
-      ? 1
-      : THREE.MathUtils.smoothstep(time - config.delay, 0, 1.1);
+    const reveal = THREE.MathUtils.smoothstep(time - config.delay, 0, 1.1);
     const scroll = THREE.MathUtils.clamp(scrollStore.hero, 0, 1);
     const dt = Math.min(delta, 0.05);
 
     // Subtle organic levitation physics
-    const floatY = reduced
-      ? 0
-      : Math.sin(time * 1.4 + config.delay * 3) * 0.028;
-    const floatRot = reduced
-      ? 0
-      : Math.cos(time * 1.1 + config.delay * 2) * 0.006;
+    const floatY = Math.sin(time * 1.4 + config.delay * 3) * 0.028;
+    const floatRot = Math.cos(time * 1.1 + config.delay * 2) * 0.006;
 
     // Scroll-driven dimensional transition
     const isLead = config.id === "product";
@@ -369,6 +1145,9 @@ function InterfaceModule({
       (isLead ? scroll * 0.06 : -scroll * 0.05);
     group.rotation.z =
       config.rotation[2] + (hover.current ? 0.015 : 0) + floatRot * 0.5;
+
+    // Update continuous procedural living UI texture
+    controller.update(time);
 
     const scale =
       (0.92 + reveal * 0.08) *
@@ -430,7 +1209,7 @@ function InterfaceModule({
       </RoundedBox>
       <mesh position={[0, 0, depth / 2 + 0.002]}>
         <planeGeometry args={[config.width - 0.065, config.height - 0.065]} />
-        <meshBasicMaterial map={texture} toneMapped={false} />
+        <meshBasicMaterial map={controller.texture} toneMapped={false} />
       </mesh>
       <mesh position={[0, 0, -depth / 2 - 0.012]}>
         <boxGeometry
@@ -498,7 +1277,7 @@ function FloatingAtmosphere({
   }, []);
 
   useFrame((state) => {
-    if (reduced || !group.current) return;
+    if (!group.current) return;
     const time = state.clock.elapsedTime;
     const scroll = THREE.MathUtils.clamp(scrollStore.hero, 0, 1);
     group.current.children.forEach((child, i) => {
@@ -766,6 +1545,7 @@ function Scene({
         ))}
         {quality.shadows && (
           <ContactShadows
+            frames={1}
             position={[1.1, -2.1, -0.8]}
             opacity={0.3}
             scale={8}
@@ -806,14 +1586,13 @@ export default function HeroScene({
       className="hero-canvas"
       dpr={quality.dpr}
       shadows={quality.shadows}
-      frameloop={active && !reduced ? "always" : "demand"}
+      frameloop={active ? "always" : "never"}
       gl={{
         antialias: quality.antialias,
         alpha: true,
         powerPreference: "high-performance",
         stencil: false,
       }}
-      performance={{ min: 0.65 }}
       camera={{
         position: [
           quality.tier === "low" ? 0.78 : 1.14,

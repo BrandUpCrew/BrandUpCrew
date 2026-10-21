@@ -474,23 +474,20 @@ export function HeroSpatialExit({
       gsap.fromTo(
         el,
         {
-          transformPerspective: 1200,
-          z: 0,
-          rotateX: 0,
           y: 0,
+          scale: 1,
           opacity: 1,
         },
         {
-          z: -120,
-          rotateX: 6,
           y: 60,
-          opacity: 0.18,
+          scale: 0.96,
+          opacity: 0.2,
           ease: "none",
           scrollTrigger: {
             trigger: el,
             start: "top top",
-            end: "bottom 20%",
-            scrub: 0.5,
+            end: "bottom 25%",
+            scrub: 0.25,
           },
         },
       );
@@ -499,7 +496,11 @@ export function HeroSpatialExit({
   );
 
   return (
-    <div ref={ref} className={cn("hero-spatial-exit", className)} style={{ transformStyle: "preserve-3d" }}>
+    <div
+      ref={ref}
+      className={cn("hero-spatial-exit", className)}
+      style={{ willChange: "transform, opacity" }}
+    >
       {children}
     </div>
   );
