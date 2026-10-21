@@ -4768,13 +4768,22 @@ html[data-initial-loader="leaving"] .brand-loader-initial {
   display: grid;
   grid-template-columns: 0.7fr 1.3fr;
   gap: clamp(46px, 8vw, 118px);
+  align-items: start;
 }
 
 .contact-sidebar {
   display: flex;
   flex-direction: column;
-  gap: 34px;
+  gap: 22px;
   padding-top: 6px;
+  align-self: start;
+  position: sticky;
+  top: 100px;
+}
+
+.contact-sidebar .perspective-tilt-wrap,
+.contact-sidebar .perspective-tilt-inner {
+  height: auto !important;
 }
 
 .contact-aside-item {
