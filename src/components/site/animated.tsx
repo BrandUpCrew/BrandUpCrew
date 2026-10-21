@@ -67,7 +67,7 @@ export function RevealSection({
     <motion.section
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.15 }}
+      viewport={{ once: false, amount: 0.15 }}
       transition={{ duration: 0.65, delay, ease: EASE }}
       className={className}
       {...props}
@@ -89,7 +89,7 @@ export function RevealItem({
     <motion.div
       initial={{ opacity: 0, y: distance }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.2 }}
+      viewport={{ once: false, amount: 0.2 }}
       transition={{ duration: 0.6, delay, ease: EASE }}
       className={className}
       {...props}
@@ -118,7 +118,7 @@ export function HeroBlock({
   );
 }
 
-/** Counts up to a value the first time it scrolls into view. */
+/** Counts up to a value every time it scrolls into view. */
 export function StatCounter({
   value,
   label,
@@ -131,7 +131,7 @@ export function StatCounter({
   suffix?: string;
 }) {
   const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, { once: true, amount: 0.5 });
+  const inView = useInView(ref, { once: false, amount: 0.5 });
   const reduce = useSyncExternalStore(
     subscribeReducedMotion,
     getReducedMotion,
@@ -140,20 +140,25 @@ export function StatCounter({
   const [display, setDisplay] = useState(0);
 
   useEffect(() => {
-    if (!inView || reduce) return;
+    if (reduce || !inView) return;
     const controls = animate(0, value, {
       duration: 1.2,
       delay,
       ease: EASE,
       onUpdate: (latest) => setDisplay(Math.round(latest)),
     });
-    return () => controls.stop();
+    return () => {
+      controls.stop();
+      setDisplay(0);
+    };
   }, [inView, value, delay, reduce]);
+
+  const activeDisplay = inView ? display : 0;
 
   return (
     <div className="stat-item">
       <span className="stat-value" ref={ref}>
-        {String(reduce ? value : display).padStart(2, "0")}
+        {String(reduce ? value : activeDisplay).padStart(2, "0")}
         {suffix}
       </span>
       <span className="stat-label">{label}</span>
@@ -173,5 +178,100 @@ export function Marquee({ items }: { items: string[] }) {
         ))}
       </div>
     </div>
+  );
+}
+
+/** Staggers child items sequentially when scrolling into view. */
+export function StaggerGroup({
+  children,
+  className,
+  stagger = 0.08,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  stagger?: number;
+}) {
+  return (
+    <motion.div
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once: false, amount: 0.15 }}
+      variants={{
+        hidden: {},
+        show: {
+          transition: {
+            staggerChildren: stagger,
+          },
+        },
+      }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+export function StaggerItem({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <motion.div
+      variants={{
+        hidden: { opacity: 0, y: 24, scale: 0.98 },
+        show: {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          transition: { duration: 0.65, ease: EASE },
+        },
+      }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+/** Subtle continuous floating physics for decorative accents. */
+export function FloatingElement({
+  children,
+  className,
+  duration = 4.5,
+  distance = 8,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  duration?: number;
+  distance?: number;
+}) {
+  const reduce = useReducedMotion();
+
+  return (
+    <motion.div
+      className={className}
+      animate={
+        reduce
+          ? undefined
+          : {
+              y: [-distance, distance, -distance],
+              rotate: [-0.8, 0.8, -0.8],
+            }
+      }
+      transition={
+        reduce
+          ? undefined
+          : {
+              duration,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }
+      }
+    >
+      {children}
+    </motion.div>
   );
 }
