@@ -5,6 +5,7 @@ import { ArrowLeft, ArrowUpRight } from "lucide-react";
 
 import { ArticleCard } from "@/components/site/cards";
 import { CtaSection } from "@/components/site/cta-section";
+import { MaskedHeading, ScrollStorySection } from "@/components/site/motion";
 import { articles } from "@/content/content";
 import { siteConfig } from "@/config/site";
 
@@ -79,7 +80,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             <span />
             {article.category}
           </p>
-          <h1>{article.title}</h1>
+          <MaskedHeading lines={[article.title]} tag="h1" trigger="mount" />
           <p className="article-deck">{article.summary}</p>
           <p className="article-byline">
             Studio Notes <span>·</span> {date} <span>·</span>{" "}
@@ -110,16 +111,18 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         </div>
       </article>
       {related.length > 0 && (
-        <section className="section-block related-articles">
-          <div className="content-width">
-            <h2>Keep exploring</h2>
-            <div className="article-grid">
-              {related.map((item) => (
-                <ArticleCard key={item.slug} article={item} />
-              ))}
+        <ScrollStorySection>
+          <section className="section-block related-articles">
+            <div className="content-width">
+              <h2>Keep exploring</h2>
+              <div className="article-grid">
+                {related.map((item) => (
+                  <ArticleCard key={item.slug} article={item} />
+                ))}
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        </ScrollStorySection>
       )}
       <CtaSection />
     </main>

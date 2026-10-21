@@ -306,9 +306,11 @@ function useUiTexture(id: ModuleId) {
 function InterfaceModule({
   config,
   reduced,
+  theme,
 }: {
   config: ModuleConfig;
   reduced: boolean;
+  theme: Theme;
 }) {
   const ref = useRef<THREE.Group>(null);
   const texture = useUiTexture(config.id);
@@ -327,24 +329,51 @@ function InterfaceModule({
       : THREE.MathUtils.smoothstep(time - config.delay, 0, 1.1);
     const scroll = THREE.MathUtils.clamp(scrollStore.hero, 0, 1);
     const dt = Math.min(delta, 0.05);
+
+    // Subtle organic levitation physics
+    const floatY = reduced
+      ? 0
+      : Math.sin(time * 1.4 + config.delay * 3) * 0.028;
+    const floatRot = reduced
+      ? 0
+      : Math.cos(time * 1.1 + config.delay * 2) * 0.006;
+
+    // Scroll-driven dimensional transition
+    const isLead = config.id === "product";
+    const xSpread = isLead
+      ? -scroll * 0.14
+      : config.position[0] > 0
+        ? scroll * 0.38
+        : -scroll * 0.35;
+    const yRecede = -scroll * 0.45;
+    const zDepth = isLead ? scroll * 0.32 : -scroll * 0.55;
+
     group.position.x =
-      config.position[0] +
-      config.formationOffset[0] * (1 - reveal) -
-      scroll * config.position[0] * 0.035;
+      config.position[0] + config.formationOffset[0] * (1 - reveal) + xSpread;
     group.position.y =
-      config.position[1] + config.formationOffset[1] * (1 - reveal);
+      config.position[1] +
+      config.formationOffset[1] * (1 - reveal) +
+      floatY +
+      yRecede;
     group.position.z =
-      config.position[2] +
-      config.formationOffset[2] * (1 - reveal) +
-      scroll * 0.16;
-    group.rotation.x = config.rotation[0] + (hover.current ? -0.025 : 0);
+      config.position[2] + config.formationOffset[2] * (1 - reveal) + zDepth;
+
+    group.rotation.x =
+      config.rotation[0] +
+      (hover.current ? -0.03 : 0) +
+      floatRot -
+      scroll * 0.1;
     group.rotation.y =
-      config.rotation[1] + state.pointer.x * (reduced ? 0 : 0.018);
-    group.rotation.z = config.rotation[2] + (hover.current ? 0.014 : 0);
+      config.rotation[1] +
+      state.pointer.x * (reduced ? 0 : 0.022) +
+      (isLead ? scroll * 0.06 : -scroll * 0.05);
+    group.rotation.z =
+      config.rotation[2] + (hover.current ? 0.015 : 0) + floatRot * 0.5;
+
     const scale =
       (0.92 + reveal * 0.08) *
       (hover.current ? 1.025 : 1) *
-      (1 - scroll * 0.02);
+      (1 - scroll * 0.03);
     const nextScale = THREE.MathUtils.damp(group.scale.x, scale, 5, dt);
     group.scale.setScalar(nextScale);
   });
@@ -382,12 +411,21 @@ function InterfaceModule({
         receiveShadow
       >
         <meshPhysicalMaterial
-          color={config.id === "product" ? "#d3d9e3" : "#8792a4"}
-          metalness={0.5}
-          roughness={0.32}
-          clearcoat={0.42}
-          clearcoatRoughness={0.24}
-          envMapIntensity={1.3}
+          color={
+            config.id === "product"
+              ? theme === "light"
+                ? "#d6dde8"
+                : "#182030"
+              : theme === "light"
+                ? "#8c99ad"
+                : "#121724"
+          }
+          metalness={0.65}
+          roughness={0.24}
+          clearcoat={0.95}
+          clearcoatRoughness={0.12}
+          reflectivity={0.9}
+          envMapIntensity={theme === "light" ? 1.5 : 1.3}
         />
       </RoundedBox>
       <mesh position={[0, 0, depth / 2 + 0.002]}>
@@ -400,8 +438,8 @@ function InterfaceModule({
         />
         <meshStandardMaterial
           color="#080b12"
-          metalness={0.62}
-          roughness={0.28}
+          metalness={0.65}
+          roughness={0.26}
         />
       </mesh>
       {selected && (
@@ -415,6 +453,88 @@ function InterfaceModule({
           </span>
         </Html>
       )}
+    </group>
+  );
+}
+
+function FloatingAtmosphere({
+  reduced,
+  theme,
+}: {
+  reduced: boolean;
+  theme: Theme;
+}) {
+  const group = useRef<THREE.Group>(null);
+  const items = useMemo(() => {
+    const list: {
+      position: [number, number, number];
+      scale: number;
+      speed: number;
+      offset: number;
+      isTorus: boolean;
+    }[] = [];
+    const seed = [
+      [-2.6, 1.8, 0.8],
+      [-1.9, -1.3, 0.6],
+      [2.3, 2.5, -1.2],
+      [4.7, 0.3, 0.1],
+      [0.3, 2.7, -0.5],
+      [-3.3, 0.3, -1.0],
+      [4.2, -2.2, 0.4],
+      [-0.5, -2.1, 1.2],
+      [2.7, -1.7, -0.3],
+      [-2.7, 2.5, -0.6],
+    ];
+    seed.forEach((pos, i) => {
+      list.push({
+        position: pos as [number, number, number],
+        scale: 0.09 + (i % 3) * 0.035,
+        speed: 0.3 + (i % 4) * 0.12,
+        offset: i * 0.65,
+        isTorus: i % 2 === 0,
+      });
+    });
+    return list;
+  }, []);
+
+  useFrame((state) => {
+    if (reduced || !group.current) return;
+    const time = state.clock.elapsedTime;
+    const scroll = THREE.MathUtils.clamp(scrollStore.hero, 0, 1);
+    group.current.children.forEach((child, i) => {
+      const it = items[i];
+      if (!it) return;
+      child.position.y =
+        it.position[1] +
+        Math.sin(time * it.speed + it.offset) * 0.12 -
+        scroll * 0.6;
+      child.rotation.x = time * 0.2 + it.offset;
+      child.rotation.y = time * 0.3 + it.offset;
+    });
+  });
+
+  return (
+    <group ref={group}>
+      {items.map((it, i) => (
+        <mesh key={i} position={it.position} scale={it.scale}>
+          {it.isTorus ? (
+            <torusGeometry args={[0.42, 0.07, 10, 20]} />
+          ) : (
+            <octahedronGeometry args={[0.46, 0]} />
+          )}
+          <meshPhysicalMaterial
+            color={theme === "light" ? "#2547f0" : "#6f8dff"}
+            metalness={0.6}
+            roughness={0.2}
+            clearcoat={1}
+            clearcoatRoughness={0.1}
+            transparent
+            opacity={theme === "light" ? 0.3 : 0.4}
+            transmission={0.35}
+            thickness={0.2}
+          />
+        </mesh>
+      ))}
     </group>
   );
 }
@@ -503,28 +623,34 @@ function CameraRig({
       : THREE.MathUtils.smoothstep(state.clock.elapsedTime, 0, 1.4);
     const px = reduced ? 0 : state.pointer.x;
     const py = reduced ? 0 : state.pointer.y;
+    const vel = THREE.MathUtils.clamp(
+      (scrollStore.velocity || 0) * 0.00008,
+      -0.2,
+      0.2,
+    );
+
     camera.position.x = THREE.MathUtils.damp(
       camera.position.x,
-      1.14 + px * 0.18 + scroll * 0.16,
+      1.14 + px * 0.2 + scroll * 0.28,
       2.1,
       dt,
     );
     camera.position.y = THREE.MathUtils.damp(
       camera.position.y,
-      0.14 + py * 0.12 + scroll * 0.08,
+      0.14 + py * 0.14 - scroll * 0.38 + vel,
       2.1,
       dt,
     );
     camera.position.z = THREE.MathUtils.damp(
       camera.position.z,
-      (compact ? 13.1 : 8.35) - intro * (compact ? 0.45 : 0.58) - scroll * 0.55,
+      (compact ? 13.1 : 8.35) - intro * (compact ? 0.45 : 0.58) - scroll * 0.95,
       1.8,
       dt,
     );
     target.set(
-      (compact ? 0.78 : 1.08) + px * 0.08 + scroll * 0.22,
-      0.08 + py * 0.04,
-      -0.12 - scroll * 0.22,
+      (compact ? 0.78 : 1.08) + px * 0.09 + scroll * 0.32,
+      0.08 + py * 0.04 - scroll * 0.4,
+      -0.12 - scroll * 0.45,
     );
     camera.lookAt(target);
   });
@@ -620,6 +746,7 @@ function Scene({
       </Environment>
 
       <group scale={quality.tier === "low" ? 0.68 : 1}>
+        <FloatingAtmosphere reduced={reduced} theme={theme} />
         {routes.map((route, index) => (
           <Connector
             key={index}
@@ -630,7 +757,12 @@ function Scene({
           />
         ))}
         {MODULES.map((config) => (
-          <InterfaceModule key={config.id} config={config} reduced={reduced} />
+          <InterfaceModule
+            key={config.id}
+            config={config}
+            reduced={reduced}
+            theme={theme}
+          />
         ))}
         {quality.shadows && (
           <ContactShadows
