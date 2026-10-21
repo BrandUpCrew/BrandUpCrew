@@ -1,24 +1,28 @@
+import { StaggerGroup, StaggerItem } from "@/components/site/animated";
+
 export function FaqList({
   items,
 }: {
   items: { question: string; answer: string }[];
 }) {
   return (
-    <div className="faq-list">
+    <StaggerGroup className="faq-list" stagger={0.06}>
       {items.map((item, index) => (
-        <details className="faq-item" key={item.question}>
-          <summary>
-            <span className="faq-number">
-              {String(index + 1).padStart(2, "0")}
-            </span>
-            <span>{item.question}</span>
-            <span className="faq-plus" aria-hidden="true">
-              +
-            </span>
-          </summary>
-          <p>{item.answer}</p>
-        </details>
+        <StaggerItem key={item.question}>
+          <details className="faq-item">
+            <summary>
+              <span className="faq-number">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+              <span>{item.question}</span>
+              <span className="faq-plus" aria-hidden="true">
+                +
+              </span>
+            </summary>
+            <p>{item.answer}</p>
+          </details>
+        </StaggerItem>
       ))}
-    </div>
+    </StaggerGroup>
   );
 }
