@@ -34,7 +34,7 @@ function applyTheme(theme: Theme) {
   window.requestAnimationFrame(() => {
     delete root.dataset.themeSwitching;
   });
-  const themeColor = theme === "dark" ? "#04060f" : "#ffffff";
+  const themeColor = theme === "dark" ? "#000000" : "#ffffff";
   document
     .querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]')
     .forEach((meta) => {
@@ -95,7 +95,7 @@ export const initializeThemeScript = `
     window.requestAnimationFrame(() => {
       delete root.dataset.themeSwitching;
     });
-    const themeColor = theme === "dark" ? "#04060f" : "#ffffff";
+    const themeColor = theme === "dark" ? "#000000" : "#ffffff";
     document
       .querySelectorAll('meta[name="theme-color"]')
       .forEach((meta) => meta.setAttribute("content", themeColor));
