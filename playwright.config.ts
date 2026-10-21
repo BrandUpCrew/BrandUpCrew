@@ -1,6 +1,6 @@
 import { defineConfig, devices } from "@playwright/test";
 
-const port = Number(process.env.PLAYWRIGHT_PORT ?? 3100);
+const port = Number(process.env.PLAYWRIGHT_PORT ?? 3000);
 if (!Number.isInteger(port) || port < 1 || port > 65_535) {
   throw new Error("PLAYWRIGHT_PORT must be a valid TCP port number.");
 }
@@ -21,7 +21,7 @@ export default defineConfig({
   webServer: {
     command: `npm run ${useProductionServer ? "start" : "dev"} -- --hostname 127.0.0.1 --port ${port}`,
     url: `http://127.0.0.1:${port}`,
-    reuseExistingServer: false,
+    reuseExistingServer: !process.env.CI,
     timeout: 120_000,
   },
 });
