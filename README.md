@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="public/Logo.png" alt="BrandUpCrew" width="78" height="78" />
+
 # BrandUpCrew
 
 **Digital growth & technology — independent strategy, design, and engineering for businesses ready to move forward.**
@@ -9,13 +11,48 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-06B6D4?logo=tailwindcss&logoColor=white)
 ![Playwright](https://img.shields.io/badge/Tested_with-Playwright-2EAD33?logo=playwright&logoColor=white)
-![Accessibility](https://img.shields.io/badge/WCAG-2.2_AA-1E8E3E)
+![WCAG](https://img.shields.io/badge/WCAG-2.2_AA-1E8E3E)
+![License](https://img.shields.io/badge/License-Proprietary-8B5CF6)
 
 </div>
 
+> **In one line:** this is the public website of an independent digital studio — a complete narrative of what the studio does, how it works, and how to start a conversation, built as a static-first Next.js application with one server endpoint.
+
 ---
 
-## Table of contents
+## At a glance
+
+| Field               | Value                                                                         |
+| ------------------- | ----------------------------------------------------------------------------- |
+| **Studio**          | BrandUpCrew — independent digital studio                                      |
+| **Product**         | Public marketing website, production-facing                                   |
+| **Framework**       | Next.js 16 · App Router · React Server Components · Turbopack                 |
+| **Language**        | TypeScript 5.9 in `strict` mode                                               |
+| **Styling**         | Tailwind CSS v4 over a semantic CSS token layer                               |
+| **Content**         | One typed module — no CMS, no database                                        |
+| **Server API**      | A single route: `/api/contact`                                                |
+| **Motion**          | Lenis · GSAP + ScrollTrigger · Motion · React Three Fiber (divided ownership) |
+| **Accessibility**   | WCAG 2.2 A/AA checks on representative routes via axe                         |
+| **Test engines**    | Chromium · Firefox · WebKit                                                   |
+| **Generated pages** | 12 services · 3 concepts · 3 articles · 4 team profiles                       |
+| **License**         | [Proprietary — All Rights Reserved](LICENSE.md)                               |
+
+---
+
+## Reading paths
+
+Different visitors need different things from this repository. Start where you are.
+
+| If you are…              | Read in this order                                                                                                                                          |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **A prospective client** | [About the studio](#about-the-studio) → [Service disciplines](#service-disciplines) → [How we work](#how-we-work) → [Studio principles](#studio-principles) |
+| **A designer**           | [Design language](#design-language) → [Motion, 3D, and theming](#motion-3d-and-theming) → [`docs/design-system.md`](docs/design-system.md)                  |
+| **An engineer**          | [Architecture at a glance](#architecture-at-a-glance) → [Getting started](#getting-started) → [Testing](#testing) → [`CONTRIBUTING.md`](CONTRIBUTING.md)    |
+| **A security reviewer**  | [Contact and inquiry pipeline](#contact-and-inquiry-pipeline) → [Deployment notes](#deployment-notes) → [`SECURITY.md`](SECURITY.md)                        |
+
+---
+
+## Contents
 
 - [About the studio](#about-the-studio)
 - [What this repository contains](#what-this-repository-contains)
@@ -23,6 +60,7 @@
 - [Industries we work with](#industries-we-work-with)
 - [How we work](#how-we-work)
 - [Studio principles](#studio-principles)
+- [Design language](#design-language)
 - [Technology stack](#technology-stack)
 - [Architecture at a glance](#architecture-at-a-glance)
 - [Content model](#content-model)
@@ -31,13 +69,16 @@
 - [Getting started](#getting-started)
 - [Environment variables](#environment-variables)
 - [Available scripts](#available-scripts)
+- [Quality gates](#quality-gates)
 - [Testing](#testing)
 - [Project structure](#project-structure)
 - [Contact and inquiry pipeline](#contact-and-inquiry-pipeline)
 - [Deployment notes](#deployment-notes)
+- [What is deliberately not included](#what-is-deliberately-not-included)
 - [Documentation](#documentation)
 - [Content, legal, and honesty notes](#content-legal-and-honesty-notes)
 - [Contributing](#contributing)
+- [License](#license)
 
 ---
 
@@ -45,11 +86,9 @@
 
 **BrandUpCrew** is an independent digital studio working across **strategy, design, engineering, and digital marketing**. The studio positions itself as one accountable partner rather than a collection of disconnected suppliers: the same team that understands the business problem also designs, builds, and improves the response to it.
 
-The studio descriptor used across the product is **“Digital growth & technology”**, and the public positioning statement is:
+The descriptor used across the product is **“Digital growth & technology”**. The public positioning statement is:
 
 > Independent strategy, design, and technology for businesses ready to move forward.
-
-What that means in practice:
 
 | Area                                | How the studio works with a client                                                                                                     |
 | ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
@@ -59,7 +98,7 @@ What that means in practice:
 | **Honest measurement**              | Meaningful measures are agreed up front, and findings are reported as they are — including when they are inconvenient.                 |
 | **Collaboration-ready**             | The studio works alongside internal marketing, design, engineering, and leadership teams, with responsibilities agreed at the start.   |
 
-**Who the studio is a good fit for:** teams that need to improve a digital experience, launch a product, or make their marketing more coherent. Fit is decided by the problem and the available capacity, not by company size.
+**A good fit if** you need to improve a digital experience, launch a product, or make your marketing more coherent. Fit is decided by the problem and available capacity, not by company size.
 
 **What the studio does not claim:** no guarantees on rankings, revenue, leads, or advertising returns. Work is scoped, measured, and reported honestly.
 
@@ -69,7 +108,10 @@ What that means in practice:
 
 This repository is the **public marketing website** for the studio — a production-grade Next.js application that explains the offering, demonstrates how the studio thinks, and converts interest into a project inquiry.
 
-The site is intentionally **static-first**: all editorial content is rendered at build time, and there is no database, authentication layer, admin panel, or CMS. The only API route is the contact endpoint, and metadata endpoints (`sitemap.xml`, `robots.txt`, `feed.xml`) are generated from the same typed content.
+It is intentionally **static-first**: all editorial content is rendered at build time, and there is no database, authentication layer, admin panel, or CMS. The only API route is the contact endpoint; metadata endpoints (`sitemap.xml`, `robots.txt`, `feed.xml`) are generated from the same typed content.
+
+<details>
+<summary><strong>Site areas</strong></summary>
 
 | Area                 | What visitors can explore                                                                                                                                                                |
 | -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -83,7 +125,10 @@ The site is intentionally **static-first**: all editorial content is rendered at
 | **Contact**          | A structured inquiry form that can be prefilled with a chosen service and/or team member, plus privacy and terms pages.                                                                  |
 | **Machine-readable** | `sitemap.xml`, `robots.txt`, `feed.xml`, canonical URLs, Open Graph metadata, and article structured data.                                                                               |
 
-### Route map
+</details>
+
+<details>
+<summary><strong>Route map</strong></summary>
 
 | Route                                      | Purpose                                                                    |
 | ------------------------------------------ | -------------------------------------------------------------------------- |
@@ -100,7 +145,9 @@ The site is intentionally **static-first**: all editorial content is rendered at
 | `/faq`, `/privacy`, `/terms`               | Supporting editorial and legal pages.                                      |
 | `/api/contact`                             | The only API route: validated, rate-limited inquiry delivery.              |
 | `/feed.xml`, `/sitemap.xml`, `/robots.txt` | Generated metadata endpoints.                                              |
-| `/loading`, `/error`, `/not-found`         | Loading, error, and 404 states styled as part of the experience.           |
+| `loading`, `error`, `not-found`            | Loading, error, and 404 states styled as part of the experience.           |
+
+</details>
 
 ---
 
@@ -134,14 +181,14 @@ Every service page answers the same questions in the same order: **what problem 
 
 ## How we work
 
-The same four-step method is repeated on the site, in the process page, and on every service page, so the promise and the delivery model match.
+The same four-step method is repeated on the site, on the process page, and on every service page — so the promise and the delivery model match.
 
-| Step                       | What happens                                                                              |
-| -------------------------- | ----------------------------------------------------------------------------------------- |
-| **01 — Listen**            | Learn about customers, ambitions, constraints, and what has already been tried.           |
-| **02 — Find the focus**    | Turn the brief into a shared problem, a clear scope, and a sensible measure of progress.  |
-| **03 — Make and test**     | Work in visible increments, invite useful feedback, and test the details that matter.     |
-| **04 — Learn and improve** | Hand over clearly, review what changed, and help the team decide what should happen next. |
+```mermaid
+flowchart LR
+  A["01 — Listen<br/>customers, ambitions, constraints"] --> B["02 — Find the focus<br/>shared problem, scope, measure"]
+  B --> C["03 — Make and test<br/>visible increments, useful feedback"]
+  C --> D["04 — Learn and improve<br/>clear handover, next decisions"]
+```
 
 ---
 
@@ -154,7 +201,25 @@ These principles are encoded in the product itself — if a change contradicts t
 3. **Reproducible delivery.** Every service page defines the deliverables and the approach before it asks for a conversation.
 4. **Useful by default.** The site must remain readable, navigable, and honest without WebGL, without JavaScript-heavy effects, and with reduced motion enabled.
 5. **Privacy-conscious contact.** The inquiry endpoint validates, limits, and forwards a message. It does not store leads.
-6. **Accessibility is a requirement, not a refinement.** Representative routes are verified against WCAG 2.2 AA in CI-style automated checks.
+6. **Accessibility is a requirement, not a refinement.** Representative routes are verified against WCAG 2.2 AA in automated checks.
+
+---
+
+## Design language
+
+The interface is a deliberate, token-driven system rather than a set of one-off screens.
+
+| Dimension        | Approach                                                                                                                                                                                                                            |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Tokens**       | Semantic roles (`--background`, `--surface`, `--card`, `--foreground`, `--muted`, `--border`, `--accent`) mapped into Tailwind with `@theme inline`, so components never hard-code palette values.                                  |
+| **Theme parity** | Light and dark are the same roles remapped. A before-interactive script applies the saved or system theme with no flash, and `theme-color` follows the active theme.                                                                |
+| **Brand accent** | A single orange identity colour carries emphasis, interactive states, and glow. Everything else is neutral surface and typography.                                                                                                  |
+| **Typography**   | Self-hosted Montserrat variable font through `next/font`, applied as CSS variables (`--font-manrope`, `--font-newsreader`) for display and body roles.                                                                              |
+| **Rhythm**       | Radii, elevation, and easing come from tokens (`--radius-*`, `--shadow-*`, `--glow*`, `--ease-out-soft`, `--ease-out-expo`) so spacing and motion feel consistent across pages.                                                     |
+| **Composition**  | Oversized display headings with masked reveals, generous whitespace, gradient and mask artwork, and a restrained use of the accent so it always means something.                                                                    |
+| **Brand assets** | The mark (`public/Logo.png`) is referenced once through `siteConfig.logo` and appears in the header, footer, and both loading states; `public/favicon.png` is registered in the root metadata. No CSS-drawn substitute marks exist. |
+
+The complete specification — tokens, breakpoints, motion ownership, and the 3D hero contract — is in [`docs/design-system.md`](docs/design-system.md).
 
 ---
 
@@ -165,10 +230,10 @@ These principles are encoded in the product itself — if a change contradicts t
 | **Framework**          | Next.js 16 (App Router, React Server Components, Turbopack) — Node.js **20.9+** required                    |
 | **UI runtime**         | React 19, TypeScript 5.9 in `strict` mode                                                                   |
 | **Styling**            | Tailwind CSS v4 via `@tailwindcss/postcss` plus a semantic CSS token layer in `src/app/globals.css`         |
-| **Typography**         | `next/font` (self-hosted Montserrat variable font, exposed as `--font-manrope` / `--font-newsreader`)       |
+| **Typography**         | `next/font` (self-hosted Montserrat variable font)                                                          |
 | **Scroll**             | Lenis, driven by the GSAP ticker so one animation clock governs the whole page                              |
 | **Scroll motion**      | GSAP 3 + ScrollTrigger via `@gsap/react`                                                                    |
-| **Component motion**   | `motion` (Framer Motion lineage) for reveals, counters, and transitions                                     |
+| **Component motion**   | `motion` for reveals, counters, and transitions                                                             |
 | **3D**                 | three.js with `@react-three/fiber` and `@react-three/drei`                                                  |
 | **Icons**              | `lucide-react`                                                                                              |
 | **Primitives**         | `class-variance-authority` + `clsx` + `tailwind-merge`                                                      |
@@ -185,25 +250,26 @@ Server Components are the default. A Client Component boundary is introduced onl
 
 ```mermaid
 flowchart TD
-  A[Static content: src/content/content.ts] --> B[App Router routes: src/app]
-  B --> C[Site components: src/components/site]
-  B --> D[UI primitives: src/components/ui]
-  C --> E[Motion: Lenis + GSAP + motion]
-  C --> F[3D hero: R3F + three.js]
-  B --> G[Metadata endpoints: sitemap, robots, feed.xml]
-  H[Contact form: client] --> I["POST /api/contact"]
-  I --> J[Zod schema + size cap + rate limit]
-  J --> K[Resend delivery]
+  A["Static content<br/>src/content/content.ts"] --> B["App Router routes<br/>src/app"]
+  B --> C["Site components<br/>src/components/site"]
+  B --> D["UI primitives<br/>src/components/ui"]
+  C --> E["Motion<br/>Lenis + GSAP + Motion"]
+  C --> F["3D hero<br/>R3F + three.js"]
+  B --> G["Metadata endpoints<br/>sitemap · robots · feed.xml"]
+  H["Contact form<br/>client"] --> I["POST /api/contact"]
+  I --> J["Zod schema + size cap + rate limit"]
+  J --> K["Resend delivery"]
 ```
 
-**Request and rendering model**
+**Rendering model**
 
 - Every editorial route is **prerendered at build time**; slugs are produced by `generateStaticParams` from typed content.
-- The root layout owns the title template, description, Open Graph defaults, canonical origin, theme bootstrap script, theme colour, favicon metadata, and the initial-loader gate.
-- Three files define the whole shell: header (sticky navigation + theme toggle), footer, and the shell that also mounts scroll smoothing, the initial loader, the skip link, and the reading-progress bar.
-- Route-level `loading.tsx` uses the same brand loader as the initial page gate, so navigation and first paint share one identity.
+- The root layout owns the title template, description, Open Graph defaults, canonical origin, theme bootstrap, theme colour, favicon metadata, and the initial-loader gate.
+- Three files define the whole shell: the header (sticky navigation + theme toggle), the footer, and the shell that also mounts scroll smoothing, the initial loader, the skip link, and the reading-progress bar.
+- Route-level `loading.tsx` reuses the same brand loader as the initial page gate, so navigation and first paint share one identity.
 
-**Client boundaries that exist, and why**
+<details>
+<summary><strong>Client boundaries that exist, and why</strong></summary>
 
 | Component           | Reason it is a Client Component                                            |
 | ------------------- | -------------------------------------------------------------------------- |
@@ -214,11 +280,24 @@ flowchart TD
 | Motion primitives   | GSAP/Motion timelines, pointer interaction                                 |
 | Smooth scroll       | Lenis lifecycle tied to the GSAP ticker                                    |
 
+</details>
+
 ---
 
 ## Content model
 
-All editorial content lives in a single typed module, `src/content/content.ts`. It is the source of truth for routes, sitemap entries, structured data, and the FAQ/insight content — there is no CMS and no database.
+All editorial content lives in a single typed module, `src/content/content.ts`. It is the source of truth for routes, sitemap entries, structured data, and FAQ/insight content — there is no CMS and no database.
+
+```mermaid
+flowchart LR
+  S["services<br/>12"] --> P1["/services/[slug]"]
+  W["caseStudies<br/>3"] --> P2["/work/[slug]"]
+  I2["articles<br/>3"] --> P3["/insights/[slug]<br/>RSS + JSON-LD"]
+  T["teamDisciplines<br/>4"] --> P4["/team/[slug]<br/>contact routing"]
+  S --> M["sitemap · contact options"]
+  I2 --> M
+  T --> M
+```
 
 | Export            | Type           | Count | Drives                                                             |
 | ----------------- | -------------- | ----- | ------------------------------------------------------------------ |
@@ -236,7 +315,7 @@ Each `TeamMember` carries its own expertise list, grouped technology, services, 
 
 ## Motion, 3D, and theming
 
-Motion responsibilities are **divided, never duplicated**. The full contract is documented in [`docs/design-system.md`](docs/design-system.md); the summary is:
+Motion responsibilities are **divided, never duplicated**. The full contract is in [`docs/design-system.md`](docs/design-system.md); the summary is:
 
 | Owner                    | Responsibility                                                                        |
 | ------------------------ | ------------------------------------------------------------------------------------- |
@@ -253,30 +332,28 @@ Motion responsibilities are **divided, never duplicated**. The full contract is 
 - A quality tier (derived from `hardwareConcurrency`, `deviceMemory`, pointer coarseness, and viewport width) controls DPR, antialiasing, particle count, environment resolution, shadows, and whether the expensive transmission material is used.
 - An `IntersectionObserver` pauses rendering once the hero scrolls out of view.
 
-**Theming** is attribute-based: the root element carries `data-theme="light|dark"`, a before-interactive script applies the saved or system theme before paint (no flash), the toggle persists the choice, system-preference changes are honoured while no explicit choice exists, and `theme-color` is kept in sync with the active theme.
-
-**Brand assets.** The logo mark lives at `public/Logo.png` and is referenced through `siteConfig.logo`, so the identity can be replaced in one place. It is used in the header, the footer, and both loading states. `public/favicon.png` is registered as the icon and apple touch icon in the root metadata. No CSS-drawn substitute marks are used anywhere in the product.
+**Theming** is attribute-based: the root element carries `data-theme="light|dark"`, a before-interactive script applies the saved or system theme before paint (no flash), the toggle persists the choice, system-preference changes are honoured while no explicit choice exists, and `theme-color` stays in sync with the active theme.
 
 ---
 
 ## Accessibility, performance, and SEO
 
-**Accessibility**
+### Accessibility
 
 - Semantic landmarks, a skip link, visible two-pixel focus outlines, and accessible names on every icon-only control.
-- Motion is never required to understand content: `prefers-reduced-motion` neutralises ambient animation, motion primitives bail out of their timelines, Lenis is replaced by native scrolling, the WebGL canvas switches to on-demand frames, and counters render their final value immediately.
+- Motion is never required to understand content: reduced motion neutralises ambient animation, motion primitives bail out of their timelines, Lenis is replaced by native scrolling, the WebGL canvas switches to on-demand frames, and counters render their final value immediately.
 - Representative routes are checked with axe against WCAG 2.2 A/AA tags, and no animation is allowed to block clicks or scrolling.
 
-**Performance**
+### Performance
 
 - Static-first rendering: editorial content is prerendered at build time with no runtime data fetching.
 - The 3D bundle is split and only fetched in the browser after a capability check, with rendering paused when off-screen.
 - Images use `next/image`; decorative artwork stays in CSS.
 - Fonts are self-hosted through `next/font` and applied as CSS variables.
 
-**SEO and machine readability**
+### SEO and machine readability
 
-- Root metadata defines `metadataBase`, the title template, description, canonical origin, and Open Graph defaults; route metadata overrides route-specific values.
+- Root metadata defines `metadataBase`, the title template, description, canonical origin, and Open Graph defaults; routes override with their own values.
 - `sitemap.xml` is generated from routes plus services, case studies, articles, and team profiles; `robots.txt` allows crawling but disallows `/api/`.
 - Articles emit canonical URLs, publication metadata, Open Graph data, and JSON-LD `Article` structured data.
 - The insights feed is published as RSS at `/feed.xml` with a one-hour cache window.
@@ -290,8 +367,6 @@ Motion responsibilities are **divided, never duplicated**. The full contract is 
 - **Node.js 20.9 or newer** (required by Next.js 16)
 - npm (the repository ships a `package-lock.json`)
 - Optional, for the full test matrix: `npx playwright install --with-deps chromium firefox webkit`
-
-**Setup**
 
 ```bash
 # 1. Install dependencies
@@ -336,7 +411,19 @@ Additional test-time variables: `PLAYWRIGHT_PORT` (server port, default `3000`) 
 | `npm run format:check`          | Verify formatting without writing.                        |
 | `npm test` / `npm run test:e2e` | Playwright end-to-end suite across three browser engines. |
 
-A change is only considered ready when **lint, typecheck, tests, and a production build all pass**.
+---
+
+## Quality gates
+
+A change is only considered ready when every gate passes.
+
+| Gate                   | What it protects against                                                   |
+| ---------------------- | -------------------------------------------------------------------------- |
+| `npm run lint`         | Rule violations, framework misuse, and integration mistakes.               |
+| `npm run typecheck`    | Type drift between content, components, and route parameters.              |
+| `npm test`             | Behaviour, accessibility, overflow, theming, and API-contract regressions. |
+| `npm run build`        | Prerender failures, missing metadata, and broken dynamic imports.          |
+| `npm run format:check` | Formatting drift across the repository.                                    |
 
 ---
 
@@ -347,10 +434,8 @@ The suite in `tests/e2e` is behaviour-focused: it asserts what a visitor can see
 | Spec                   | Coverage                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `home.spec.ts`         | Hero and primary journeys, showcase placement, loader behaviour on load/reload/navigation, team section, all core route headings, mobile navigation, header control grouping, dark-mode contrast, axe accessibility checks, viewport overflow, hero behaviour below 1000px, internal links and public metadata, security headers, contact API contract (validation, content type, size, URL protocol, honeypot, rate limit, provider failures), 404 handling, RSS and sitemap. |
-| `team-profile.spec.ts` | Accessible profile links, portrait placeholders, per-member profile content, canonical URLs, related-member panels, FAQ behaviour, direct load and reload, inquiry routing into the contact form, rejection of unverified member values, unknown-profile 404, layout fit and theming.                                                                                                                                                                                          |
+| `team-profile.spec.ts` | Accessible profile links, portrait placeholders, per-member profile content, canonical URLs, related-member panels, FAQ behaviour, direct load and reload, inquiry routing into the contact form, rejection of unverified member values, unknown-profile 404, layout fit, and theming.                                                                                                                                                                                         |
 | `theme.spec.ts`        | System theme detection, toggle persistence, accent token integrity, per-page theme stability, and reset to system preference across every route.                                                                                                                                                                                                                                                                                                                               |
-
-Useful commands:
 
 ```bash
 npm test                             # dev server, all three engines
@@ -378,10 +463,12 @@ PLAYWRIGHT_PORT=3100 npm test        # avoid clashing with a running dev server
 │   │   └── ui/                # Reusable primitives (Button)
 │   ├── config/site.ts         # Brand, navigation, and shared site settings
 │   ├── content/content.ts     # Typed editorial content (single source of truth)
-│   └── lib/                   # env validation, theme, scroll bridge, utilities
+│   └── lib/                   # Environment validation, theme, scroll bridge, utilities
 ├── tests/e2e/                 # Playwright specs
 ├── AGENTS.md                  # Agent/automation rules for this repository
-└── CONTRIBUTING.md            # How to work in this codebase
+├── CONTRIBUTING.md            # How to work in this codebase
+├── SECURITY.md                # How to report a vulnerability
+└── LICENSE.md                 # Proprietary terms
 ```
 
 ---
@@ -390,9 +477,28 @@ PLAYWRIGHT_PORT=3100 npm test        # avoid clashing with a running dev server
 
 The contact form is the only stateful interaction on the site, and it is hardened deliberately.
 
-**Flow:** the form posts JSON to `/api/contact` → the route enforces transport rules → the payload is validated against a strict Zod schema → a honeypot field is checked → the message is delivered through Resend → the form shows an honest success or failure message.
+```mermaid
+sequenceDiagram
+  autonumber
+  participant V as Visitor
+  participant F as Contact form
+  participant A as POST /api/contact
+  participant Z as Zod schema
+  participant R as Resend
+  V->>F: Submits an inquiry
+  F->>A: JSON payload
+  A->>A: Content type + 16 KB cap
+  A->>Z: Strict validation (unknown keys rejected)
+  Z-->>A: Validated
+  A->>A: Honeypot check + rate limit
+  A->>R: Delivery request
+  R-->>A: Accepted
+  A-->>F: 200 success
+  F-->>V: Honest confirmation
+```
 
-**Hardening in place**
+<details>
+<summary><strong>Controls in place, and the response contract</strong></summary>
 
 | Control           | Detail                                                                                                                               |
 | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
@@ -406,15 +512,34 @@ The contact form is the only stateful interaction on the site, and it is hardene
 | Honest failure    | Returns 503 when delivery is not configured, 502 when the provider fails, and never reports success for a message that was not sent. |
 | No storage        | Inquiries are not persisted anywhere.                                                                                                |
 
+</details>
+
 ---
 
 ## Deployment notes
 
-- The application is static-first; the host must only support standard Next.js server/edge rendering for the contact route.
+- The application is static-first; the host only needs standard Next.js rendering support for the contact route.
 - Provide `NEXT_PUBLIC_SITE_URL` with the real public origin before building, so canonical URLs, the sitemap, robots rules, and the feed point at production.
-- The production edge (not the repository) must terminate TLS and add **HSTS** and a **nonce-based Content Security Policy** after the deployment domain and font/asset policy are confirmed.
+- The production edge (not the repository) must terminate TLS and add **HSTS** and a **nonce-based Content Security Policy** once the deployment domain and asset policy are confirmed.
 - The contact ingress must **overwrite** `X-Real-IP`; the built-in limiter is process-local and is not a distributed production control. Replace it with a shared store if the endpoint runs on more than one instance.
 - Live contact delivery with real provider credentials has not been verified in this environment — smoke-test it after configuring Resend.
+
+See [`SECURITY.md`](SECURITY.md) for the full hardening checklist and reporting process.
+
+---
+
+## What is deliberately not included
+
+Absence is a decision here, not an oversight.
+
+| Not included                                | Why                                                                                          |
+| ------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| Database, authentication, admin panel       | A marketing site needs none of them; leaving them out keeps the attack surface to one route. |
+| CMS                                         | Content is typed, reviewed, and versioned with the code.                                     |
+| Analytics, advertising, and tracking pixels | Nothing is loaded that identifies visitors. Provider and privacy requirements come first.    |
+| Consent tooling                             | There is currently nothing to consent to.                                                    |
+| CRM or marketing automation                 | Inquiries are delivered, not stored.                                                         |
+| Booking, newsletter, payments               | Out of scope for the studio’s current engagement model.                                      |
 
 ---
 
@@ -425,6 +550,7 @@ The contact form is the only stateful interaction on the site, and it is hardene
 | [`docs/architecture.md`](docs/architecture.md)   | Application shape, ownership, dependency direction, rendering rules.       |
 | [`docs/design-system.md`](docs/design-system.md) | Design tokens, motion framework split, 3D hero contract, page composition. |
 | [`CONTRIBUTING.md`](CONTRIBUTING.md)             | Setup, standards, and the definition of done for any change.               |
+| [`SECURITY.md`](SECURITY.md)                     | Vulnerability reporting, scope, safe harbour, and hardening requirements.  |
 | [`AGENTS.md`](AGENTS.md)                         | Repository rules for automated agents working in this codebase.            |
 
 ---
@@ -433,7 +559,7 @@ The contact form is the only stateful interaction on the site, and it is hardene
 
 - **Portfolio content is fictional.** The projects shown are demonstration concepts that illustrate how a challenge, strategy, and execution are presented. They are not client engagements, and no measured results are claimed.
 - **No fabricated identity data.** No organization identity, reviews, ratings, or local-business structured data is invented anywhere in the site.
-- **Privacy and terms** pages describe how information is handled and what a working relationship starts from.
+- **Privacy and terms** describe how information is handled and what a working relationship starts from.
 - **Inactive on purpose.** Analytics, booking, consent tooling, CRM, and conversion tracking remain disabled until provider, privacy, and account requirements are defined.
 
 ---
@@ -442,11 +568,19 @@ The contact form is the only stateful interaction on the site, and it is hardene
 
 This is a private project, but the standards are explicit. Read [`CONTRIBUTING.md`](CONTRIBUTING.md) before opening a change: it defines the setup, the non-negotiables (accessibility, reduced motion, semantic tokens, honest content), the motion ownership rules, and the checks a change must pass.
 
-**In short:**
-
 ```bash
 npm run lint && npm run typecheck && npm test && npm run build
 ```
+
+---
+
+## License
+
+**Proprietary — All Rights Reserved.** Copyright © 2026 BrandUpCrew.
+
+This project is **not** open source. Source code is visible for evaluation and reference only. Copying, modifying, deploying, distributing, sublicensing, or selling any part of it requires prior written permission, and the BrandUpCrew name, logo, and other brand assets may not be reused. Third-party dependencies remain under their own licenses.
+
+Read the full terms in [`LICENSE.md`](LICENSE.md).
 
 <div align="center">
 
