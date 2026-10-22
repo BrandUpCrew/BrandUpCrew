@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ArrowUpRight, Menu, X } from "lucide-react";
@@ -53,11 +54,15 @@ export function SiteHeader() {
           href="/"
           aria-label={`${siteConfig.name} home`}
         >
-          <span aria-hidden="true" className="brand-mark">
-            <span />
-            <span />
-            <span />
-          </span>
+          <Image
+            alt=""
+            aria-hidden="true"
+            className="brand-mark"
+            height={34}
+            priority
+            src={siteConfig.logo}
+            width={34}
+          />
           <span className="brand-name">{siteConfig.name}</span>
         </Link>
 
