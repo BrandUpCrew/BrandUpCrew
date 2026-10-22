@@ -178,7 +178,7 @@ function drawProductModule(
     mono = false,
   ) => {
     ctx.fillStyle = color;
-    ctx.font = `${weight} ${size}px ${mono ? MONO_FONT : UI_FONT}`;
+    ctx.font = `${weight} ${size * 1.1}px ${mono ? MONO_FONT : UI_FONT}`;
     ctx.fillText(val, x, y);
   };
 
@@ -495,7 +495,7 @@ function drawIdentityModule(
     mono = false,
   ) => {
     ctx.fillStyle = color;
-    ctx.font = `${weight} ${size}px ${mono ? MONO_FONT : UI_FONT}`;
+    ctx.font = `${weight} ${size * 1.3}px ${mono ? MONO_FONT : UI_FONT}`;
     ctx.fillText(val, x, y);
   };
 
@@ -586,7 +586,7 @@ function drawEngineeringModule(
   time: number,
 ) {
   // Deep dark IDE background
-  ctx.fillStyle = "#0c101c";
+  ctx.fillStyle = "#11100e";
   ctx.fillRect(0, 0, w, h);
 
   const rect = (
@@ -617,13 +617,13 @@ function drawEngineeringModule(
     mono = true,
   ) => {
     ctx.fillStyle = color;
-    ctx.font = `${weight} ${size}px ${mono ? MONO_FONT : UI_FONT}`;
+    ctx.font = `${weight} ${size * 1.3}px ${mono ? MONO_FONT : UI_FONT}`;
     ctx.fillText(val, x, y);
   };
 
   // Window top bar
-  rect(0, 0, w, 52, "#131929");
-  rect(0, 51, w, 1, "#1e293b");
+  rect(0, 0, w, 52, "#1b1a18");
+  rect(0, 51, w, 1, "#2b2926");
 
   // Window control dots with soft glow
   [
@@ -646,36 +646,36 @@ function drawEngineeringModule(
   ctx.stroke();
 
   drawText("/ product-platform.tsx", 30, 32, 13.5, "#e2e8f0", 600, false);
-  drawText("TS 5.4 · main", 620, 32, 11, "#64748b", 500, false);
+  drawText("TS 5.4 · main", 620, 32, 11, "#9b978f", 500, false);
 
   // Realistic code typing engine
   const CODE_LINES = [
     {
       num: "01",
       tokens: [
-        { t: "export", c: "#c084fc" },
-        { t: " function", c: "#c084fc" },
-        { t: " Experience", c: "#38bdf8" },
+        { t: "export", c: "#ffad66" },
+        { t: " function", c: "#ffad66" },
+        { t: " Experience", c: "#f5f2ec" },
         { t: "() {", c: "#e2e8f0" },
       ],
     },
     {
       num: "02",
       tokens: [
-        { t: "  const", c: "#c084fc" },
+        { t: "  const", c: "#ffad66" },
         { t: " signal", c: "#f8fafc" },
-        { t: " = ", c: "#38bdf8" },
-        { t: "useProductState", c: "#60a5fa" },
+        { t: " = ", c: "#f5f2ec" },
+        { t: "useProductState", c: "#fa8927" },
         { t: '("live");', c: "#34d399" },
       ],
     },
     {
       num: "03",
       tokens: [
-        { t: "  const", c: "#c084fc" },
+        { t: "  const", c: "#ffad66" },
         { t: " motion", c: "#f8fafc" },
-        { t: " = ", c: "#38bdf8" },
-        { t: "useSystemMotion", c: "#60a5fa" },
+        { t: " = ", c: "#f5f2ec" },
+        { t: "useSystemMotion", c: "#fa8927" },
         { t: "({ fps: 60 });", c: "#fbbf24" },
       ],
     },
@@ -687,8 +687,8 @@ function drawEngineeringModule(
       num: "05",
       tokens: [
         { t: "    <", c: "#e2e8f0" },
-        { t: "Canvas", c: "#38bdf8" },
-        { t: " surface", c: "#a5b4fc" },
+        { t: "Canvas", c: "#fa8927" },
+        { t: " surface", c: "#d8d0c2" },
         { t: "={signal.active}>", c: "#e2e8f0" },
       ],
     },
@@ -696,8 +696,8 @@ function drawEngineeringModule(
       num: "06",
       tokens: [
         { t: "      <", c: "#e2e8f0" },
-        { t: "Pipeline", c: "#38bdf8" },
-        { t: " deploy", c: "#a5b4fc" },
+        { t: "Pipeline", c: "#fa8927" },
+        { t: " deploy", c: "#d8d0c2" },
         { t: '="instant"', c: "#34d399" },
         { t: " />", c: "#e2e8f0" },
       ],
@@ -706,7 +706,7 @@ function drawEngineeringModule(
       num: "07",
       tokens: [
         { t: "    </", c: "#e2e8f0" },
-        { t: "Canvas", c: "#38bdf8" },
+        { t: "Canvas", c: "#fa8927" },
         { t: ">", c: "#e2e8f0" },
       ],
     },
@@ -738,7 +738,7 @@ function drawEngineeringModule(
   CODE_LINES.forEach((line, lineIdx) => {
     const y = 98 + lineIdx * 37;
     // Line number
-    drawText(line.num, 30, y, 12.5, "#475569", 500);
+    drawText(line.num, 30, y, 12.5, "#77736d", 500);
 
     let curX = 78;
     line.tokens.forEach((tok) => {
@@ -748,7 +748,7 @@ function drawEngineeringModule(
       drawText(str, curX, y, 15, tok.c, 500);
       charsAccounted += str.length;
 
-      ctx.font = `500 15px ${MONO_FONT}`;
+      ctx.font = `500 19.5px ${MONO_FONT}`;
       const strWidth = ctx.measureText(str).width;
       curX += strWidth;
 
@@ -761,7 +761,7 @@ function drawEngineeringModule(
 
   // Glowing Blinking Caret
   if (Math.floor(time * 3.5) % 2 === 0) {
-    rect(caretX + 2, caretY - 14, 2.5, 17, "#FA8927");
+    rect(caretX + 2, caretY - 18, 3, 21, "#FA8927");
   }
 
   // Active line highlight
@@ -779,7 +779,7 @@ function drawEngineeringModule(
   }
 
   // Footer status bar
-  rect(30, 464, 740, 1, "#1e293b");
+  rect(30, 464, 740, 1, "#2b2926");
   ctx.beginPath();
   ctx.arc(38, 498, 4, 0, Math.PI * 2);
   ctx.fillStyle = "#34d399";
@@ -790,7 +790,7 @@ function drawEngineeringModule(
     340,
     502,
     10.5,
-    "#64748b",
+    "#9b978f",
     500,
     false,
   );
@@ -799,7 +799,7 @@ function drawEngineeringModule(
     600,
     502,
     10.5,
-    "#94a3b8",
+    "#b3ada3",
     600,
     false,
   );
@@ -812,7 +812,7 @@ function drawGrowthModule(
   time: number,
 ) {
   // Dark dashboard background
-  ctx.fillStyle = "#0c121e";
+  ctx.fillStyle = "#11100e";
   ctx.fillRect(0, 0, w, h);
 
   const rect = (
@@ -843,12 +843,12 @@ function drawGrowthModule(
     mono = false,
   ) => {
     ctx.fillStyle = color;
-    ctx.font = `${weight} ${size}px ${mono ? MONO_FONT : UI_FONT}`;
+    ctx.font = `${weight} ${size * 1.3}px ${mono ? MONO_FONT : UI_FONT}`;
     ctx.fillText(val, x, y);
   };
 
   drawText("GROWTH SIGNALS", 36, 46, 12, "#FFAA5C", 750);
-  drawText("A clearer picture of progress", 36, 86, 21, "#f8fafc", 650);
+  drawText("A clearer picture of progress", 36, 86, 21, "#f8f8f5", 650);
 
   // Live telemetry badge
   rect(590, 34, 174, 26, "rgba(250, 137, 39, 0.12)", 13);
@@ -858,7 +858,7 @@ function drawGrowthModule(
   ctx.fill();
   drawText("TELEMETRY · LIVE", 618, 51, 9.5, "#FFAA5C", 700);
 
-  drawText("CHANNEL PERFORMANCE", 36, 136, 11, "#64748b", 600);
+  drawText("CHANNEL PERFORMANCE", 36, 136, 11, "#a19b92", 600);
 
   // Chart Grid Lines
   [180, 250, 320].forEach((gridY) => {
@@ -917,7 +917,7 @@ function drawGrowthModule(
   points.forEach(([x, y]) => {
     ctx.beginPath();
     ctx.arc(x, y, 7, 0, Math.PI * 2);
-    ctx.fillStyle = "#0c121e";
+    ctx.fillStyle = "#11100e";
     ctx.fill();
     ctx.strokeStyle = "#FA8927";
     ctx.lineWidth = 2;
@@ -956,7 +956,7 @@ function drawGrowthModule(
 
   // Tooltip pill above cursor
   const tooltipX = Math.min(Math.max(scrubX - 65, 40), 620);
-  rect(tooltipX, interpY - 48, 140, 32, "#131b2e", 6);
+  rect(tooltipX, interpY - 48, 140, 32, "#1b1a18", 6);
   ctx.strokeStyle = "#FA8927";
   ctx.lineWidth = 1;
   ctx.beginPath();
@@ -974,7 +974,7 @@ function drawGrowthModule(
   );
 
   // Bottom Channels progress bars
-  rect(36, 420, 728, 1, "#1e293b");
+  rect(36, 420, 728, 1, "#2b2926");
 
   const channels = [
     { label: "DISCOVERY", basePct: 0.76, x: 36, speed: 1.0 },
@@ -987,7 +987,7 @@ function drawGrowthModule(
       0.99,
       ch.basePct + Math.sin(time * ch.speed) * 0.05,
     );
-    drawText(ch.label, ch.x, 458, 11, "#94a3b8", 600);
+    drawText(ch.label, ch.x, 458, 11, "#b3ada3", 600);
     drawText(
       `${Math.round(pct * 100)}%`,
       ch.x + 196,
@@ -998,7 +998,7 @@ function drawGrowthModule(
     );
 
     // Track
-    rect(ch.x, 474, 230, 4, "#1e293b", 2);
+    rect(ch.x, 474, 230, 4, "#2b2926", 2);
     // Fill
     rect(ch.x, 474, 230 * pct, 4, "#FA8927", 2);
   });
@@ -1196,10 +1196,10 @@ function InterfaceModule({
             config.id === "product"
               ? theme === "light"
                 ? "#d6dde8"
-                : "#182030"
+                : "#191817"
               : theme === "light"
                 ? "#8c99ad"
-                : "#121724"
+                : "#181715"
           }
           metalness={0.65}
           roughness={0.24}
@@ -1218,7 +1218,7 @@ function InterfaceModule({
           args={[config.width - 0.08, config.height - 0.08, 0.012]}
         />
         <meshStandardMaterial
-          color="#080b12"
+          color="#080808"
           metalness={0.65}
           roughness={0.26}
         />
@@ -1469,11 +1469,11 @@ function Scene({
     <>
       <color
         attach="background"
-        args={[theme === "light" ? "#ffffff" : "#080a10"]}
+        args={[theme === "light" ? "#ffffff" : "#080808"]}
       />
       <fog
         attach="fog"
-        args={[theme === "light" ? "#ffffff" : "#080a10", 13, 30]}
+        args={[theme === "light" ? "#ffffff" : "#080808", 13, 30]}
       />
       <ambientLight
         intensity={theme === "light" ? 0.7 : 0.4}
