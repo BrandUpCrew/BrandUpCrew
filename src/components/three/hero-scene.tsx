@@ -1004,8 +1004,7 @@ function drawGrowthModule(
   });
 }
 
-function useAnimatedUiTexture(id: ModuleId, reduced: boolean) {
-  const lastUpdate = useRef(-1);
+function useUiTexture(id: ModuleId) {
   const controller = useMemo(() => {
     const canvas = document.createElement("canvas");
     // Crisp native dimensions matching mesh aspect ratios perfectly:
@@ -1029,58 +1028,26 @@ function useAnimatedUiTexture(id: ModuleId, reduced: boolean) {
     texture.magFilter = THREE.LinearFilter;
     texture.anisotropy = 8;
 
-    // Staggered update cadence & phase offsets so no two modules ever upload on the same frame
-    const interval =
-      id === "product"
-        ? 0.033 // ~30 FPS for central studio preview
-        : id === "growth"
-          ? 0.040 // ~25 FPS for analytics chart
-          : id === "engineering"
-            ? 0.042 // ~24 FPS for code typing
-            : 0.048; // ~21 FPS for brand system
-
-    const phaseOffset =
-      id === "product"
-        ? 0
-        : id === "identity"
-          ? 0.012
-          : id === "engineering"
-            ? 0.024
-            : 0.036;
-
-    const render = (time: number) => {
-      if (!context) return;
+    if (context) {
       if (id === "product") {
-        drawProductModule(context, width, height, time);
+        drawProductModule(context, width, height, 0);
       } else if (id === "identity") {
-        drawIdentityModule(context, width, height, time);
+        drawIdentityModule(context, width, height, 0);
       } else if (id === "engineering") {
-        drawEngineeringModule(context, width, height, time);
+        drawEngineeringModule(context, width, height, 0);
       } else {
-        drawGrowthModule(context, width, height, time);
+        drawGrowthModule(context, width, height, 0);
       }
       texture.needsUpdate = true;
-    };
-
-    // Render initial static frame immediately
-    render(0);
-
-    const update = (time: number) => {
-      if (reduced) return;
-      const elapsed = time + phaseOffset;
-      if (elapsed - lastUpdate.current < interval) return;
-      lastUpdate.current = elapsed;
-      render(time);
-    };
+    }
 
     return {
       texture,
-      update,
       dispose: () => {
         texture.dispose();
       },
     };
-  }, [id, reduced]);
+  }, [id]);
 
   useEffect(() => () => controller.dispose(), [controller]);
 
@@ -1097,7 +1064,7 @@ function InterfaceModule({
   theme: Theme;
 }) {
   const ref = useRef<THREE.Group>(null);
-  const controller = useAnimatedUiTexture(config.id, reduced);
+  const controller = useUiTexture(config.id);
   const [selected, setSelected] = useState(false);
   const hover = useRef(false);
   const touchSelected = useRef(false);
@@ -1147,9 +1114,6 @@ function InterfaceModule({
       (isLead ? scroll * 0.06 : -scroll * 0.05);
     group.rotation.z =
       config.rotation[2] + (hover.current ? 0.015 : 0) + floatRot * 0.5;
-
-    // Update continuous procedural living UI texture
-    controller.update(time);
 
     const scale =
       (0.92 + reveal * 0.08) *
@@ -1238,13 +1202,7 @@ function InterfaceModule({
   );
 }
 
-function FloatingAtmosphere({
-  reduced,
-  theme,
-}: {
-  reduced: boolean;
-  theme: Theme;
-}) {
+function FloatingAtmosphere({ theme }: { theme: Theme }) {
   const group = useRef<THREE.Group>(null);
   const items = useMemo(() => {
     const list: {
@@ -1438,6 +1396,36 @@ function CameraRig({
   return null;
 }
 
+function SceneFrameReadiness({ onReady }: { onReady: () => void }) {
+  const stableFrames = useRef(0);
+  const notified = useRef(false);
+  const frame = useRef<number | null>(null);
+
+  useFrame((_, delta) => {
+    if (delta > 0.05) {
+      stableFrames.current = 0;
+      return;
+    }
+
+    stableFrames.current += 1;
+    if (stableFrames.current < 3) return;
+    if (notified.current) return;
+    notified.current = true;
+    frame.current = window.requestAnimationFrame(onReady);
+  });
+
+  useEffect(
+    () => () => {
+      if (frame.current !== null) {
+        window.cancelAnimationFrame(frame.current);
+      }
+    },
+    [],
+  );
+
+  return null;
+}
+
 function Scene({
   quality,
   reduced,
@@ -1449,8 +1437,6 @@ function Scene({
   theme: Theme;
   onReady: () => void;
 }) {
-  useEffect(() => onReady(), [onReady]);
-
   const product = MODULES[0];
   const routes = MODULES.slice(1).map((module) => ({
     from: [
@@ -1527,7 +1513,7 @@ function Scene({
       </Environment>
 
       <group scale={quality.tier === "low" ? 0.68 : 1}>
-        <FloatingAtmosphere reduced={reduced} theme={theme} />
+        <FloatingAtmosphere theme={theme} />
         {routes.map((route, index) => (
           <Connector
             key={index}
@@ -1559,6 +1545,7 @@ function Scene({
         )}
       </group>
       <CameraRig reduced={reduced} compact={quality.tier === "low"} />
+      <SceneFrameReadiness onReady={onReady} />
     </>
   );
 }
