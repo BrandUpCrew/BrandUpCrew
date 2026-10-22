@@ -18,14 +18,10 @@ export function SmoothScroll() {
 
     let lastY = window.scrollY;
     let lastTime = performance.now();
+    let heroSpan = 1;
+    let maxScroll = 0;
 
     const sync = (y: number) => {
-      const hero = document.getElementById("hero");
-      const heroSpan = hero
-        ? Math.max(hero.offsetHeight - window.innerHeight * 0.35, 1)
-        : 1;
-      const max = root.scrollHeight - window.innerHeight;
-
       const now = performance.now();
       const dt = Math.max((now - lastTime) / 1000, 0.001);
       const deltaY = y - lastY;
@@ -35,9 +31,18 @@ export function SmoothScroll() {
 
       scrollStore.y = y;
       scrollStore.hero = clamp(y / heroSpan, 0, 1);
-      scrollStore.progress = max > 0 ? clamp(y / max, 0, 1) : 0;
+      scrollStore.progress = maxScroll > 0 ? clamp(y / maxScroll, 0, 1) : 0;
       scrollStore.velocity = currentVelocity;
       scrollStore.direction = deltaY > 0 ? 1 : deltaY < 0 ? -1 : 0;
+    };
+
+    const refreshMetrics = () => {
+      const hero = document.getElementById("hero");
+      heroSpan = hero
+        ? Math.max(hero.offsetHeight - window.innerHeight * 0.35, 1)
+        : 1;
+      maxScroll = Math.max(root.scrollHeight - window.innerHeight, 0);
+      sync(window.scrollY);
     };
 
     const reduced = window.matchMedia(
@@ -45,25 +50,40 @@ export function SmoothScroll() {
     ).matches;
 
     const onNativeScroll = () => sync(window.scrollY);
-    const refresh = () => scrollTrigger?.refresh();
+    const onViewportChange = () => {
+      refreshMetrics();
+      scrollTrigger?.refresh();
+    };
+    const onLoad = () => {
+      refreshMetrics();
+      scrollTrigger?.refresh();
+    };
     let scrollTrigger:
       typeof import("gsap/ScrollTrigger").ScrollTrigger | null = null;
     let lenis: import("lenis").default | null = null;
     let gsap: typeof import("gsap").gsap | null = null;
+    let tickerCallback: ((time: number) => void) | null = null;
     let tickerActive = false;
     let cancelled = false;
     let startupTimer = 0;
+    const resizeObserver =
+      typeof ResizeObserver === "undefined"
+        ? null
+        : new ResizeObserver(refreshMetrics);
 
     window.addEventListener("scroll", onNativeScroll, { passive: true });
-    window.addEventListener("resize", onNativeScroll);
-    window.addEventListener("load", refresh);
-    sync(window.scrollY);
+    window.addEventListener("resize", onViewportChange);
+    window.addEventListener("load", onLoad);
+    resizeObserver?.observe(root);
+    if (document.body) resizeObserver?.observe(document.body);
+    refreshMetrics();
 
     if (reduced) {
       return () => {
         window.removeEventListener("scroll", onNativeScroll);
-        window.removeEventListener("resize", onNativeScroll);
-        window.removeEventListener("load", refresh);
+        window.removeEventListener("resize", onViewportChange);
+        window.removeEventListener("load", onLoad);
+        resizeObserver?.disconnect();
       };
     }
 
@@ -92,14 +112,14 @@ export function SmoothScroll() {
           scrollTrigger?.update();
         };
         const raf = (time: number) => lenis?.raf(time * 1000);
+        tickerCallback = raf;
 
         window.removeEventListener("scroll", onNativeScroll);
-        window.removeEventListener("resize", onNativeScroll);
         lenis.on("scroll", onScroll);
         gsap.ticker.add(raf);
         gsap.ticker.lagSmoothing(500, 33);
         tickerActive = true;
-        sync(window.scrollY);
+        refreshMetrics();
         scrollTrigger.refresh();
 
         cleanupSmoothScroll = () => {
@@ -108,7 +128,14 @@ export function SmoothScroll() {
           lenis?.destroy();
           tickerActive = false;
         };
-      } catch {
+      } catch (error) {
+        console.error(
+          "Smooth scrolling failed to initialize; native scrolling remains active.",
+          error,
+        );
+        if (tickerCallback) gsap?.ticker.remove(tickerCallback);
+        lenis?.destroy();
+        window.addEventListener("scroll", onNativeScroll, { passive: true });
         sync(window.scrollY);
       }
     };
@@ -119,9 +146,10 @@ export function SmoothScroll() {
     return () => {
       cancelled = true;
       window.clearTimeout(startupTimer);
-      window.removeEventListener("load", refresh);
+      window.removeEventListener("load", onLoad);
       window.removeEventListener("scroll", onNativeScroll);
-      window.removeEventListener("resize", onNativeScroll);
+      window.removeEventListener("resize", onViewportChange);
+      resizeObserver?.disconnect();
       cleanupSmoothScroll?.();
       if (tickerActive) {
         gsap?.ticker.lagSmoothing(500, 33);

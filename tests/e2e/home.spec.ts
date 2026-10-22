@@ -50,30 +50,73 @@ test("the selected-concepts showcase appears on Work only", async ({
 test("initial loader appears on every page reload and internal navigation remains usable", async ({
   page,
 }) => {
+  test.setTimeout(90_000);
   const loader = page.locator(".brand-loader-initial");
+  const heroVisual = page.locator(".hero-visual");
   await page.goto("/", { waitUntil: "commit" });
 
   await expect(loader).toBeVisible();
   await expect(
     page.getByRole("heading", { name: "Make your next move matter." }),
   ).toBeVisible();
-  await expect(loader).toBeHidden({ timeout: 9_000 });
+  await expect(heroVisual).toHaveAttribute(
+    "data-initial-ready",
+    /^(true|fallback)$/,
+    { timeout: 20_000 },
+  );
+  await expect(loader).toBeHidden({ timeout: 20_000 });
 
   await page.reload({ waitUntil: "commit" });
   await expect(loader).toBeVisible();
   await expect(
     page.getByRole("heading", { name: "Make your next move matter." }),
   ).toBeVisible();
-  await expect(loader).toBeHidden({ timeout: 9_000 });
+  await expect(heroVisual).toHaveAttribute(
+    "data-initial-ready",
+    /^(true|fallback)$/,
+    { timeout: 20_000 },
+  );
+  await expect(loader).toBeHidden({ timeout: 20_000 });
 
   await page.getByRole("link", { name: /Explore our services/ }).click();
   await expect(
     page.getByRole("heading", {
       name: "The right work, in the right order.",
     }),
-  ).toBeVisible();
-  await expect(page.locator(".brand-loader-route")).toBeHidden();
+  ).toBeVisible({ timeout: 20_000 });
+  await expect(page.locator(".brand-loader-route")).toBeHidden({
+    timeout: 20_000,
+  });
 });
+
+test("hero canvas stays mounted while scrolling away and back", async ({
+  page,
+}) => {
+  test.setTimeout(90_000);
+  await page.goto("/");
+  const canvas = page.locator(".hero-canvas");
+  await expect(page.locator(".hero-visual")).toHaveAttribute(
+    "data-initial-ready",
+    /^(true|fallback)$/,
+    { timeout: 20_000 },
+  );
+  await expect(canvas).toHaveCount(1, { timeout: 20_000 });
+  await canvas.evaluate((element) => {
+    element.dataset.scrollTestMarker = "mounted";
+  });
+
+  await page.evaluate(() =>
+    window.scrollTo(0, document.documentElement.scrollHeight),
+  );
+  await expect
+    .poll(() => page.evaluate(() => window.scrollY))
+    .toBeGreaterThan(0);
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
+  await expect(canvas).toHaveCount(1);
+  await expect(canvas).toHaveAttribute("data-scroll-test-marker", "mounted");
+});
+
 test("home page includes an editorial team section with senior disciplines", async ({
   page,
 }) => {

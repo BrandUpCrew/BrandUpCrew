@@ -4,7 +4,8 @@ import { useEffect } from "react";
 
 import { BrandLoader } from "@/components/site/brand-loader";
 
-const maximumWaitMs = 1_500;
+const readinessTimeoutMs = 10_000;
+const exitTransitionMs = 480;
 
 export function InitialPageLoader() {
   useEffect(() => {
@@ -14,12 +15,14 @@ export function InitialPageLoader() {
     const reduced = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
-    let leavingTimer = 0;
     let active = true;
+    let readinessTimer = 0;
+    let leavingTimer = 0;
 
     const leave = () => {
       if (!active) return;
       active = false;
+      window.clearTimeout(readinessTimer);
       root.dataset.initialLoader = "leaving";
       if (reduced) {
         delete root.dataset.initialLoader;
@@ -27,21 +30,51 @@ export function InitialPageLoader() {
       }
       leavingTimer = window.setTimeout(() => {
         delete root.dataset.initialLoader;
-      }, 220);
+      }, exitTransitionMs);
     };
 
-    const timeout = window.setTimeout(leave, maximumWaitMs);
     const layoutPainted = new Promise<void>((resolve) => {
       requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
     });
-    void layoutPainted.then(() => {
-      if (!active) return;
-      leave();
+    const hero = document.querySelector<HTMLElement>(".hero-visual");
+    let onHeroReady: (() => void) | null = null;
+    const heroReady = new Promise<void>((resolve) => {
+      if (!hero || hero.dataset.initialReady === "true") {
+        resolve();
+        return;
+      }
+
+      onHeroReady = () => resolve();
+      window.addEventListener("initial-hero-ready", onHeroReady, {
+        once: true,
+      });
     });
+
+    const fontsReady = document.fonts.ready.catch((error: unknown) => {
+      console.error(
+        "The page font set failed to load; continuing with fallback fonts.",
+        error,
+      );
+    });
+
+    readinessTimer = window.setTimeout(() => {
+      if (hero && hero.dataset.initialReady !== "true") {
+        hero.dataset.initialReady = "fallback";
+        console.error(
+          "The hero did not report a rendered frame before the loading readiness timeout; continuing with the CSS fallback.",
+        );
+      }
+      leave();
+    }, readinessTimeoutMs);
+
+    void Promise.all([layoutPainted, fontsReady, heroReady]).then(leave);
 
     return () => {
       active = false;
-      window.clearTimeout(timeout);
+      if (onHeroReady) {
+        window.removeEventListener("initial-hero-ready", onHeroReady);
+      }
+      window.clearTimeout(readinessTimer);
       window.clearTimeout(leavingTimer);
     };
   }, []);
