@@ -145,7 +145,8 @@ function drawProductModule(
   h: number,
   time: number,
 ) {
-  const blue = "#2563eb";
+  const brandOrange = "#FA8927";
+  const brandOrangeText = "#A84900";
   const ink = "#0f172a";
   const muted = "#64748b";
 
@@ -189,11 +190,11 @@ function drawProductModule(
   rect(0, 0, w, 72, "#ffffff");
   rect(0, 71, w, 1, "#e2e8f0");
 
-  // Logo mark with cobalt dot
+  // Logo mark with brand-orange dot
   drawText("DIGITAL / STUDIO", 44, 44, 18, ink, 750);
   ctx.beginPath();
   ctx.arc(206, 38, 3.5, 0, Math.PI * 2);
-  ctx.fillStyle = blue;
+  ctx.fillStyle = brandOrange;
   ctx.fill();
 
   // Address chip in center
@@ -224,7 +225,7 @@ function drawProductModule(
   const tabPillW =
     tabs[curTabIdx].w + (tabs[nextTabIdx].w - tabs[curTabIdx].w) * smoothTabT;
 
-  rect(tabPillX, 22, tabPillW, 32, "rgba(37, 99, 235, 0.08)", 16);
+  rect(tabPillX, 22, tabPillW, 32, "rgba(250, 137, 39, 0.08)", 16);
 
   tabs.forEach((tab, i) => {
     const isAct = i === curTabIdx;
@@ -239,7 +240,7 @@ function drawProductModule(
   });
 
   // "Let's talk" CTA button with continuous sheen sweep
-  rect(1040, 18, 122, 38, blue, 19);
+  rect(1040, 18, 122, 38, brandOrange, 19);
   ctx.save();
   ctx.beginPath();
   drawRoundedRect(ctx, 1040, 18, 122, 38, 19);
@@ -252,22 +253,22 @@ function drawProductModule(
   ctx.fillStyle = shimGrad;
   ctx.fillRect(shimX, 18, 60, 38);
   ctx.restore();
-  drawText("Let's talk ↗", 1064, 42, 13, "#ffffff", 650);
+  drawText("Let's talk ↗", 1064, 42, 13, "#08090b", 650);
 
   // Left Content Area
   // Radar beacon
   ctx.beginPath();
   ctx.arc(58, 172, 4.5, 0, Math.PI * 2);
-  ctx.fillStyle = blue;
+  ctx.fillStyle = brandOrange;
   ctx.fill();
   const haloR = 4.5 + (Math.sin(time * 3.2) * 0.5 + 0.5) * 6;
   ctx.beginPath();
   ctx.arc(58, 172, haloR, 0, Math.PI * 2);
-  ctx.strokeStyle = `rgba(37, 99, 235, ${1 - (haloR - 4.5) / 6})`;
+  ctx.strokeStyle = `rgba(250, 137, 39, ${1 - (haloR - 4.5) / 6})`;
   ctx.lineWidth = 1.5;
   ctx.stroke();
 
-  drawText("DIGITAL PRODUCT STUDIO", 74, 177, 12.5, blue, 750);
+  drawText("DIGITAL PRODUCT STUDIO", 74, 177, 12.5, brandOrangeText, 750);
   drawText("Make space for", 54, 254, 52, ink, 650);
   drawText("what comes next.", 54, 316, 52, ink, 650);
   drawText(
@@ -279,8 +280,8 @@ function drawProductModule(
   );
 
   // Primary action button
-  rect(58, 394, 152, 44, blue, 6);
-  drawText("Explore the work ↗", 74, 421, 13.5, "#ffffff", 600);
+  rect(58, 394, 152, 44, brandOrange, 6);
+  drawText("Explore the work ↗", 74, 421, 13.5, "#08090b", 600);
 
   // Right Mockup Window
   rect(714, 148, 434, 282, "#ffffff", 8);
@@ -335,19 +336,19 @@ function drawProductModule(
   rect(892, 246, barW3, 7, "#cbd5e1", 4);
 
   // Active status tag
-  rect(892, 272, 130, 24, "rgba(37, 99, 235, 0.08)", 12);
+  rect(892, 272, 130, 24, "rgba(250, 137, 39, 0.08)", 12);
   drawText(
     `ACTIVE · ${Math.round(2420 + Math.sin(time * 2) * 80)}`,
     906,
     288,
     9.5,
-    blue,
+    brandOrangeText,
     700,
   );
 
   // Deploy button inside mockup
-  rect(892, 312, 106, 36, blue, 5);
-  drawText("Deploy now", 912, 335, 11, "#ffffff", 600);
+  rect(892, 312, 106, 36, brandOrange, 5);
+  drawText("Deploy now", 912, 335, 11, "#08090b", 600);
 
   // Smooth parametric mouse pointer animation
   const curCycle = (time * 0.22) % 1;
@@ -394,7 +395,7 @@ function drawProductModule(
   if (clickRadius > 0 && clickAlpha > 0) {
     ctx.beginPath();
     ctx.arc(curX, curY, clickRadius, 0, Math.PI * 2);
-    ctx.strokeStyle = `rgba(37, 99, 235, ${clickAlpha})`;
+    ctx.strokeStyle = `rgba(250, 137, 39, ${clickAlpha})`;
     ctx.lineWidth = 2;
     ctx.stroke();
   }
@@ -442,13 +443,13 @@ function drawProductModule(
     // Track
     rect(x, 548, 210, 4, "#e2e8f0", 2);
     if (isCatActive) {
-      rect(x, 548, Math.max(12, 210 * catProgress), 4, blue, 2);
+      rect(x, 548, Math.max(12, 210 * catProgress), 4, brandOrange, 2);
       drawText(
         `${Math.round(catProgress * 100)}%`,
         x + 178,
         524,
         12,
-        blue,
+        brandOrange,
         700,
       );
     }
@@ -463,7 +464,8 @@ function drawIdentityModule(
 ) {
   const ink = "#0f172a";
   const muted = "#64748b";
-  const blue = "#2563eb";
+  const brandOrange = "#FA8927";
+  const brandOrangeText = "#A84900";
 
   const rect = (
     x: number,
@@ -518,7 +520,7 @@ function drawIdentityModule(
 
   // 4 Color Swatches
   const swatches = [
-    { name: "Cobalt Blue", hex: "#2563EB", bg: "#2563eb", x: 36, w: 164 },
+    { name: "Brand Orange", hex: "#FA8927", bg: "#FA8927", x: 36, w: 164 },
     { name: "Pale Surface", hex: "#DFE6EE", bg: "#dfe6ee", x: 216, w: 164 },
     { name: "Warm Sand", hex: "#D1C4AE", bg: "#d1c4ae", x: 396, w: 164 },
     { name: "Obsidian Slate", hex: "#1E2430", bg: "#1e2430", x: 576, w: 188 },
@@ -542,7 +544,7 @@ function drawIdentityModule(
   });
 
   // Gliding Focus Viewfinder
-  ctx.strokeStyle = blue;
+  ctx.strokeStyle = "#E97816";
   ctx.lineWidth = 2.5;
   ctx.beginPath();
   drawRoundedRect(ctx, focusX - 4, 218, focusW + 8, 132, 8);
@@ -550,7 +552,7 @@ function drawIdentityModule(
 
   // Active checkmark badge
   rect(focusX + focusW - 24, 230, 16, 16, "#ffffff", 8);
-  drawText("✓", focusX + focusW - 20, 242, 11, blue, 700);
+  drawText("✓", focusX + focusW - 20, 242, 11, brandOrangeText, 700);
 
   // Active Tooltip chip tracking viewfinder
   const activeHex = swatches[curIdx].hex;
@@ -566,15 +568,15 @@ function drawIdentityModule(
   // Slider track under Aa
   rect(144, 436, 110, 4, "#e2e8f0", 2);
   const sliderThumbX = 144 + ((wght - 300) / 500) * 110;
-  rect(sliderThumbX - 5, 432, 10, 12, blue, 3);
-  drawText(`wght: ${wght}`, 268, 441, 11, blue, 700);
+  rect(sliderThumbX - 5, 432, 10, 12, brandOrange, 3);
+  drawText(`wght: ${wght}`, 268, 441, 11, brandOrangeText, 700);
 
   drawText("Montserrat / Variable", 144, 416, 16, ink, 650);
   drawText("KERNING: OPTICAL · TRACKING: -0.02EM", 144, 464, 11, muted, 600);
 
   // Contrast ratio pill
-  rect(620, 424, 144, 26, "rgba(37, 99, 235, 0.08)", 13);
-  drawText("AAA · 14.8:1 RATIO", 634, 441, 10, blue, 700);
+  rect(620, 424, 144, 26, "rgba(250, 137, 39, 0.08)", 13);
+  drawText("AAA · 14.8:1 RATIO", 634, 441, 10, brandOrangeText, 700);
 }
 
 function drawEngineeringModule(
@@ -759,11 +761,11 @@ function drawEngineeringModule(
 
   // Glowing Blinking Caret
   if (Math.floor(time * 3.5) % 2 === 0) {
-    rect(caretX + 2, caretY - 14, 2.5, 17, "#38bdf8");
+    rect(caretX + 2, caretY - 14, 2.5, 17, "#FA8927");
   }
 
   // Active line highlight
-  rect(72, caretY - 17, 700, 22, "rgba(56, 189, 248, 0.04)");
+  rect(72, caretY - 17, 700, 22, "rgba(250, 137, 39, 0.06)");
 
   // Compilation toast when snippet completes
   if (localTime > 10) {
@@ -845,16 +847,16 @@ function drawGrowthModule(
     ctx.fillText(val, x, y);
   };
 
-  drawText("GROWTH SIGNALS", 36, 46, 12, "#818cf8", 750);
+  drawText("GROWTH SIGNALS", 36, 46, 12, "#FFAA5C", 750);
   drawText("A clearer picture of progress", 36, 86, 21, "#f8fafc", 650);
 
   // Live telemetry badge
-  rect(590, 34, 174, 26, "rgba(56, 189, 248, 0.12)", 13);
+  rect(590, 34, 174, 26, "rgba(250, 137, 39, 0.12)", 13);
   ctx.beginPath();
   ctx.arc(606, 47, 4, 0, Math.PI * 2);
-  ctx.fillStyle = "#38bdf8";
+  ctx.fillStyle = "#FA8927";
   ctx.fill();
-  drawText("TELEMETRY · LIVE", 618, 51, 9.5, "#38bdf8", 700);
+  drawText("TELEMETRY · LIVE", 618, 51, 9.5, "#FFAA5C", 700);
 
   drawText("CHANNEL PERFORMANCE", 36, 136, 11, "#64748b", 600);
 
@@ -892,8 +894,8 @@ function drawGrowthModule(
   ctx.lineTo(40, 370);
   ctx.closePath();
   const areaGrad = ctx.createLinearGradient(0, 120, 0, 370);
-  areaGrad.addColorStop(0, "rgba(56, 189, 248, 0.24)");
-  areaGrad.addColorStop(1, "rgba(56, 189, 248, 0.0)");
+  areaGrad.addColorStop(0, "rgba(250, 137, 39, 0.24)");
+  areaGrad.addColorStop(1, "rgba(250, 137, 39, 0.0)");
   ctx.fillStyle = areaGrad;
   ctx.fill();
 
@@ -904,9 +906,9 @@ function drawGrowthModule(
     else ctx.lineTo(x, y);
   });
   const strokeGrad = ctx.createLinearGradient(40, 0, 750, 0);
-  strokeGrad.addColorStop(0, "#6366f1");
-  strokeGrad.addColorStop(0.5, "#38bdf8");
-  strokeGrad.addColorStop(1, "#818cf8");
+  strokeGrad.addColorStop(0, "#C95E0A");
+  strokeGrad.addColorStop(0.5, "#FA8927");
+  strokeGrad.addColorStop(1, "#FFAA5C");
   ctx.strokeStyle = strokeGrad;
   ctx.lineWidth = 3.5;
   ctx.stroke();
@@ -917,7 +919,7 @@ function drawGrowthModule(
     ctx.arc(x, y, 7, 0, Math.PI * 2);
     ctx.fillStyle = "#0c121e";
     ctx.fill();
-    ctx.strokeStyle = "#38bdf8";
+    ctx.strokeStyle = "#FA8927";
     ctx.lineWidth = 2;
     ctx.stroke();
   });
@@ -935,7 +937,7 @@ function drawGrowthModule(
   }
 
   // Vertical dashed scrubber
-  ctx.strokeStyle = "rgba(56, 189, 248, 0.4)";
+  ctx.strokeStyle = "rgba(250, 137, 39, 0.4)";
   ctx.lineWidth = 1.5;
   ctx.setLineDash([4, 4]);
   ctx.beginPath();
@@ -948,14 +950,14 @@ function drawGrowthModule(
   const ripR = ((time * 2.5) % 1) * 14;
   ctx.beginPath();
   ctx.arc(scrubX, interpY, ripR, 0, Math.PI * 2);
-  ctx.strokeStyle = `rgba(56, 189, 248, ${1 - ripR / 14})`;
+  ctx.strokeStyle = `rgba(250, 137, 39, ${1 - ripR / 14})`;
   ctx.lineWidth = 1.5;
   ctx.stroke();
 
   // Tooltip pill above cursor
   const tooltipX = Math.min(Math.max(scrubX - 65, 40), 620);
   rect(tooltipX, interpY - 48, 140, 32, "#131b2e", 6);
-  ctx.strokeStyle = "#38bdf8";
+  ctx.strokeStyle = "#FA8927";
   ctx.lineWidth = 1;
   ctx.beginPath();
   drawRoundedRect(ctx, tooltipX, interpY - 48, 140, 32, 6);
@@ -991,14 +993,14 @@ function drawGrowthModule(
       ch.x + 196,
       458,
       11,
-      "#38bdf8",
+      "#FFAA5C",
       700,
     );
 
     // Track
     rect(ch.x, 474, 230, 4, "#1e293b", 2);
     // Fill
-    rect(ch.x, 474, 230 * pct, 4, "#38bdf8", 2);
+    rect(ch.x, 474, 230 * pct, 4, "#FA8927", 2);
   });
 }
 
@@ -1302,7 +1304,7 @@ function FloatingAtmosphere({
             <octahedronGeometry args={[0.46, 0]} />
           )}
           <meshPhysicalMaterial
-            color={theme === "light" ? "#2547f0" : "#6f8dff"}
+            color={theme === "light" ? "#FA8927" : "#FFAA5C"}
             metalness={0.6}
             roughness={0.2}
             clearcoat={1}
@@ -1346,7 +1348,7 @@ function Connector({
     () =>
       new THREE.Mesh(
         new THREE.SphereGeometry(0.03, 10, 8),
-        new THREE.MeshBasicMaterial({ color: "#a5b8ff" }),
+        new THREE.MeshBasicMaterial({ color: "#FFC18A" }),
       ),
     [],
   );
@@ -1373,7 +1375,7 @@ function Connector({
     <group>
       <mesh geometry={tube}>
         <meshStandardMaterial
-          color={theme === "light" ? "#385cf4" : "#7083bd"}
+          color={theme === "light" ? "#E97816" : "#FFAA5C"}
           metalness={0.5}
           roughness={0.42}
           transparent
@@ -1495,7 +1497,7 @@ function Scene({
       <directionalLight
         position={[5, -1, 3]}
         intensity={theme === "light" ? 1.05 : 0.78}
-        color={theme === "light" ? "#385cf4" : "#91a9ff"}
+        color={theme === "light" ? "#E97816" : "#FFAA5C"}
       />
       <Environment resolution={quality.envResolution} frames={1}>
         <Lightformer
@@ -1509,7 +1511,7 @@ function Scene({
         <Lightformer
           form="rect"
           intensity={2.4}
-          color="#506bc5"
+          color="#E97816"
           position={[5, 1, -2]}
           scale={[5, 6, 1]}
           target={[1, 0, 0]}
@@ -1517,7 +1519,7 @@ function Scene({
         <Lightformer
           form="rect"
           intensity={1.25}
-          color="#b9c8ff"
+          color="#FFC18A"
           position={[0, -4, 2]}
           scale={[6, 3, 1]}
           target={[1, 0, 0]}
