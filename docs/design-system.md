@@ -2,12 +2,12 @@
 
 ## Direction
 
-Obsidian, electric cobalt, and ice. A deep obsidian-to-midnight base carries an
-electric cobalt (ultramarine) primary accent, with soft icy blue and cool white
-contrast, controlled violet and cyan highlights, and subtle metallic
-reflections. Editorial typography still leads the hierarchy: a confident display
-serif for headlines over a clean geometric sans for body copy. Surfaces use
-layered panels, fine dividers, and restrained glows rather than flat blocks.
+Obsidian and brand orange. A deep black foundation carries `#FA8927` as the
+primary accent, supported by deep and light orange shades, subtle orange-tinted
+surfaces, and cool white contrast. Editorial typography still leads the
+hierarchy: a confident display serif for headlines over a clean geometric sans
+for body copy. Surfaces use layered panels, fine dividers, and restrained glows
+rather than flat blocks.
 
 The home hero is deliberately darker than the rest of the site: it is an
 immersive, genuinely rendered WebGL stage, and everything below hands off into
@@ -27,13 +27,18 @@ Tailwind v4 theme tokens. Components should use semantic utilities such as
 - Typography: `next/font` variables `--font-manrope` (sans) and
   `--font-newsreader` (display serif); use display type for editorial hierarchy
   and body type for longer reading.
+- Brand palette: `--color-brand` (`#FA8927`), `--color-brand-hover`,
+  `--color-brand-deep`, `--color-brand-light`, `--color-brand-highlight`,
+  `--color-brand-soft`, `--color-brand-surface`, `--color-brand-border`, and
+  the two glow tokens. `--accent-text` selects a contrast-appropriate orange for
+  text independently from the primary fill.
 - Color roles: `--background` / `--background-2`, `--surface` /
   `--surface-hover`, `--card` / `--card-soft`, `--foreground`, `--muted`,
-  `--border`, `--accent` / `--accent-hover` / `--accent-2` / `--accent-violet`,
-  `--accent-soft`, `--accent-line`, `--focus`, plus `--ink` / `--on-dark` /
+  `--border`, `--accent` / `--accent-hover` / `--accent-2`, `--accent-soft`,
+  `--accent-line`, `--focus`, plus `--ink` / `--on-dark` /
   `--on-dark-muted` and `--line-dark` pairs for dark bands.
-- Immersive (WebGL hero) tokens: `--obsidian`, `--obsidian-2`, `--ice`,
-  `--cobalt`, `--cobalt-bright`.
+- Immersive (WebGL hero) surfaces retain `--obsidian` and `--obsidian-2`; the
+  WebGL and canvas accents use the shared orange palette.
 - The system dark preference remaps the same roles.
 - Legacy aliases (`--primary`, `--primary-soft`, `--green`, `--green-soft`,
   `--paper`) are retained so existing markup keeps resolving.
@@ -95,10 +100,10 @@ renders its final value without animating.
 
 ## 3D hero
 
-`src/components/three/hero-scene.tsx` renders an art-directed scene ("Cobalt
-Monolith"): a faceted transmission-glass core inside tilted brushed-metal orbit
-rings with emissive cobalt beads, a faint wireframe shell, drifting ice dust,
-and an infinite cobalt grid above a `ContactShadows` catch. Lighting is a real
+`src/components/three/hero-scene.tsx` renders an art-directed scene: a faceted
+transmission-glass core inside tilted brushed-metal orbit rings with emissive
+orange beads, a faint wireframe shell, drifting particles, and an infinite grid
+above a `ContactShadows` catch. Lighting is a real
 directional setup plus a procedural `Environment` built from `Lightformer`s,
 no image textures. Tone mapping is ACES filmic.
 
@@ -113,6 +118,10 @@ no image textures. Tone mapping is ACES filmic.
   composition never looks broken before the bundle arrives or without WebGL.
 - All WebGL geometry and materials are memoised and disposed by R3F; nothing is
   created per frame.
+
+Portfolio concept artwork keeps its project-specific palettes, and the code
+sample keeps syntax-highlighting colors. These are illustrative content rather
+than the application brand; semantic success and error colors are also retained.
 
 ## Page composition
 
