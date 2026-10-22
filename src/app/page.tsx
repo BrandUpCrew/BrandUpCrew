@@ -310,7 +310,6 @@ export default function HomePage() {
                     <Link href={`/team/${member.slug}`}>{member.name}</Link>
                   </h3>
                 </div>
-                <p className="team-bio">{member.bio}</p>
                 <Link
                   className="underlined-link team-profile-cta"
                   href={`/team/${member.slug}`}
