@@ -78,7 +78,16 @@ export function HeroVisual() {
   );
   const [inView, setInView] = useState(true);
   const [webglReady, setWebglReady] = useState(false);
-  const markWebGLReady = useCallback(() => setWebglReady(true), []);
+  const markInitialReady = useCallback(() => {
+    const element = host.current;
+    if (!element) return;
+    element.dataset.initialReady = "true";
+    window.dispatchEvent(new Event("initial-hero-ready"));
+  }, []);
+  const markWebGLReady = useCallback(() => {
+    setWebglReady(true);
+    markInitialReady();
+  }, [markInitialReady]);
 
   useEffect(() => {
     const element = host.current;
@@ -92,8 +101,26 @@ export function HeroVisual() {
     return () => observer.disconnect();
   }, []);
 
+  useEffect(() => {
+    if (enabled && !smallScreen) return;
+
+    let secondFrame = 0;
+    const firstFrame = window.requestAnimationFrame(() => {
+      secondFrame = window.requestAnimationFrame(markInitialReady);
+    });
+    return () => {
+      window.cancelAnimationFrame(firstFrame);
+      window.cancelAnimationFrame(secondFrame);
+    };
+  }, [enabled, markInitialReady, smallScreen]);
+
   return (
-    <div className="hero-visual" data-webgl-ready={webglReady} ref={host}>
+    <div
+      className="hero-visual"
+      data-initial-ready="pending"
+      data-webgl-ready={webglReady}
+      ref={host}
+    >
       <div aria-hidden="true" className="hero-visual-fallback" />
       {enabled && !smallScreen && (
         <HeroScene active={inView} onReady={markWebGLReady} />
