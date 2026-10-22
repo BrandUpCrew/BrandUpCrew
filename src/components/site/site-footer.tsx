@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 
 import { siteConfig } from "@/config/site";
@@ -13,11 +14,14 @@ export function SiteFooter() {
             href="/"
             aria-label={`${siteConfig.name} home`}
           >
-            <span aria-hidden="true" className="brand-mark">
-              <span />
-              <span />
-              <span />
-            </span>
+            <Image
+              alt=""
+              aria-hidden="true"
+              className="brand-mark"
+              height={34}
+              src={siteConfig.logo}
+              width={34}
+            />
             <span className="brand-name">{siteConfig.name}</span>
           </Link>
           <p>
