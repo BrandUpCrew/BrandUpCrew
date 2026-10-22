@@ -64,6 +64,10 @@ test("system theme, theme switching, and persistence work across all pages", asy
     .getByRole("button", { name: "Toggle light and dark theme" })
     .click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+  await expect(page.locator(".hero-title em")).toHaveCSS(
+    "color",
+    "rgb(250, 137, 39)",
+  );
   await expect
     .poll(() =>
       page
