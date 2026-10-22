@@ -47,6 +47,13 @@
   --color-brand-ambient: rgb(250 137 39 / 5%);
   --color-brand-ambient-soft: rgb(255 170 92 / 3%);
   --color-brand-ambient-deep: rgb(201 94 10 / 4%);
+  --scrollbar-track: #f0f1f3;
+  --scrollbar-track-line: rgb(7 11 24 / 8%);
+  --scrollbar-thumb: #e97816;
+  --scrollbar-thumb-start: #ffad62;
+  --scrollbar-thumb-end: #e97816;
+  --scrollbar-thumb-hover-start: #ffc18a;
+  --scrollbar-thumb-hover-end: #fa8927;
 
   /* Accent roles */
   --accent: var(--color-brand);
@@ -157,6 +164,13 @@
     --color-brand-ambient: rgb(250 137 39 / 18%);
     --color-brand-ambient-soft: rgb(255 170 92 / 8%);
     --color-brand-ambient-deep: rgb(201 94 10 / 14%);
+    --scrollbar-track: #101114;
+    --scrollbar-track-line: rgb(255 255 255 / 8%);
+    --scrollbar-thumb: #fa8927;
+    --scrollbar-thumb-start: #ffb36f;
+    --scrollbar-thumb-end: #e97816;
+    --scrollbar-thumb-hover-start: #ffc18a;
+    --scrollbar-thumb-hover-end: #ff963d;
     --shadow-sm:
       0 1px 2px rgba(0, 0, 0, 0.5), 0 8px 20px -8px rgba(0, 0, 0, 0.7);
     --shadow-md:
@@ -200,6 +214,13 @@
   --color-brand-ambient: rgb(250 137 39 / 5%);
   --color-brand-ambient-soft: rgb(255 170 92 / 3%);
   --color-brand-ambient-deep: rgb(201 94 10 / 4%);
+  --scrollbar-track: #f0f1f3;
+  --scrollbar-track-line: rgb(7 11 24 / 8%);
+  --scrollbar-thumb: #e97816;
+  --scrollbar-thumb-start: #ffad62;
+  --scrollbar-thumb-end: #e97816;
+  --scrollbar-thumb-hover-start: #ffc18a;
+  --scrollbar-thumb-hover-end: #fa8927;
   --glow: rgb(250 137 39 / 7%);
   --glow-2: rgb(250 137 39 / 6%);
   --shadow-sm:
@@ -243,6 +264,13 @@
   --color-brand-ambient: rgb(250 137 39 / 18%);
   --color-brand-ambient-soft: rgb(255 170 92 / 8%);
   --color-brand-ambient-deep: rgb(201 94 10 / 14%);
+  --scrollbar-track: #101114;
+  --scrollbar-track-line: rgb(255 255 255 / 8%);
+  --scrollbar-thumb: #fa8927;
+  --scrollbar-thumb-start: #ffb36f;
+  --scrollbar-thumb-end: #e97816;
+  --scrollbar-thumb-hover-start: #ffc18a;
+  --scrollbar-thumb-hover-end: #ff963d;
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5), 0 8px 20px -8px rgba(0, 0, 0, 0.7);
   --shadow-md:
     0 4px 12px rgba(0, 0, 0, 0.6), 0 20px 40px -16px rgba(0, 0, 0, 0.85);
@@ -264,6 +292,44 @@ html {
   min-height: 100%;
   scroll-behavior: smooth;
   background: var(--background);
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+  scrollbar-width: thin;
+}
+
+html::-webkit-scrollbar {
+  width: 12px;
+}
+
+html::-webkit-scrollbar-track {
+  border-inline-start: 1px solid var(--scrollbar-track-line);
+  background: var(--scrollbar-track);
+}
+
+html::-webkit-scrollbar-thumb {
+  min-height: 56px;
+  border: 3px solid var(--scrollbar-track);
+  border-radius: 999px;
+  background: linear-gradient(
+    180deg,
+    var(--scrollbar-thumb-start),
+    var(--scrollbar-thumb-end)
+  );
+  background-clip: padding-box;
+  box-shadow: 0 0 12px var(--color-brand-glow);
+  transition: background 180ms ease;
+}
+
+html::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    180deg,
+    var(--scrollbar-thumb-hover-start),
+    var(--scrollbar-thumb-hover-end)
+  );
+  background-clip: padding-box;
+}
+
+html::-webkit-scrollbar-corner {
+  background: var(--scrollbar-track);
 }
 
 /* Lenis owns scrolling once it mounts, so the native smooth behaviour must
