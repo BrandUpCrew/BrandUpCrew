@@ -636,8 +636,8 @@ html[data-initial-loader="leaving"] .brand-loader-initial {
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(56, 189, 248, 0.35) 30%,
-    rgba(37, 99, 235, 0.25) 70%,
+    var(--color-brand-border) 30%,
+    rgba(201, 94, 10, 0.22) 70%,
     transparent
   );
   opacity: 0.6;
@@ -1159,8 +1159,8 @@ html[data-initial-loader="leaving"] .brand-loader-initial {
   inset: 0;
   content: "";
   background-image:
-    linear-gradient(rgb(233 238 255 / 4%) 1px, transparent 1px),
-    linear-gradient(90deg, rgb(233 238 255 / 4%) 1px, transparent 1px);
+    linear-gradient(rgb(255 255 255 / 4%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 4%) 1px, transparent 1px);
   background-size: 88px 88px;
   mask-image: radial-gradient(84% 74% at 58% 34%, #000 0%, transparent 76%);
   pointer-events: none;
@@ -1190,10 +1190,10 @@ html[data-initial-loader="leaving"] .brand-loader-initial {
   inset: 0;
   background: linear-gradient(
     98deg,
-    rgb(5 7 15 / 96%) 0%,
-    rgb(5 7 15 / 78%) 30%,
-    rgb(5 7 15 / 20%) 58%,
-    rgb(5 7 15 / 6%) 74%,
+    rgb(5 5 5 / 96%) 0%,
+    rgb(5 5 5 / 78%) 30%,
+    rgb(5 5 5 / 20%) 58%,
+    rgb(5 5 5 / 6%) 74%,
     transparent 100%
   );
   pointer-events: none;
@@ -1401,7 +1401,7 @@ html[data-initial-loader="leaving"] .brand-loader-initial {
       var(--color-brand-ambient-soft),
       transparent 45%
     ),
-    linear-gradient(115deg, #080a10, #11151d 68%, #080a10);
+    linear-gradient(115deg, #080808, #111110 68%, #080808);
   transition: opacity 280ms var(--ease-out-soft);
 }
 
@@ -5308,6 +5308,10 @@ html[data-initial-loader="leaving"] .brand-loader-initial {
 [data-theme="light"] .hero-actions .text-link,
 [data-theme="light"] .hero .stat-value {
   color: var(--foreground);
+}
+
+[data-theme="light"] .hero-title em {
+  color: var(--color-brand);
 }
 
 [data-theme="light"] .hero-eyebrow,
