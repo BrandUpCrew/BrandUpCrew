@@ -3,6 +3,7 @@ import { env } from "@/lib/env";
 export const siteConfig = {
   name: "BrandUpCrew",
   descriptor: "Digital growth & technology",
+  tagline: "Digital Growth. Built to Scale.",
   description:
     "Independent strategy, design, and technology for businesses ready to move forward.",
   logo: "/Logo.png",
