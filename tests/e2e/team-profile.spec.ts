@@ -209,6 +209,12 @@ test("team profiles load directly, refresh, and connect to the correct inquiry",
     await expect(
       page.getByText(member.role, { exact: true }).first(),
     ).toBeVisible();
+    await expect(page.locator(".team-profile-lead")).toBeVisible();
+    if (member.slug === "sabir-ali") {
+      await expect(page.locator(".team-profile-lead")).toContainText(
+        "Sabir Ali is a Full-Stack Engineer who builds modern web applications",
+      );
+    }
     for (const skill of member.skills) {
       await expect(
         page.getByText(skill, { exact: true }).first(),

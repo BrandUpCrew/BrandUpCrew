@@ -110,9 +110,9 @@ test("team profiles use the correct names and portraits in both themes", async (
     "alt",
     "Sabir Ali, Full-Stack Engineer",
   );
-  await expect(firstProfile).toContainText(
-    "Sabir Ali is a Full-Stack Engineer who builds modern web applications across frontend experiences, backend services, APIs, and data stores.",
-  );
+  for (const profile of await profiles.all()) {
+    await expect(profile.locator(".team-bio")).toHaveCount(0);
+  }
   await expect(
     profiles.nth(1).getByRole("heading", { name: "Sulman Sagheer" }),
   ).toBeVisible();
