@@ -1,8 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="BrandUpCrew">
   <defs>
     <linearGradient id="mark" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#5b4be0" />
-      <stop offset="1" stop-color="#4a3acb" />
+      <stop offset="0" stop-color="#FFAA5C" />
+      <stop offset="1" stop-color="#FA8927" />
     </linearGradient>
   </defs>
   <rect width="32" height="32" rx="8" fill="url(#mark)" />
