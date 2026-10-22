@@ -43,6 +43,18 @@ test("system theme, theme switching, and persistence work across all pages", asy
     timeout: 10_000,
   });
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  await expect
+    .poll(() =>
+      page
+        .locator("html")
+        .evaluate((element) =>
+          getComputedStyle(element)
+            .getPropertyValue("--accent")
+            .trim()
+            .toLowerCase(),
+        ),
+    )
+    .toBe("#fa8927");
   await expect(page.locator("body")).toHaveCSS(
     "background-color",
     "rgb(4, 6, 15)",
@@ -52,6 +64,18 @@ test("system theme, theme switching, and persistence work across all pages", asy
     .getByRole("button", { name: "Toggle light and dark theme" })
     .click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+  await expect
+    .poll(() =>
+      page
+        .locator("html")
+        .evaluate((element) =>
+          getComputedStyle(element)
+            .getPropertyValue("--accent")
+            .trim()
+            .toLowerCase(),
+        ),
+    )
+    .toBe("#fa8927");
 
   for (const path of pages) {
     await page.goto(path);
