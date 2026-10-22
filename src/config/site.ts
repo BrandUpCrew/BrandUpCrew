@@ -5,6 +5,7 @@ export const siteConfig = {
   descriptor: "Digital growth & technology",
   description:
     "Independent strategy, design, and technology for businesses ready to move forward.",
+  logo: "/Logo.png",
   url: env.NEXT_PUBLIC_SITE_URL,
   locale: "en",
   navigation: [
