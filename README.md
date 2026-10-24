@@ -4,7 +4,7 @@
 
 # BrandUpCrew
 
-**Digital growth & technology — independent strategy, design, and engineering for businesses ready to move forward.**
+**Digital growth & technology independent strategy, design, and engineering for businesses ready to move forward.**
 
 ![Next.js](https://img.shields.io/badge/Next.js-16.4-000000?logo=nextdotjs&logoColor=white)
 ![React](https://img.shields.io/badge/React-19.3-087EA4?logo=react&logoColor=white)
