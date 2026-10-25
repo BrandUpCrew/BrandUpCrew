@@ -63,14 +63,12 @@ export default function RootLayout({
       lang={siteConfig.locale}
       className={montserrat.variable}
       data-scroll-behavior="smooth"
+      data-initial-loader="pending"
       suppressHydrationWarning
     >
       <body suppressHydrationWarning>
         <Script id="initialize-color-theme" strategy="beforeInteractive">
           {initializeThemeScript}
-        </Script>
-        <Script id="initial-page-loader-gate" strategy="beforeInteractive">
-          {`document.documentElement.dataset.initialLoader = "pending";`}
         </Script>
         <SiteShell>{children}</SiteShell>
       </body>

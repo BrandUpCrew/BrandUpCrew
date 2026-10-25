@@ -53,7 +53,10 @@ test("initial loader appears on every page reload and internal navigation remain
   test.setTimeout(90_000);
   const loader = page.locator(".brand-loader-initial");
   const heroVisual = page.locator(".hero-visual");
-  await page.goto("/", { waitUntil: "commit" });
+  const response = await page.goto("/", { waitUntil: "commit" });
+  expect(await response?.text()).toMatch(
+    /<html[^>]*data-initial-loader="pending"/,
+  );
 
   await expect(loader).toBeVisible();
   await expect(
