@@ -101,6 +101,7 @@
 }
 
 @theme inline {
+  --animate-shimmer: shimmer 2.5s infinite;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-surface: var(--surface);
@@ -1809,7 +1810,6 @@ html[data-initial-loader="leaving"] .brand-loader-initial {
 
 .magnetic {
   display: inline-flex;
-  will-change: transform;
 }
 
 .parallax {
@@ -5583,6 +5583,14 @@ html[data-initial-loader="leaving"] .brand-loader-initial {
   }
 }
 
+/* Paired with --animate-shimmer. Kept out of the @theme block so the CSS
+   optimizer treats it as ordinary keyframes instead of an unknown at-rule. */
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
 [data-theme="light"] .hero {
   background: #ffffff;
   color: var(--foreground);
@@ -6521,7 +6529,6 @@ html[data-initial-loader="leaving"] .brand-loader-initial {
 
 .perspective-tilt-inner {
   transform-style: preserve-3d;
-  will-change: transform;
 }
 
 .perspective-glare {
@@ -6536,7 +6543,7 @@ html[data-initial-loader="leaving"] .brand-loader-initial {
 }
 
 .clip-reveal-wrap {
-  will-change: clip-path, opacity;
+  transform-style: preserve-3d;
 }
 
 .scroll-story-section {
@@ -6605,6 +6612,14 @@ html[data-initial-loader="leaving"] .brand-loader-initial {
   transform-origin: center center;
 }
 
+/* Dedicated tilt layer so the velocity rotation never collides with the
+   infinite translateX loop that owns `.marquee-track`'s transform. */
+.spatial-marquee-tilt {
+  transform-style: preserve-3d;
+  transform-origin: center center;
+  will-change: transform;
+}
+
 .spatial-service-lead-wrap {
   perspective: 1200px;
   transform-style: preserve-3d;
@@ -6614,7 +6629,6 @@ html[data-initial-loader="leaving"] .brand-loader-initial {
 .spatial-service-lead-inner {
   transform-style: preserve-3d;
   height: 100%;
-  will-change: transform;
 }
 
 .spatial-service-lead-inner .service-feature {
@@ -6656,7 +6670,6 @@ html[data-initial-loader="leaving"] .brand-loader-initial {
 
 .spatial-service-rail li {
   transform-style: preserve-3d;
-  will-change: transform, opacity;
 }
 
 .spatial-service-rail li a {
@@ -6678,7 +6691,6 @@ html[data-initial-loader="leaving"] .brand-loader-initial {
 
 .spatial-process-rail li {
   transform-style: preserve-3d;
-  will-change: transform, opacity;
   transition:
     transform 320ms var(--ease-out-soft),
     background-color 280ms ease,
@@ -6700,7 +6712,6 @@ html[data-initial-loader="leaving"] .brand-loader-initial {
 
 .spatial-industry-grid li {
   transform-style: preserve-3d;
-  will-change: transform, opacity;
 }
 
 .spatial-industry-grid li:hover {
@@ -6714,7 +6725,6 @@ html[data-initial-loader="leaving"] .brand-loader-initial {
 
 .spatial-article-grid > * {
   transform-style: preserve-3d;
-  will-change: transform, opacity;
 }
 
 .article-card {
@@ -6744,7 +6754,6 @@ html[data-initial-loader="leaving"] .brand-loader-initial {
 
 .spatial-faq-list .faq-item-wrap {
   transform-style: preserve-3d;
-  will-change: transform, opacity;
 }
 
 .spatial-faq-list .faq-item {
@@ -6777,6 +6786,19 @@ html[data-initial-loader="leaving"] .brand-loader-initial {
 
 .spatial-cta-section .button {
   transform: translateZ(25px);
+}
+
+/* Compositor promotion is only worth its memory while an interaction is live.
+   Scoping it to hover keeps the idle page from holding a layer per card, list
+   item, and grid cell — the entrance reveals promote themselves as they run. */
+.perspective-tilt-wrap:hover .perspective-tilt-inner,
+.spatial-service-lead-wrap:hover .spatial-service-lead-inner,
+.spatial-team-card-wrap:hover .spatial-team-card-inner,
+.spatial-service-rail li:hover,
+.spatial-process-rail li:hover,
+.spatial-industry-grid li:hover,
+.magnetic:hover {
+  will-change: transform;
 }
 
 @media (prefers-reduced-motion: reduce) {
