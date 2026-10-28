@@ -64,7 +64,7 @@ export default function HomePage() {
         <div className="content-width">
           <div className="hero-shell">
             <HeroSpatialExit className="hero-content">
-              <HeroBlock delay={0.05}>
+              <HeroBlock>
                 <p className="eyebrow hero-eyebrow">
                   <span />
                   {siteConfig.descriptor}
@@ -81,7 +81,7 @@ export default function HomePage() {
                 trigger="mount"
               />
 
-              <HeroBlock delay={0.4}>
+              <HeroBlock>
                 <p className="hero-description">
                   We bring strategy, design, and technology together to make
                   digital work clearer, more useful, and ready for what comes
@@ -103,16 +103,8 @@ export default function HomePage() {
 
                 <HeroStatGrid3D>
                   <StatCounter value={services.length} label="Capabilities" />
-                  <StatCounter
-                    value={industries.length}
-                    label="Industries"
-                    delay={0.1}
-                  />
-                  <StatCounter
-                    value={processSteps.length}
-                    label="Process steps"
-                    delay={0.2}
-                  />
+                  <StatCounter value={industries.length} label="Industries" />
+                  <StatCounter value={processSteps.length} label="Process steps" />
                 </HeroStatGrid3D>
 
                 <p className="hero-cue">
