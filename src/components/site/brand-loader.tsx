@@ -23,7 +23,8 @@ export function BrandLoader({ mode }: { mode: "initial" | "route" }) {
               alt=""
               className="brand-loader-logo"
               height={192}
-              priority
+              preload
+              quality={85}
               src={siteConfig.logo}
               width={192}
             />
@@ -33,6 +34,7 @@ export function BrandLoader({ mode }: { mode: "initial" | "route" }) {
                 className="brand-loader-sheen-mark"
                 height={192}
                 loading="eager"
+                quality={60}
                 src={siteConfig.logo}
                 width={192}
               />

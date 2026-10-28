@@ -3,9 +3,10 @@
 import { useEffect } from "react";
 
 import { BrandLoader } from "@/components/site/brand-loader";
+import { INITIAL_LOADER_EXIT_EVENT } from "@/lib/entrance";
 
-const readinessTimeoutMs = 10_000;
-const exitTransitionMs = 480;
+const readinessTimeoutMs = 4000;
+const exitTransitionMs = 420;
 
 export function InitialPageLoader() {
   useEffect(() => {
@@ -23,6 +24,9 @@ export function InitialPageLoader() {
       if (!active) return;
       active = false;
       window.clearTimeout(readinessTimer);
+      // Announce the lift before the attribute flips so hero entrances are
+      // already running as the curtain fades out.
+      window.dispatchEvent(new Event(INITIAL_LOADER_EXIT_EVENT));
       root.dataset.initialLoader = "leaving";
       if (reduced) {
         delete root.dataset.initialLoader;

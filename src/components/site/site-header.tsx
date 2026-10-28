@@ -59,7 +59,7 @@ export function SiteHeader() {
             aria-hidden="true"
             className="brand-mark"
             height={34}
-            priority
+            loading="eager"
             src={siteConfig.logo}
             width={34}
           />

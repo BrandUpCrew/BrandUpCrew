@@ -1,12 +1,43 @@
+# Dependencies
 node_modules/
+
+# Next.js build output and framework caches
 .next/
 /out/
 /build/
+
+# Test artifacts and coverage
 /coverage/
-/playwright-report/
 /test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Local environment files (the safe template stays tracked)
 .env*
 !.env.example
+
+# TypeScript generated files
 *.tsbuildinfo
 next-env.d.ts
+
+# Deployment metadata (local only)
+.vercel
+
+# Operating system files
 .DS_Store
+Thumbs.db
+Desktop.ini
+
+# Editors and IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Certificates and private keys
+*.pem

@@ -16,6 +16,8 @@ import {
   type ComponentProps,
 } from "react";
 
+import { useHeroEntrance } from "@/lib/entrance";
+
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
 /**
@@ -105,11 +107,15 @@ export function HeroBlock({
   delay = 0,
   ...props
 }: ComponentProps<typeof motion.div> & { delay?: number }) {
+  // Held back while the brand curtain is still up, so the entrance plays as the
+  // overlay fades rather than finishing behind it.
+  const ready = useHeroEntrance();
+
   return (
     <motion.div
       className={className}
       initial={{ opacity: 0, y: 18 }}
-      animate={{ opacity: 1, y: 0 }}
+      animate={ready ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
       transition={{ duration: 0.7, delay, ease: EASE }}
       {...props}
     >
@@ -132,6 +138,7 @@ export function StatCounter({
 }) {
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: false, amount: 0.5 });
+  const entranceReady = useHeroEntrance();
   const reduce = useSyncExternalStore(
     subscribeReducedMotion,
     getReducedMotion,
@@ -140,7 +147,7 @@ export function StatCounter({
   const [display, setDisplay] = useState(0);
 
   useEffect(() => {
-    if (reduce || !inView) return;
+    if (reduce || !inView || !entranceReady) return;
     const controls = animate(0, value, {
       duration: 1.2,
       delay,
@@ -151,7 +158,7 @@ export function StatCounter({
       controls.stop();
       setDisplay(0);
     };
-  }, [inView, value, delay, reduce]);
+  }, [inView, entranceReady, value, delay, reduce]);
 
   const activeDisplay = inView ? display : 0;
 
