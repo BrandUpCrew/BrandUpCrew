@@ -1,14 +1,20 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
+import { subscribeToHeroEntrance } from "@/lib/entrance";
 import { scrollStore } from "@/lib/scroll";
 import { cn } from "@/lib/utils";
 
 gsap.registerPlugin(ScrollTrigger);
+
+// Mobile browser chrome showing/hiding resizes the viewport several times in a
+// row; letting ScrollTrigger recalculate every trigger mid-gesture reads as a
+// jump. We opt out and refresh from our own deliberate checkpoints instead.
+ScrollTrigger.config({ ignoreMobileResize: true });
 
 function prefersReducedMotion() {
   if (typeof window === "undefined") return false;
@@ -18,6 +24,39 @@ function prefersReducedMotion() {
 function isTouchDevice() {
   if (typeof window === "undefined") return false;
   return window.matchMedia("(pointer: coarse)").matches;
+}
+
+/**
+ * Pointer events fire far more often than the display refreshes, and each tilt
+ * or magnetic handler that reacts to them also has to read layout. Coalescing
+ * both into a single animation frame keeps the interaction locked to the cursor
+ * while cutting layout reads and GSAP writes down to one per frame.
+ */
+function trackPointerMove(
+  target: HTMLElement,
+  onFrame: (x: number, y: number, rect: DOMRect) => void,
+) {
+  let frame = 0;
+  let x = 0;
+  let y = 0;
+
+  const flush = () => {
+    frame = 0;
+    onFrame(x, y, target.getBoundingClientRect());
+  };
+
+  const onMove = (event: MouseEvent) => {
+    x = event.clientX;
+    y = event.clientY;
+    if (!frame) frame = requestAnimationFrame(flush);
+  };
+
+  const cancel = () => {
+    if (frame) cancelAnimationFrame(frame);
+    frame = 0;
+  };
+
+  return { onMove, cancel };
 }
 
 /**
@@ -47,33 +86,52 @@ export function MaskedHeading({
       const inners = el.querySelectorAll<HTMLElement>("[data-mask-inner]");
       if (!inners.length) return;
 
-      gsap.fromTo(
-        inners,
-        {
-          yPercent: 118,
-          opacity: 0,
-          rotateX: -14,
-          transformPerspective: 800,
-          transformOrigin: "bottom left",
-        },
-        {
-          yPercent: 0,
-          opacity: 1,
-          rotateX: 0,
-          duration: 1.08,
-          delay,
-          ease: "power3.out",
-          stagger: 0.08,
-          scrollTrigger:
-            trigger === "scroll"
-              ? {
-                  trigger: el,
-                  start: "top 88%",
-                  toggleActions: "play reverse play reverse",
-                }
-              : undefined,
-        },
-      );
+      const play = () =>
+        gsap.fromTo(
+          inners,
+          {
+            yPercent: 118,
+            opacity: 0,
+            rotateX: -14,
+            transformPerspective: 800,
+            transformOrigin: "bottom left",
+          },
+          {
+            yPercent: 0,
+            opacity: 1,
+            rotateX: 0,
+            duration: 1.08,
+            delay,
+            ease: "power3.out",
+            stagger: 0.08,
+            scrollTrigger:
+              trigger === "scroll"
+                ? {
+                    trigger: el,
+                    start: "top 88%",
+                    toggleActions: "play reverse play reverse",
+                  }
+                : undefined,
+          },
+        );
+
+      // Scroll-triggered headings must register their trigger straight away, or
+      // a refresh during load would miss them. Only the mount-triggered variant
+      // (the hero headline) has to wait for the curtain to lift.
+      if (trigger !== "mount") {
+        play();
+        return;
+      }
+
+      let tween: gsap.core.Tween | null = null;
+      const unsubscribe = subscribeToHeroEntrance(() => {
+        tween = play();
+      });
+
+      return () => {
+        unsubscribe();
+        tween?.kill();
+      };
     },
     { scope: ref, dependencies: [trigger, delay] },
   );
@@ -155,22 +213,23 @@ export function Magnetic({
     const xTo = gsap.quickTo(el, "x", { duration: 0.55, ease: "power3.out" });
     const yTo = gsap.quickTo(el, "y", { duration: 0.55, ease: "power3.out" });
 
-    const onMove = (event: PointerEvent) => {
-      const rect = el.getBoundingClientRect();
-      xTo((event.clientX - (rect.left + rect.width / 2)) * strength);
-      yTo((event.clientY - (rect.top + rect.height / 2)) * strength);
-    };
+    const tracker = trackPointerMove(el, (x, y, rect) => {
+      xTo((x - (rect.left + rect.width / 2)) * strength);
+      yTo((y - (rect.top + rect.height / 2)) * strength);
+    });
     const onLeave = () => {
+      tracker.cancel();
       xTo(0);
       yTo(0);
     };
 
-    el.addEventListener("pointermove", onMove);
+    el.addEventListener("pointermove", tracker.onMove);
     el.addEventListener("pointerleave", onLeave);
 
     return () => {
-      el.removeEventListener("pointermove", onMove);
+      el.removeEventListener("pointermove", tracker.onMove);
       el.removeEventListener("pointerleave", onLeave);
+      tracker.cancel();
       gsap.killTweensOf(el);
     };
   }, [strength]);
@@ -219,23 +278,21 @@ export function PerspectiveTilt({
       ease: "power2.out",
     });
 
-    const onMove = (e: MouseEvent) => {
-      const rect = container.getBoundingClientRect();
-      const px = (e.clientX - rect.left) / rect.width;
-      const py = (e.clientY - rect.top) / rect.height;
-      const tiltX = (py - 0.5) * -intensity;
-      const tiltY = (px - 0.5) * intensity;
-      rotX(tiltX);
-      rotY(tiltY);
+    const tracker = trackPointerMove(container, (x, y, rect) => {
+      const px = (x - rect.left) / rect.width;
+      const py = (y - rect.top) / rect.height;
+      rotX((py - 0.5) * -intensity);
+      rotY((px - 0.5) * intensity);
       zTo(14);
 
       if (glare && glareRef.current) {
         glareRef.current.style.opacity = "1";
         glareRef.current.style.background = `radial-gradient(circle 380px at ${px * 100}% ${py * 100}%, rgba(255,255,255,0.16), transparent 70%)`;
       }
-    };
+    });
 
     const onLeave = () => {
+      tracker.cancel();
       rotX(0);
       rotY(0);
       zTo(0);
@@ -244,12 +301,13 @@ export function PerspectiveTilt({
       }
     };
 
-    container.addEventListener("mousemove", onMove);
+    container.addEventListener("mousemove", tracker.onMove);
     container.addEventListener("mouseleave", onLeave);
 
     return () => {
-      container.removeEventListener("mousemove", onMove);
+      container.removeEventListener("mousemove", tracker.onMove);
       container.removeEventListener("mouseleave", onLeave);
+      tracker.cancel();
       gsap.killTweensOf(card);
     };
   }, [intensity, glare]);
@@ -487,7 +545,11 @@ export function HeroSpatialExit({
             trigger: el,
             start: "top top",
             end: "bottom 25%",
-            scrub: 0.25,
+            // `true` tracks the scroll position directly instead of easing
+            // towards it. The hero is the one place where a trailing value is
+            // obvious: the WebGL scene already moves with the gesture, so any
+            // scrub smoothing leaves the typography visibly behind it.
+            scrub: true,
           },
         },
       );
@@ -524,27 +586,37 @@ export function HeroStatGrid3D({
       if (!el || prefersReducedMotion()) return;
 
       const items = el.children;
-      gsap.fromTo(
-        items,
-        {
-          opacity: 0,
-          y: 28,
-          z: -40,
-          rotateX: 25,
-          transformPerspective: 800,
-          transformOrigin: "bottom center",
-        },
-        {
-          opacity: 1,
-          y: 0,
-          z: 0,
-          rotateX: 0,
-          duration: 1.1,
-          delay: 0.45,
-          stagger: 0.12,
-          ease: "power3.out",
-        },
-      );
+
+      let tween: gsap.core.Tween | null = null;
+      const unsubscribe = subscribeToHeroEntrance(() => {
+        tween = gsap.fromTo(
+          items,
+          {
+            opacity: 0,
+            y: 28,
+            z: -40,
+            rotateX: 25,
+            transformPerspective: 800,
+            transformOrigin: "bottom center",
+          },
+          {
+            opacity: 1,
+            y: 0,
+            z: 0,
+            rotateX: 0,
+            duration: 1.1,
+            // No leading delay: the row is already sequenced by the stagger, so
+            // an extra hold here only reads as the hero waiting to settle.
+            stagger: 0.12,
+            ease: "power3.out",
+          },
+        );
+      });
+
+      return () => {
+        unsubscribe();
+        tween?.kill();
+      };
     },
     { scope: ref },
   );
@@ -563,26 +635,68 @@ export function HeroStatGrid3D({
  */
 export function SpatialMarquee({ items }: { items: string[] }) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const tiltRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const container = containerRef.current;
+    const tilt = tiltRef.current;
     const track = trackRef.current;
-    if (!track || prefersReducedMotion() || isTouchDevice()) return;
+    if (!container) return;
 
-    const rotX = gsap.quickTo(track, "rotateX", { duration: 0.35, ease: "power2.out" });
-    const skewX = gsap.quickTo(track, "skewX", { duration: 0.35, ease: "power2.out" });
+    // The endless translateX loop lives on `.marquee-track` via CSS, and a CSS
+    // animation outranks inline transforms. The velocity tilt therefore targets
+    // a dedicated wrapper above it so the two never fight for `transform`.
+    const tiltActive =
+      Boolean(tilt) && !prefersReducedMotion() && !isTouchDevice();
+    const rotX = tiltActive
+      ? gsap.quickTo(tilt as HTMLDivElement, "rotateX", {
+          duration: 0.35,
+          ease: "power2.out",
+        })
+      : null;
+    const skewX = tiltActive
+      ? gsap.quickTo(tilt as HTMLDivElement, "skewX", {
+          duration: 0.35,
+          ease: "power2.out",
+        })
+      : null;
 
-    let rafId: number;
+    let rafId = 0;
     const update = () => {
       const vel = gsap.utils.clamp(-3500, 3500, scrollStore.velocity || 0);
       const intensity = vel / 3500;
-      rotX(intensity * 5);
-      skewX(intensity * -2);
+      rotX?.(intensity * 5);
+      skewX?.(intensity * -2);
       rafId = requestAnimationFrame(update);
     };
+    const start = () => {
+      if (!rafId) rafId = requestAnimationFrame(update);
+    };
+    const stop = () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = 0;
+    };
 
-    rafId = requestAnimationFrame(update);
-    return () => cancelAnimationFrame(rafId);
+    // Both the per-frame tilt and the always-on compositor update are pure
+    // waste while the ribbon sits off-screen, so we park them until it returns.
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (track) {
+          track.style.animationPlayState = entry.isIntersecting ? "" : "paused";
+        }
+        if (entry.isIntersecting && tiltActive) start();
+        else stop();
+      },
+      { rootMargin: "160px 0px" },
+    );
+    observer.observe(container);
+
+    return () => {
+      observer.disconnect();
+      stop();
+      if (tilt) gsap.killTweensOf(tilt);
+    };
   }, []);
 
   return (
@@ -592,16 +706,14 @@ export function SpatialMarquee({ items }: { items: string[] }) {
       aria-hidden="true"
       style={{ perspective: "1000px", overflow: "hidden" }}
     >
-      <div
-        ref={trackRef}
-        className="marquee-track"
-        style={{ transformStyle: "preserve-3d", willChange: "transform" }}
-      >
-        {[...items, ...items].map((item, index) => (
-          <span className="marquee-item" key={`${item}-${index}`}>
-            {item}
-          </span>
-        ))}
+      <div ref={tiltRef} className="spatial-marquee-tilt">
+        <div ref={trackRef} className="marquee-track">
+          {[...items, ...items].map((item, index) => (
+            <span className="marquee-item" key={`${item}-${index}`}>
+              {item}
+            </span>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -667,10 +779,9 @@ export function SpatialServiceLead({
     const rotY = gsap.quickTo(card, "rotateY", { duration: 0.45, ease: "power2.out" });
     const zTo = gsap.quickTo(card, "z", { duration: 0.45, ease: "power2.out" });
 
-    const onMove = (e: MouseEvent) => {
-      const rect = container.getBoundingClientRect();
-      const px = (e.clientX - rect.left) / rect.width;
-      const py = (e.clientY - rect.top) / rect.height;
+    const tracker = trackPointerMove(container, (x, y, rect) => {
+      const px = (x - rect.left) / rect.width;
+      const py = (y - rect.top) / rect.height;
       rotX((py - 0.5) * -12);
       rotY((px - 0.5) * 12);
       zTo(20);
@@ -679,9 +790,10 @@ export function SpatialServiceLead({
         glareRef.current.style.opacity = "1";
         glareRef.current.style.background = `radial-gradient(circle 420px at ${px * 100}% ${py * 100}%, rgba(255,255,255,0.18), transparent 70%)`;
       }
-    };
+    });
 
     const onLeave = () => {
+      tracker.cancel();
       rotX(0);
       rotY(0);
       zTo(0);
@@ -690,12 +802,13 @@ export function SpatialServiceLead({
       }
     };
 
-    container.addEventListener("mousemove", onMove);
+    container.addEventListener("mousemove", tracker.onMove);
     container.addEventListener("mouseleave", onLeave);
 
     return () => {
-      container.removeEventListener("mousemove", onMove);
+      container.removeEventListener("mousemove", tracker.onMove);
       container.removeEventListener("mouseleave", onLeave);
+      tracker.cancel();
       gsap.killTweensOf(card);
     };
   }, []);
@@ -920,27 +1033,28 @@ export function SpatialIndustryGrid({
       const rotY = gsap.quickTo(item, "rotateY", { duration: 0.35, ease: "power2.out" });
       const zTo = gsap.quickTo(item, "z", { duration: 0.35, ease: "power2.out" });
 
-      const onMove = (e: MouseEvent) => {
-        const rect = item.getBoundingClientRect();
-        const px = (e.clientX - rect.left) / rect.width;
-        const py = (e.clientY - rect.top) / rect.height;
+      const tracker = trackPointerMove(item, (x, y, rect) => {
+        const px = (x - rect.left) / rect.width;
+        const py = (y - rect.top) / rect.height;
         rotX((py - 0.5) * -7);
         rotY((px - 0.5) * 7);
         zTo(14);
-      };
+      });
 
       const onLeave = () => {
+        tracker.cancel();
         rotX(0);
         rotY(0);
         zTo(0);
       };
 
-      item.addEventListener("mousemove", onMove);
+      item.addEventListener("mousemove", tracker.onMove);
       item.addEventListener("mouseleave", onLeave);
 
       cleanups.push(() => {
-        item.removeEventListener("mousemove", onMove);
+        item.removeEventListener("mousemove", tracker.onMove);
         item.removeEventListener("mouseleave", onLeave);
+        tracker.cancel();
         gsap.killTweensOf(item);
       });
     });
@@ -1022,10 +1136,9 @@ export function SpatialTeamCard({
     const rotY = gsap.quickTo(card, "rotateY", { duration: 0.45, ease: "power2.out" });
     const zTo = gsap.quickTo(card, "z", { duration: 0.45, ease: "power2.out" });
 
-    const onMove = (e: MouseEvent) => {
-      const rect = container.getBoundingClientRect();
-      const px = (e.clientX - rect.left) / rect.width;
-      const py = (e.clientY - rect.top) / rect.height;
+    const tracker = trackPointerMove(container, (x, y, rect) => {
+      const px = (x - rect.left) / rect.width;
+      const py = (y - rect.top) / rect.height;
       rotX((py - 0.5) * -11);
       rotY((px - 0.5) * 11);
       zTo(16);
@@ -1034,9 +1147,10 @@ export function SpatialTeamCard({
         glareRef.current.style.opacity = "1";
         glareRef.current.style.background = `radial-gradient(circle 380px at ${px * 100}% ${py * 100}%, rgba(255,255,255,0.16), transparent 70%)`;
       }
-    };
+    });
 
     const onLeave = () => {
+      tracker.cancel();
       rotX(0);
       rotY(0);
       zTo(0);
@@ -1045,12 +1159,13 @@ export function SpatialTeamCard({
       }
     };
 
-    container.addEventListener("mousemove", onMove);
+    container.addEventListener("mousemove", tracker.onMove);
     container.addEventListener("mouseleave", onLeave);
 
     return () => {
-      container.removeEventListener("mousemove", onMove);
+      container.removeEventListener("mousemove", tracker.onMove);
       container.removeEventListener("mouseleave", onLeave);
+      tracker.cancel();
       gsap.killTweensOf(card);
     };
   }, []);
@@ -1336,5 +1451,22 @@ export function SpatialCta({
     <section ref={ref} className={cn("cta-section", "spatial-cta-section", className)} style={{ transformStyle: "preserve-3d" }}>
       {children}
     </section>
+  );
+}
+
+/**
+ * Professional shimmer effect for loading states or premium card accents.
+ * Uses CSS-first animation for performance.
+ */
+export function Shimmer({ className }: { className?: string }) {
+  return (
+    <div
+      className={cn(
+        "absolute inset-0 z-10 pointer-events-none overflow-hidden",
+        className
+      )}
+    >
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full animate-shimmer" />
+    </div>
   );
 }
