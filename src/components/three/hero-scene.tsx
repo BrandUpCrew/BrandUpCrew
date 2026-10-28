@@ -1075,9 +1075,14 @@ function InterfaceModule({
     const group = ref.current;
     if (!group) return;
     const time = state.clock.elapsedTime;
-    const reveal = THREE.MathUtils.smoothstep(time - config.delay, 0, 1.1);
-    const scroll = THREE.MathUtils.clamp(scrollStore.hero, 0, 1);
     const dt = Math.min(delta, 0.05);
+
+    // Lenis has already eased the scroll position for us. Reading it straight
+    // here keeps the modules locked to the gesture; damping a second time only
+    // made the scene trail the visitor on the way up and on the way down.
+    const scroll = THREE.MathUtils.clamp(scrollStore.hero, 0, 1);
+
+    const reveal = THREE.MathUtils.smoothstep(time - config.delay, 0, 1.1);
 
     // Subtle organic levitation physics
     const floatY = Math.sin(time * 1.4 + config.delay * 3) * 0.028;
@@ -1284,13 +1289,19 @@ function Connector({
   index,
   reduced,
   theme,
+  isLeadToSecondary,
 }: {
   from: [number, number, number];
   to: [number, number, number];
   index: number;
   reduced: boolean;
   theme: Theme;
+  isLeadToSecondary: boolean;
 }) {
+  const group = useRef<THREE.Group>(null);
+  const tubeMaterial = useRef<THREE.MeshStandardMaterial>(null);
+  const pulseMesh = useRef<THREE.Mesh>(null);
+  const pulseMaterial = useRef<THREE.MeshBasicMaterial>(null);
   const curve = useMemo(() => {
     const start = new THREE.Vector3(...from);
     const end = new THREE.Vector3(...to);
@@ -1302,37 +1313,50 @@ function Connector({
     () => new THREE.TubeGeometry(curve, 36, 0.008, 6, false),
     [curve],
   );
-  const pulse = useMemo(
-    () =>
-      new THREE.Mesh(
-        new THREE.SphereGeometry(0.03, 10, 8),
-        new THREE.MeshBasicMaterial({ color: "#FFC18A" }),
-      ),
-    [],
-  );
 
   useEffect(
     () => () => {
       tube.dispose();
-      pulse.geometry.dispose();
-      (pulse.material as THREE.Material).dispose();
     },
-    [pulse, tube],
+    [tube],
   );
 
   useFrame((state) => {
+    // Must match the modules exactly, otherwise the tubes visibly detach from
+    // the panels they are supposed to be attached to.
+    const scroll = THREE.MathUtils.clamp(scrollStore.hero, 0, 1);
+
     const reveal = reduced
       ? 1
       : THREE.MathUtils.smoothstep(state.clock.elapsedTime - 0.5, 0, 1.05);
     const phase = (state.clock.elapsedTime * 0.12 + index * 0.28) % 1;
-    pulse.position.copy(curve.getPointAt(phase));
-    pulse.scale.setScalar(reduced ? 0 : reveal);
+    
+    if (pulseMesh.current) {
+      pulseMesh.current.position.copy(curve.getPointAt(phase));
+      pulseMesh.current.scale.setScalar(reduced ? 0 : reveal);
+    }
+
+    if (group.current) {
+      // Connectors follow the recede and depth of the modules to stay "attached"
+      const yRecede = -scroll * 0.45;
+      const zDepth = isLeadToSecondary ? scroll * 0.32 : -scroll * 0.55;
+      group.current.position.y = yRecede;
+      group.current.position.z = zDepth;
+    }
+
+    if (tubeMaterial.current) {
+      tubeMaterial.current.opacity = (1 - scroll * 0.6) * 0.4;
+    }
+    if (pulseMaterial.current) {
+      pulseMaterial.current.opacity = (1 - scroll * 0.6) * reveal;
+    }
   });
 
   return (
-    <group>
+    <group ref={group}>
       <mesh geometry={tube}>
         <meshStandardMaterial
+          ref={tubeMaterial}
           color={theme === "light" ? "#E97816" : "#FFAA5C"}
           metalness={0.5}
           roughness={0.42}
@@ -1340,7 +1364,15 @@ function Connector({
           opacity={0.4}
         />
       </mesh>
-      <primitive object={pulse} />
+      <mesh ref={pulseMesh} position={curve.getPointAt(0)}>
+        <sphereGeometry args={[0.03, 10, 8]} />
+        <meshBasicMaterial
+          ref={pulseMaterial}
+          color="#FFC18A"
+          transparent
+          opacity={1}
+        />
+      </mesh>
     </group>
   );
 }
@@ -1353,39 +1385,59 @@ function CameraRig({
   compact: boolean;
 }) {
   const target = useMemo(() => new THREE.Vector3(), []);
+  const pointer = useRef({ x: 0, y: 0 });
+  const momentum = useRef(0);
+
   useFrame((state, delta) => {
     const { camera } = state;
     const dt = Math.min(delta, 0.05);
+
+    // Scroll is read straight through: Lenis already eased the position, so any
+    // extra damping here is pure lag in both scroll directions.
     const scroll = THREE.MathUtils.clamp(scrollStore.hero, 0, 1);
+
+    // These two do earn their smoothing. The pointer arrives as raw event
+    // values, and velocity is a noisy per-frame derivative that would otherwise
+    // shake the camera.
+    if (reduced) {
+      pointer.current.x = 0;
+      pointer.current.y = 0;
+      momentum.current = 0;
+    } else {
+      pointer.current.x = THREE.MathUtils.damp(
+        pointer.current.x,
+        state.pointer.x,
+        3.4,
+        dt,
+      );
+      pointer.current.y = THREE.MathUtils.damp(
+        pointer.current.y,
+        state.pointer.y,
+        3.4,
+        dt,
+      );
+      momentum.current = THREE.MathUtils.damp(
+        momentum.current,
+        THREE.MathUtils.clamp((scrollStore.velocity || 0) * 0.00008, -0.2, 0.2),
+        9,
+        dt,
+      );
+    }
+
+    const px = pointer.current.x;
+    const py = pointer.current.y;
+    const vel = momentum.current;
+
     const intro = reduced
       ? 1
       : THREE.MathUtils.smoothstep(state.clock.elapsedTime, 0, 1.4);
-    const px = reduced ? 0 : state.pointer.x;
-    const py = reduced ? 0 : state.pointer.y;
-    const vel = THREE.MathUtils.clamp(
-      (scrollStore.velocity || 0) * 0.00008,
-      -0.2,
-      0.2,
-    );
 
-    camera.position.x = THREE.MathUtils.damp(
-      camera.position.x,
-      1.14 + px * 0.2 + scroll * 0.28,
-      2.1,
-      dt,
-    );
-    camera.position.y = THREE.MathUtils.damp(
-      camera.position.y,
-      0.14 + py * 0.14 - scroll * 0.38 + vel,
-      2.1,
-      dt,
-    );
-    camera.position.z = THREE.MathUtils.damp(
-      camera.position.z,
-      (compact ? 13.1 : 8.35) - intro * (compact ? 0.45 : 0.58) - scroll * 0.95,
-      1.8,
-      dt,
-    );
+    camera.position.x = 1.14 + px * 0.2 + scroll * 0.28;
+    camera.position.y = 0.14 + py * 0.14 - scroll * 0.38 + vel;
+    camera.position.z =
+      (compact ? 13.1 : 8.35) -
+      intro * (compact ? 0.45 : 0.58) -
+      scroll * 0.95;
     target.set(
       (compact ? 0.78 : 1.08) + px * 0.09 + scroll * 0.32,
       0.08 + py * 0.04 - scroll * 0.4,
@@ -1408,7 +1460,7 @@ function SceneFrameReadiness({ onReady }: { onReady: () => void }) {
     }
 
     stableFrames.current += 1;
-    if (stableFrames.current < 3) return;
+    if (stableFrames.current < 2) return;
     if (notified.current) return;
     notified.current = true;
     frame.current = window.requestAnimationFrame(onReady);
@@ -1521,6 +1573,7 @@ function Scene({
             index={index}
             reduced={reduced}
             theme={theme}
+            isLeadToSecondary={true}
           />
         ))}
         {MODULES.map((config) => (
