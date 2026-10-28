@@ -95,7 +95,7 @@ export function HeroVisual() {
 
     const observer = new IntersectionObserver(
       ([entry]) => setInView(entry.isIntersecting),
-      { rootMargin: "0px" },
+      { rootMargin: "15% 0px" },
     );
     observer.observe(element);
     return () => observer.disconnect();
