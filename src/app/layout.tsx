@@ -66,6 +66,42 @@ export default function RootLayout({
       data-initial-loader="pending"
       suppressHydrationWarning
     >
+      <head>
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `
+            html { background: #050608; }
+            .brand-loader-initial {
+              --loader-emblem-size: 96px;
+              position: fixed;
+              z-index: 120;
+              inset: 0;
+              display: none;
+              align-content: center;
+              justify-items: center;
+              overflow: hidden;
+              background: #050608;
+              color: #eef2ff;
+              opacity: 1;
+              visibility: visible;
+              transition: opacity 420ms cubic-bezier(0.22, 1, 0.36, 1);
+            }
+            html[data-initial-loader="pending"] .brand-loader-initial,
+            html[data-initial-loader="leaving"] .brand-loader-initial {
+              display: grid;
+            }
+            html[data-initial-loader="leaving"] .brand-loader-initial {
+              opacity: 0;
+              visibility: hidden;
+              pointer-events: none;
+            }
+            @media (max-width: 30rem) {
+              .brand-loader-initial { --loader-emblem-size: 76px; }
+            }
+          `,
+          }}
+        />
+      </head>
       <body suppressHydrationWarning>
         <Script id="initialize-color-theme" strategy="beforeInteractive">
           {initializeThemeScript}
