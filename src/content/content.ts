@@ -1287,19 +1287,138 @@ export const teamDisciplines: TeamMember[] = [
     number: "04",
     name: "Muhammad Abdullah",
     role: "SEO Specialist",
-    portrait: null,
+    portrait: "/abdullah.jpeg",
     email: null,
     socialLinks: [],
-    bio: "Muhammad Abdullah is an SEO Specialist at BrandUpCrew. Additional profile details are being prepared.",
+    bio: "Muhammad Abdullah is an SEO Specialist at BrandUpCrew who helps businesses improve their organic search visibility across on-page, off-page, and technical SEO. He combines content and metadata optimization, authority-focused link building, and site health reviews to help websites rank for the searches that matter and earn lasting credibility.",
     overview:
-      "Muhammad's profile is focused on search engine optimization. Specific tools, services, and project contributions will be added when confirmed.",
-    expertise: ["Search Engine Optimization (SEO)"],
-    technologyGroups: [],
-    services: [],
-    process: [],
+      "Muhammad's work covers the three pillars of search optimization: on-page SEO to align pages and content with search intent, off-page SEO to build authority through quality backlinks and profiles, and technical SEO to keep a site crawlable, fast, and well structured. His recommendations are grounded in audits, keyword research, and search performance data, with clear priorities rather than promises about rankings.",
+    expertise: [
+      "On-Page SEO",
+      "Off-Page SEO",
+      "Technical SEO",
+      "Keyword Research & Search Intent",
+      "Content and Metadata Optimization",
+      "Link Building & Backlink Strategy",
+      "Website SEO Audits",
+      "Search Performance Monitoring & Reporting",
+    ],
+    technologyGroups: [
+      {
+        title: "Search and analytics tools",
+        items: [
+          "Google Search Console",
+          "Google Analytics 4",
+          "Google Keyword Planner",
+          "Ahrefs",
+          "Semrush",
+          "Screaming Frog SEO Spider",
+        ],
+      },
+    ],
+    services: [
+      {
+        title: "On-Page SEO Optimization",
+        description:
+          "Improve page-level relevance so titles, headings, content, and internal links clearly match the topics and intent behind relevant searches.",
+        problem:
+          "Pages may not clearly answer what people are searching for, which limits their chances of ranking for the right terms.",
+        deliverables: [
+          "Page and content review",
+          "Title, meta, and heading recommendations",
+          "Keyword mapping to key pages",
+          "Internal linking and follow-up review",
+        ],
+        suitableFor:
+          "Businesses that want existing pages to target the right searches more effectively.",
+      },
+      {
+        title: "Off-Page SEO & Link Building",
+        description:
+          "Build search authority through relevant, quality backlinks, brand mentions, and a credible off-site profile.",
+        problem:
+          "A site with strong content can still struggle to rank without the authority that trusted links and mentions provide.",
+        deliverables: [
+          "Backlink profile review",
+          "Link opportunity research",
+          "Outreach and link building plan",
+          "Authority and mention tracking",
+        ],
+        suitableFor:
+          "Businesses looking to strengthen search authority and earn quality, relevant links.",
+      },
+      {
+        title: "Technical SEO Audits",
+        description:
+          "Review a website's technical search foundations — crawlability, indexing, site structure, speed, and markup — and prioritize the issues that matter.",
+        problem:
+          "Technical barriers can keep search engines from crawling, indexing, and ranking a site's pages as intended.",
+        deliverables: [
+          "Technical crawl and index review",
+          "Core Web Vitals and speed checks",
+          "Prioritized findings",
+          "Actionable recommendations",
+        ],
+        suitableFor:
+          "Websites that need a clear view of technical SEO issues and how to fix them.",
+      },
+      {
+        title: "Keyword Research & SEO Reporting",
+        description:
+          "Explore search terms, intent, and competitor visibility, then report on search performance to guide the next set of priorities.",
+        problem:
+          "SEO decisions are harder to make without a clear picture of demand, competition, and current search performance.",
+        deliverables: [
+          "Keyword and intent research",
+          "Competitor search review",
+          "Search performance reporting",
+          "Prioritized next steps",
+        ],
+        suitableFor:
+          "Businesses planning SEO work or reviewing their organic search performance over time.",
+      },
+    ],
+    process: [
+      {
+        title: "Understand the goals",
+        description:
+          "Discuss the business context, audience, website, and the search questions the SEO work should address.",
+      },
+      {
+        title: "Audit and research",
+        description:
+          "Review on-page content, technical foundations, off-page authority, and available search performance data.",
+      },
+      {
+        title: "Prioritize improvements",
+        description:
+          "Turn findings into a practical sequence of on-page, off-page, and technical recommendations.",
+      },
+      {
+        title: "Review and learn",
+        description:
+          "Assess search data after agreed changes and use the findings to inform the next steps.",
+      },
+    ],
     experience: null,
     projects: [],
-    faqs: [],
+    faqs: [
+      {
+        question: "What areas of SEO do you cover?",
+        answer:
+          "Muhammad covers on-page SEO, off-page SEO, and technical SEO, along with keyword research, content and metadata optimization, link building, audits, and search performance reporting.",
+      },
+      {
+        question: "Do you build backlinks?",
+        answer:
+          "Off-page SEO and link building are listed areas of expertise. The approach focuses on relevant, quality links and mentions rather than shortcuts that can put a site at risk.",
+      },
+      {
+        question: "Can you guarantee first-page rankings or traffic growth?",
+        answer:
+          "No. Search performance depends on many factors beyond any one specialist's control. The focus is on sound analysis, practical improvements, and honest measurement.",
+      },
+    ],
     inquiryService: "search-engine-optimization",
     accent: "blue",
   },

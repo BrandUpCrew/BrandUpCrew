@@ -116,20 +116,30 @@ const members = [
     slug: "muhammad-abdullah",
     name: "Muhammad Abdullah",
     role: "SEO Specialist",
-    skills: ["Search Engine Optimization (SEO)"],
-    technologies: [],
-    excludedTechnologies: [
+    skills: [
+      "On-Page SEO",
+      "Off-Page SEO",
+      "Technical SEO",
+      "Keyword Research & Search Intent",
+      "Content and Metadata Optimization",
+      "Link Building & Backlink Strategy",
+      "Website SEO Audits",
+      "Search Performance Monitoring & Reporting",
+    ],
+    technologies: [
       "Google Search Console",
       "Google Analytics 4",
+      "Google Keyword Planner",
       "Ahrefs",
       "Semrush",
       "Screaming Frog SEO Spider",
     ],
+    excludedTechnologies: ["Majestic", "Moz Pro", "Ubersuggest"],
     projects: [],
     service: "search-engine-optimization",
-    portraitPending: true,
-    hasServices: false,
-    hasFaqs: false,
+    portraitPending: false,
+    hasServices: true,
+    hasFaqs: true,
   },
 ];
 
@@ -148,7 +158,7 @@ test("team cards provide accessible links to their dedicated profiles", async ({
   }
 });
 
-test("Muhammad Abdullah has a linked SEO profile with an accessible portrait placeholder", async ({
+test("Muhammad Abdullah has a linked SEO profile with a portrait and SEO details", async ({
   page,
 }) => {
   await page.goto("/");
@@ -159,7 +169,7 @@ test("Muhammad Abdullah has a linked SEO profile with an accessible portrait pla
   await expect(profileLink).toHaveAttribute("href", "/team/muhammad-abdullah");
   await expect(
     page.getByRole("img", {
-      name: "Portrait pending for SEO Specialist profile",
+      name: "Muhammad Abdullah, SEO Specialist",
     }),
   ).toBeVisible();
 
@@ -179,17 +189,21 @@ test("Muhammad Abdullah has a linked SEO profile with an accessible portrait pla
   await expect(
     page.getByText("SEO Specialist", { exact: true }).first(),
   ).toBeVisible();
-  await expect(
-    page.getByText("Search Engine Optimization (SEO)", { exact: true }),
-  ).toBeVisible();
+  for (const skill of ["On-Page SEO", "Off-Page SEO", "Technical SEO"]) {
+    await expect(page.getByText(skill, { exact: true }).first()).toBeVisible();
+  }
   await expect(
     page.locator(".team-profile-hero-image").getByRole("img", {
-      name: "Portrait pending for SEO Specialist profile",
+      name: "Muhammad Abdullah, SEO Specialist",
     }),
   ).toBeVisible();
-  await expect(page.locator(".team-profile-technologies")).toHaveCount(0);
-  await expect(page.locator(".team-profile-services")).toHaveCount(0);
-  await expect(page.locator(".team-profile-faq")).toHaveCount(0);
+  await expect(page.locator(".team-profile-technologies")).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Services and support" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Frequently asked questions" }),
+  ).toBeVisible();
   await expect(
     page.getByRole("link", { name: "Work With Me" }),
   ).toHaveAttribute(
