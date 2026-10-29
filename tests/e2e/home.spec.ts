@@ -183,18 +183,17 @@ test("team profiles use the correct names and portraits in both themes", async (
     fourthProfile.getByRole("heading", { name: "Muhammad Abdullah" }),
   ).toBeVisible();
   await expect(fourthProfile).toContainText("SEO Specialist");
-  await expect(
-    fourthProfile.getByRole("img", {
-      name: "Portrait pending for SEO Specialist profile",
-    }),
-  ).toBeVisible();
+  await expect(fourthProfile.locator("img")).toHaveAttribute(
+    "alt",
+    "Muhammad Abdullah, SEO Specialist",
+  );
   const profileImages = teamSection.locator(".team-profile-image");
-  await expect(profileImages).toHaveCount(3);
+  await expect(profileImages).toHaveCount(4);
   await expect(
     teamSection.getByRole("img", {
       name: "Portrait pending for SEO Specialist profile",
     }),
-  ).toHaveCount(1);
+  ).toHaveCount(0);
   for (const image of await profileImages.all()) {
     await expect(image).toHaveCSS("object-fit", "cover");
     await expect
@@ -257,7 +256,16 @@ test("team profiles use the correct names and portraits in both themes", async (
       "Search Performance Monitoring",
       "SEO Recommendations and Reporting",
     ],
-    ["Search Engine Optimization (SEO)"],
+    [
+      "On-Page SEO",
+      "Off-Page SEO",
+      "Technical SEO",
+      "Keyword Research & Search Intent",
+      "Content and Metadata Optimization",
+      "Link Building & Backlink Strategy",
+      "Website SEO Audits",
+      "Search Performance Monitoring & Reporting",
+    ],
   ];
   for (const [index, skills] of expertise.entries()) {
     const card = profiles.nth(index);
