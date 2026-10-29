@@ -6,7 +6,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 import { subscribeToHeroEntrance } from "@/lib/entrance";
-import { scrollStore } from "@/lib/scroll";
+import { clamp, lerp, scrollStore } from "@/lib/scroll";
 import { cn } from "@/lib/utils";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -649,25 +649,24 @@ export function SpatialMarquee({ items }: { items: string[] }) {
     // a dedicated wrapper above it so the two never fight for `transform`.
     const tiltActive =
       Boolean(tilt) && !prefersReducedMotion() && !isTouchDevice();
-    const rotX = tiltActive
-      ? gsap.quickTo(tilt as HTMLDivElement, "rotateX", {
-          duration: 0.35,
-          ease: "power2.out",
-        })
-      : null;
-    const skewX = tiltActive
-      ? gsap.quickTo(tilt as HTMLDivElement, "skewX", {
-          duration: 0.35,
-          ease: "power2.out",
-        })
-      : null;
 
+    // The tilt is driven straight from the shared scroll velocity inside our own
+    // rAF loop rather than with per-property GSAP tweens: a single GPU transform
+    // write per frame is cheaper, keeps tracking immediate, and avoids GSAP's
+    // "not eligible for reset" warning for split transform properties.
     let rafId = 0;
+    let currentRotate = 0;
+    let currentSkew = 0;
     const update = () => {
-      const vel = gsap.utils.clamp(-3500, 3500, scrollStore.velocity || 0);
+      const vel = clamp(scrollStore.velocity || 0, -3500, 3500);
       const intensity = vel / 3500;
-      rotX?.(intensity * 5);
-      skewX?.(intensity * -2);
+      currentRotate = lerp(currentRotate, intensity * 5, 0.2);
+      currentSkew = lerp(currentSkew, intensity * -2, 0.2);
+      if (tilt) {
+        tilt.style.transform = `rotateX(${currentRotate.toFixed(
+          3,
+        )}deg) skewX(${currentSkew.toFixed(3)}deg)`;
+      }
       rafId = requestAnimationFrame(update);
     };
     const start = () => {
@@ -695,7 +694,6 @@ export function SpatialMarquee({ items }: { items: string[] }) {
     return () => {
       observer.disconnect();
       stop();
-      if (tilt) gsap.killTweensOf(tilt);
     };
   }, []);
 
