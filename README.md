@@ -16,7 +16,7 @@
 
 </div>
 
-> **In one line:** this is the public website of an independent digital studio — a complete narrative of what the studio does, how it works, and how to start a conversation, built as a static-first Next.js application with one server endpoint.
+> **In one line:** this is the public website of an independent digital studio a complete narrative of what the studio does, how it works, and how to start a conversation, built as a static-first Next.js application with one server endpoint.
 
 ---
 
@@ -24,18 +24,18 @@
 
 | Field               | Value                                                                         |
 | ------------------- | ----------------------------------------------------------------------------- |
-| **Studio**          | BrandUpCrew — independent digital studio                                      |
+| **Studio**          | BrandUpCrew  independent digital studio                                      |
 | **Product**         | Public marketing website, production-facing                                   |
 | **Framework**       | Next.js 16 · App Router · React Server Components · Turbopack                 |
 | **Language**        | TypeScript 5.9 in `strict` mode                                               |
 | **Styling**         | Tailwind CSS v4 over a semantic CSS token layer                               |
-| **Content**         | One typed module — no CMS, no database                                        |
+| **Content**         | One typed module  no CMS, no database                                        |
 | **Server API**      | A single route: `/api/contact`                                                |
 | **Motion**          | Lenis · GSAP + ScrollTrigger · Motion · React Three Fiber (divided ownership) |
 | **Accessibility**   | WCAG 2.2 A/AA checks on representative routes via axe                         |
 | **Test engines**    | Chromium · Firefox · WebKit                                                   |
 | **Generated pages** | 12 services · 3 concepts · 3 articles · 4 team profiles                       |
-| **License**         | [Proprietary — All Rights Reserved](LICENSE.md)                               |
+| **License**         | [Proprietary  All Rights Reserved](LICENSE.md)                               |
 
 ---
 
@@ -92,10 +92,10 @@ The descriptor used across the product is **“Digital growth & technology”**.
 
 | Area                                | How the studio works with a client                                                                                                     |
 | ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| **Strategy before production**      | Engagement starts from the outcome, constraints, and available evidence — not from a template deliverable.                             |
+| **Strategy before production**      | Engagement starts from the outcome, constraints, and available evidence  not from a template deliverable.                             |
 | **Design and engineering together** | Interfaces are designed with implementation, accessibility, and maintainability in view, so the shipped experience matches the intent. |
 | **One senior team**                 | Work is delivered by specialists across full-stack engineering, e-commerce, SEO, and growth, coordinated as a single engagement.       |
-| **Honest measurement**              | Meaningful measures are agreed up front, and findings are reported as they are — including when they are inconvenient.                 |
+| **Honest measurement**              | Meaningful measures are agreed up front, and findings are reported as they are  including when they are inconvenient.                 |
 | **Collaboration-ready**             | The studio works alongside internal marketing, design, engineering, and leadership teams, with responsibilities agreed at the start.   |
 
 **A good fit if** you need to improve a digital experience, launch a product, or make your marketing more coherent. Fit is decided by the problem and available capacity, not by company size.
@@ -106,7 +106,7 @@ The descriptor used across the product is **“Digital growth & technology”**.
 
 ## What this repository contains
 
-This repository is the **public marketing website** for the studio — a production-grade Next.js application that explains the offering, demonstrates how the studio thinks, and converts interest into a project inquiry.
+This repository is the **public marketing website** for the studio  a production-grade Next.js application that explains the offering, demonstrates how the studio thinks, and converts interest into a project inquiry.
 
 It is intentionally **static-first**: all editorial content is rendered at build time, and there is no database, authentication layer, admin panel, or CMS. The only API route is the contact endpoint; metadata endpoints (`sitemap.xml`, `robots.txt`, `feed.xml`) are generated from the same typed content.
 
@@ -117,10 +117,10 @@ It is intentionally **static-first**: all editorial content is rendered at build
 | -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Home**             | An immersive WebGL hero, a lead service panel with supporting disciplines, a connected process rail, industries, the team, latest insights, and FAQs.                                    |
 | **Services**         | Twelve service pages, each with the problem it solves, the intended outcome, deliverables, a four-step approach, tools used, and service-specific FAQs.                                  |
-| **Work**             | Three labelled demonstration concepts showing how a challenge, strategy, and execution are presented — with an explicit portfolio note that they are not client engagements.             |
+| **Work**             | Three labelled demonstration concepts showing how a challenge, strategy, and execution are presented  with an explicit portfolio note that they are not client engagements.             |
 | **Industries**       | Six industry perspectives: professional services, technology, health & wellbeing, education, commerce, and nonprofits.                                                                   |
 | **Process**          | The studio’s four-step working method: listen, find the focus, make and test, learn and improve.                                                                                         |
-| **Team**             | Team cards on the home page plus dedicated profile pages per discipline, covering expertise, technology, services, process, selected projects, and FAQs — each able to route an inquiry. |
+| **Team**             | Team cards on the home page plus dedicated profile pages per discipline, covering expertise, technology, services, process, selected projects, and FAQs  each able to route an inquiry. |
 | **Insights**         | Articles on digital strategy, technical SEO, design, and practical improvements, exposed both as pages and as an RSS feed.                                                               |
 | **Contact**          | A structured inquiry form that can be prefilled with a chosen service and/or team member, plus privacy and terms pages.                                                                  |
 | **Machine-readable** | `sitemap.xml`, `robots.txt`, `feed.xml`, canonical URLs, Open Graph metadata, and article structured data.                                                                               |
@@ -132,7 +132,7 @@ It is intentionally **static-first**: all editorial content is rendered at build
 
 | Route                                      | Purpose                                                                    |
 | ------------------------------------------ | -------------------------------------------------------------------------- |
-| `/`                                        | Home — the full studio narrative.                                          |
+| `/`                                        | Home  the full studio narrative.                                          |
 | `/about`                                   | Studio positioning, capabilities, and how the studio thinks.               |
 | `/services`                                | Service index across all twelve disciplines.                               |
 | `/services/[slug]`                         | Twelve static service detail pages, generated from typed content.          |
@@ -153,7 +153,7 @@ It is intentionally **static-first**: all editorial content is rendered at build
 
 ## Service disciplines
 
-Twelve services, grouped by intent. Each one is a first-class page driven by typed content — not a card that links nowhere.
+Twelve services, grouped by intent. Each one is a first-class page driven by typed content  not a card that links nowhere.
 
 | Group        | Services                                                                                                                                                                                  |
 | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -181,20 +181,20 @@ Every service page answers the same questions in the same order: **what problem 
 
 ## How we work
 
-The same four-step method is repeated on the site, on the process page, and on every service page — so the promise and the delivery model match.
+The same four-step method is repeated on the site, on the process page, and on every service page  so the promise and the delivery model match.
 
 ```mermaid
 flowchart LR
-  A["01 — Listen<br/>customers, ambitions, constraints"] --> B["02 — Find the focus<br/>shared problem, scope, measure"]
-  B --> C["03 — Make and test<br/>visible increments, useful feedback"]
-  C --> D["04 — Learn and improve<br/>clear handover, next decisions"]
+  A["01  Listen<br/>customers, ambitions, constraints"] --> B["02  Find the focus<br/>shared problem, scope, measure"]
+  B --> C["03  Make and test<br/>visible increments, useful feedback"]
+  C --> D["04  Learn and improve<br/>clear handover, next decisions"]
 ```
 
 ---
 
 ## Studio principles
 
-These principles are encoded in the product itself — if a change contradicts them, the change is wrong.
+These principles are encoded in the product itself  if a change contradicts them, the change is wrong.
 
 1. **No fabricated proof.** Demonstration concepts are clearly labelled as concepts, and no organization identity, review, rating, or local-business structured data is invented.
 2. **No empty promises.** The FAQ states plainly that rankings, revenue, leads, and advertising returns are not guaranteed.
@@ -219,7 +219,7 @@ The interface is a deliberate, token-driven system rather than a set of one-off 
 | **Composition**  | Oversized display headings with masked reveals, generous whitespace, gradient and mask artwork, and a restrained use of the accent so it always means something.                                                                    |
 | **Brand assets** | The mark (`public/Logo.png`) is referenced once through `siteConfig.logo` and appears in the header, footer, and both loading states; `public/favicon.png` is registered in the root metadata. No CSS-drawn substitute marks exist. |
 
-The complete specification — tokens, breakpoints, motion ownership, and the 3D hero contract — is in [`docs/design-system.md`](docs/design-system.md).
+The complete specification  tokens, breakpoints, motion ownership, and the 3D hero contract  is in [`docs/design-system.md`](docs/design-system.md).
 
 ---
 
@@ -227,7 +227,7 @@ The complete specification — tokens, breakpoints, motion ownership, and the 3D
 
 | Layer                  | Choice                                                                                                      |
 | ---------------------- | ----------------------------------------------------------------------------------------------------------- |
-| **Framework**          | Next.js 16 (App Router, React Server Components, Turbopack) — Node.js **20.9+** required                    |
+| **Framework**          | Next.js 16 (App Router, React Server Components, Turbopack)  Node.js **20.9+** required                    |
 | **UI runtime**         | React 19, TypeScript 5.9 in `strict` mode                                                                   |
 | **Styling**            | Tailwind CSS v4 via `@tailwindcss/postcss` plus a semantic CSS token layer in `src/app/globals.css`         |
 | **Typography**         | `next/font` (self-hosted Montserrat variable font)                                                          |
@@ -286,7 +286,7 @@ flowchart TD
 
 ## Content model
 
-All editorial content lives in a single typed module, `src/content/content.ts`. It is the source of truth for routes, sitemap entries, structured data, and FAQ/insight content — there is no CMS and no database.
+All editorial content lives in a single typed module, `src/content/content.ts`. It is the source of truth for routes, sitemap entries, structured data, and FAQ/insight content  there is no CMS and no database.
 
 ```mermaid
 flowchart LR
@@ -379,7 +379,7 @@ cp .env.example .env.local
 npm run dev
 ```
 
-The site runs at `http://localhost:3000`. Contact delivery stays disabled until the three Resend values are provided — the form reports this honestly instead of pretending to send.
+The site runs at `http://localhost:3000`. Contact delivery stays disabled until the three Resend values are provided  the form reports this honestly instead of pretending to send.
 
 ---
 
@@ -505,7 +505,7 @@ sequenceDiagram
 | Content type      | Only `application/json` is accepted.                                                                                                 |
 | Request size      | Declared length and streamed body are both capped at 16 KB.                                                                          |
 | Schema            | Strict object: required name, email, at least one known service, 20–5000 character brief; unknown keys are rejected.                 |
-| Honeypot          | A hidden field that must stay empty — bots that fill it are rejected.                                                                |
+| Honeypot          | A hidden field that must stay empty  bots that fill it are rejected.                                                                |
 | Rate limit        | 5 requests per 15 minutes per client, with a `Retry-After` header; keys come from a verified IP.                                     |
 | Link safety       | Website values must use HTTP or HTTPS.                                                                                               |
 | Routing integrity | Team-member values must match a real discipline before they can influence an email.                                                  |
@@ -522,7 +522,7 @@ sequenceDiagram
 - Provide `NEXT_PUBLIC_SITE_URL` with the real public origin before building, so canonical URLs, the sitemap, robots rules, and the feed point at production.
 - The production edge (not the repository) must terminate TLS and add **HSTS** and a **nonce-based Content Security Policy** once the deployment domain and asset policy are confirmed.
 - The contact ingress must **overwrite** `X-Real-IP`; the built-in limiter is process-local and is not a distributed production control. Replace it with a shared store if the endpoint runs on more than one instance.
-- Live contact delivery with real provider credentials has not been verified in this environment — smoke-test it after configuring Resend.
+- Live contact delivery with real provider credentials has not been verified in this environment  smoke-test it after configuring Resend.
 
 See [`SECURITY.md`](SECURITY.md) for the full hardening checklist and reporting process.
 
@@ -576,7 +576,7 @@ npm run lint && npm run typecheck && npm test && npm run build
 
 ## License
 
-**Proprietary — All Rights Reserved.** Copyright © 2026 BrandUpCrew.
+**Proprietary  All Rights Reserved.** Copyright © 2026 BrandUpCrew.
 
 This project is **not** open source. Source code is visible for evaluation and reference only. Copying, modifying, deploying, distributing, sublicensing, or selling any part of it requires prior written permission, and the BrandUpCrew name, logo, and other brand assets may not be reused. Third-party dependencies remain under their own licenses.
 
@@ -584,6 +584,6 @@ Read the full terms in [`LICENSE.md`](LICENSE.md).
 
 <div align="center">
 
-**BrandUpCrew — independent strategy, design, and technology for businesses ready to move forward.**
+**BrandUpCrew  independent strategy, design, and technology for businesses ready to move forward.**
 
 </div>
