@@ -109,7 +109,6 @@ The descriptor used across the product is **“Digital growth & technology”**.
 This repository is the **public marketing website** for the studio  a production-grade Next.js application that explains the offering, demonstrates how the studio thinks, and converts interest into a project inquiry.
 
 It is intentionally **static-first**: all editorial content is rendered at build time, and there is no database, authentication layer, admin panel, or CMS. The only API route is the contact endpoint; metadata endpoints (`sitemap.xml`, `robots.txt`, `feed.xml`) are generated from the same typed content.
-
 <details>
 <summary><strong>Site areas</strong></summary>
 
